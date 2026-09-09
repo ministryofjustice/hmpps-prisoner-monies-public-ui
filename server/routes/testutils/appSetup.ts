@@ -24,7 +24,7 @@ export const user: HmppsUser = {
 }
 
 const applicationInfo: ApplicationInfo = {
-  applicationName: 'hmpps-template-typescript',
+  applicationName: 'hmpps-prisoner-monies-public-ui',
   buildNumber: '123',
   gitRef: 'abc123',
   gitShortHash: 'abc',
