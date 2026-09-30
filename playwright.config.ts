@@ -1,15 +1,8 @@
 import { defineConfig, devices } from '@playwright/test'
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// import dotenv from 'dotenv'
-// dotenv.config({ path: path.resolve(__dirname, '.env') })
+// send money vars
+const URL_SEND_MONEY = process.env.URL_SEND_MONEY || 'http://localhost:3000'
 
-/**
- * See https://playwright.dev/docs/test-configuration.
- */
 export default defineConfig({
   outputDir: './test_results/playwright/test-output',
   testDir: './integration_tests/specs',
@@ -40,9 +33,20 @@ export default defineConfig({
     trace: process.env.CI ? 'off' : 'on',
     ...devices['Desktop Chrome'],
     testIdAttribute: 'data-qa',
-    baseURL: 'http://localhost:3007',
   },
 
   /* Configure projects */
-  projects: [{ name: 'default' }],
+  projects: [
+    {
+      name: 'app-desktop-chrome',
+      use: { baseURL: 'http://localhost:3007', ...devices['Desktop Chrome'] },
+      testDir: './integration_tests/specs',
+      testMatch: ['health.spec.ts', 'signIn.spec.ts'],
+    },
+    {
+      name: 'send-money-desktop-chrome',
+      use: { baseURL: URL_SEND_MONEY, ...devices['Desktop Chrome'] },
+      testDir: './integration_tests/specs/sendMoney',
+    },
+  ],
 })
