@@ -1,35 +1,49 @@
 import { Router } from 'express'
 
-import type { Services } from '../services'
-import auditSearchRequest from '../middleware/auditSearchRequest'
+import config from '../config'
+import startPageHandler from '../handlers/startPage'
+import { Services } from '../services'
 
 export enum Page {
-  EXAMPLE_PAGE = 'EXAMPLE_PAGE',
   SEARCH_OFFENDERS = 'SEARCH_OFFENDERS',
 }
 
-export default function routes(services: Services): Router {
-  const { auditService, exampleService } = services
+export default function routes(_services: Services): Router {
   const router = Router()
 
-  router.get('/', async (req, res, _next) => {
-    await auditService.logPageView(Page.EXAMPLE_PAGE, {
-      who: res.locals.user.username,
-      correlationId: req.id,
-    })
+  router.get(
+    '/',
+    startPageHandler({
+      production: config.production,
+      productionStartPageUrl: config.productionStartPageUrl,
+      sendMoneyUrl: config.sendMoneyUrl,
+    }),
+  )
 
-    const currentTime = await exampleService.getCurrentTime()
-    return res.render('pages/index', { currentTime })
+  router.get('/info-page', async (_req, res, _next) => {
+    return res.render('pages/info-page')
   })
 
-  // Example of an audited route.
-  router.post(
-    '/perform-search',
-    auditSearchRequest({ services, page: Page.SEARCH_OFFENDERS }),
-    async (_req, res, _next) => {
-      return res.redirect('/')
-    },
-  )
+  router.get('/en-gb/', async (_req, res, _next) => {
+    return res.render('pages/before-you-continue', { continueUrl: '/payment-choice', backLinkHref: '/' })
+  })
+
+  router.get('/payment-choice', async (_req, res, _next) => {
+    return res.status(404).send('Not Found')
+    // return res.render('pages/payment-choice', { backLinkHref: '/en-gb/' })
+  })
+
+  router.get('/terms', async (_req, res, _next) => {
+    return res.render('pages/terms')
+  })
+
+  router.get('/privacy', async (_req, res, _next) => {
+    return res.render('pages/privacy')
+  })
+
+  router.get('/contact-us', async (_req, res, _next) => {
+    return res.render('pages/contact-us')
+  })
 
   return router
 }
