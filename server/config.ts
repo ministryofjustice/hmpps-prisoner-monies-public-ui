@@ -1,4 +1,3 @@
-import { AuditClientConfig } from '@ministryofjustice/hmpps-audit-client'
 import { AgentConfig } from '@ministryofjustice/hmpps-rest-client'
 
 const production = process.env.NODE_ENV === 'production'
@@ -15,7 +14,7 @@ function get<T>(name: string, fallback: T, options = { requireInProduction: fals
 
 const requiredInProduction = { requireInProduction: true }
 
-const auditConfig = (): AuditClientConfig => {
+const auditConfig = () => {
   const auditEnabled = get('AUDIT_ENABLED', 'false') === 'true'
   return {
     enabled: auditEnabled,
@@ -88,4 +87,7 @@ export default {
   },
   ingressUrl: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
   environmentName: get('ENVIRONMENT_NAME', ''),
+  // Add new vars below!
+  sendMoneyUrl: get('SEND_MONEY_URL', 'http://localhost:8004'),
+  productionStartPageUrl: get('PRODUCTION_START_PAGE_URL', 'https://www.gov.uk/send-prisoner-money'),
 }

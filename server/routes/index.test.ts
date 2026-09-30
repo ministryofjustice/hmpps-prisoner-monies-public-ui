@@ -4,7 +4,6 @@ import request from 'supertest'
 import { appWithAllRoutes, user } from './testutils/appSetup'
 import ExampleService from '../services/exampleService'
 import ExampleApiClient from '../data/exampleApiClient'
-import { Page } from '.'
 
 jest.mock('@ministryofjustice/hmpps-audit-client')
 jest.mock('../services/exampleService')
@@ -29,58 +28,91 @@ afterEach(() => {
 })
 
 describe('GET /', () => {
-  it('should render index page', () => {
-    auditService.logPageView.mockResolvedValue(undefined)
-    exampleService.getCurrentTime.mockResolvedValue('2025-01-01T12:00:00.000')
-
+  it('should render start page', () => {
     return request(app)
       .get('/')
       .expect('Content-Type', /html/)
       .expect(200)
       .expect(res => {
-        expect(res.text).toContain('This site is under construction...')
-        expect(res.text).toContain('The time is currently 2025-01-01T12:00:00.000')
-        expect(auditService.logPageView).toHaveBeenCalledWith(Page.EXAMPLE_PAGE, {
-          who: user.username,
-          correlationId: expect.any(String),
-        })
-        expect(exampleService.getCurrentTime).toHaveBeenCalled()
-      })
-  })
-
-  it('service errors are handled', () => {
-    auditService.logPageView.mockResolvedValue(undefined)
-    exampleService.getCurrentTime.mockRejectedValue(new Error('Some problem calling external api!'))
-
-    return request(app)
-      .get('/')
-      .expect('Content-Type', /html/)
-      .expect(500)
-      .expect(res => {
-        expect(res.text).toContain('Some problem calling external api!')
+        expect(res.text).toContain('Send money to someone in prison')
+        expect(res.text).toContain('Start now')
       })
   })
 })
 
-describe('POST /perform-search', () => {
-  it('should trigger audit request and redirect to /', () => {
-    exampleService.getCurrentTime.mockResolvedValue('2025-01-01T12:00:00.000')
-
+describe('GET /info-page', () => {
+  it('should render info page', () => {
     return request(app)
-      .post('/perform-search')
-      .send({ searchTerm: '12345' })
-      .expect('Content-Type', /text\/plain/)
-      .expect(302)
-      .expect('Location', '/')
-      .expect(() => {
-        expect(auditService.logAuditEvent).toHaveBeenCalledWith({
-          correlationId: '4d0fd4da-ecc1-454d-8308-cdee6b8b91f7',
-          details: { build: 'abc123', userRoles: [] },
-          subjectId: '12345',
-          subjectType: 'SEARCH_TERM',
-          what: 'SEARCH_OFFENDERS',
-          who: 'user1',
-        })
+      .get('/info-page')
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain('Staying in touch with someone in prison')
+      })
+  })
+})
+
+describe('GET /en-gb/', () => {
+  it('should render before you continue page', () => {
+    return request(app)
+      .get('/en-gb/')
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain('Before you continue')
+        expect(res.text).toContain('href="/payment-choice"')
+        expect(res.text).toContain('href="/terms"')
+        expect(res.text).toContain('href="/privacy"')
+        expect(res.text).toContain('href="/contact-us"')
+        expect(res.text).toContain('govuk-back-link')
+      })
+  })
+})
+
+describe('GET /payment-choice', () => {
+  it('should render payment choice page', () => {
+    return request(app).get('/payment-choice').expect('Content-Type', /html/).expect(404)
+    // .expect(res => {
+    //   expect(res.text).toContain('Pay now by debit card')
+    //   expect(res.text).toContain('id="id_debit_card"')
+    //   expect(res.text).toContain('href="/debit-card/details"')
+    //   expect(res.text).toContain('govuk-back-link')
+    // })
+  })
+})
+
+describe('GET /terms', () => {
+  it('should render terms page', () => {
+    return request(app)
+      .get('/terms')
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain('Terms and conditions')
+      })
+  })
+})
+
+describe('GET /privacy', () => {
+  it('should render privacy page', () => {
+    return request(app)
+      .get('/privacy')
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain('Privacy policy')
+      })
+  })
+})
+
+describe('GET /contact-us', () => {
+  it('should render contact us page', () => {
+    return request(app)
+      .get('/contact-us')
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain('Contact us')
       })
   })
 })
