@@ -1,10 +1,5 @@
 import { defineConfig, devices } from '@playwright/test'
 
-// The app instance used for health/signIn tests (e.g. started via `npm run start-feature` with PORT=3007).
-const APP_URL = 'http://localhost:3007'
-// The app instance used for the sendMoney start page tests (defaults to the app's own default port - see server/app.ts).
-const URL_SEND_MONEY = 'http://localhost:3000'
-
 export default defineConfig({
   outputDir: './test_results/playwright/test-output',
   testDir: './integration_tests/specs',
@@ -35,20 +30,9 @@ export default defineConfig({
     trace: process.env.CI ? 'off' : 'on',
     ...devices['Desktop Chrome'],
     testIdAttribute: 'data-qa',
+    baseURL: 'http://localhost:3007',
   },
 
   /* Configure projects */
-  projects: [
-    {
-      name: 'app-desktop-chrome',
-      use: { baseURL: APP_URL, ...devices['Desktop Chrome'] },
-      testDir: './integration_tests/specs',
-      testMatch: ['health.spec.ts', 'signIn.spec.ts'],
-    },
-    {
-      name: 'send-money-desktop-chrome',
-      use: { baseURL: URL_SEND_MONEY, ...devices['Desktop Chrome'] },
-      testDir: './integration_tests/specs/sendMoney',
-    },
-  ],
+  projects: [{ name: 'default' }],
 })
