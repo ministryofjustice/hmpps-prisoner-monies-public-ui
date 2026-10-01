@@ -28,25 +28,36 @@ export function validatePrisonerDetails(formValues: PrisonerDetailsFormValues): 
   const errors: PrisonerDetailsErrors = {}
 
   if (!formValues.prisonerName) {
-    errors.prisonerName = 'Enter the prisoner’s name'
+    errors.prisonerName = 'This field is required.'
   }
 
   if (!formValues.prisonerDobDay || !formValues.prisonerDobMonth || !formValues.prisonerDobYear) {
-    errors.prisonerDob = 'Enter the prisoner’s date of birth'
+    errors.prisonerDob = 'This field is required.'
   } else {
     const day = Number(formValues.prisonerDobDay)
     const month = Number(formValues.prisonerDobMonth)
     const year = Number(formValues.prisonerDobYear)
     const currentYear = new Date().getFullYear()
-    if (year < 1900 || year > currentYear) {
+
+    if (Number.isNaN(day)) {
+      errors.prisonerDob = 'Enter ‘day’ as a number'
+    } else if (day < 1 || day > 31) {
+      errors.prisonerDob = '‘Day’ should be between 1 and 31'
+    } else if (Number.isNaN(month)) {
+      errors.prisonerDob = 'Enter ‘month’ as a number'
+    } else if (month < 1 || month > 12) {
+      errors.prisonerDob = '‘Month’ should be between 1 and 12'
+    } else if (Number.isNaN(year)) {
+      errors.prisonerDob = 'Enter ‘year’ as a number'
+    } else if (year < 1900 || year > currentYear) {
       errors.prisonerDob = `‘Year’ should be between 1900 and ${currentYear}`
     } else if (!isValidDate(day, month, year)) {
-      errors.prisonerDob = 'Enter a valid date of birth'
+      errors.prisonerDob = 'Enter a valid date'
     }
   }
 
   if (!formValues.prisonerNumber) {
-    errors.prisonerNumber = 'Enter the prisoner’s number'
+    errors.prisonerNumber = 'This field is required.'
   } else if (!prisonerNumberRegex.test(formValues.prisonerNumber)) {
     errors.prisonerNumber = 'Incorrect prisoner number format'
   }

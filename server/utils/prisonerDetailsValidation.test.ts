@@ -21,14 +21,14 @@ describe('validatePrisonerDetails', () => {
     it('returns an error when the name is missing', () => {
       const result = validatePrisonerDetails({ ...validFormValues, prisonerName: undefined })
 
-      expect(result.errors.prisonerName).toBe('Enter the prisoner’s name')
-      expect(result.errorList).toContainEqual({ text: 'Enter the prisoner’s name', href: '#id_prisoner_name-label' })
+      expect(result.errors.prisonerName).toBe('This field is required.')
+      expect(result.errorList).toContainEqual({ text: 'This field is required.', href: '#id_prisoner_name-label' })
     })
 
     it('returns an error when the name is an empty string', () => {
       const result = validatePrisonerDetails({ ...validFormValues, prisonerName: '' })
 
-      expect(result.errors.prisonerName).toBe('Enter the prisoner’s name')
+      expect(result.errors.prisonerName).toBe('This field is required.')
     })
   })
 
@@ -47,9 +47,9 @@ describe('validatePrisonerDetails', () => {
         prisonerDobYear: undefined,
       })
 
-      expect(result.errors.prisonerDob).toBe('Enter the prisoner’s date of birth')
+      expect(result.errors.prisonerDob).toBe('This field is required.')
       expect(result.errorList).toContainEqual({
-        text: 'Enter the prisoner’s date of birth',
+        text: 'This field is required.',
         href: '#id_prisoner_dob_0-label',
       })
     })
@@ -74,7 +74,7 @@ describe('validatePrisonerDetails', () => {
         prisonerDobYear: '1990',
       })
 
-      expect(result.errors.prisonerDob).toBe('Enter a valid date of birth')
+      expect(result.errors.prisonerDob).toBe('Enter a valid date')
     })
 
     it('returns an error when only some date of birth fields are filled in', () => {
@@ -85,7 +85,7 @@ describe('validatePrisonerDetails', () => {
         prisonerDobYear: undefined,
       })
 
-      expect(result.errors.prisonerDob).toBe('Enter the prisoner’s date of birth')
+      expect(result.errors.prisonerDob).toBe('This field is required.')
     })
 
     it('returns an error when day and month are filled in but year is missing', () => {
@@ -96,7 +96,37 @@ describe('validatePrisonerDetails', () => {
         prisonerDobYear: undefined,
       })
 
-      expect(result.errors.prisonerDob).toBe('Enter the prisoner’s date of birth')
+      expect(result.errors.prisonerDob).toBe('This field is required.')
+    })
+
+    it('returns an error when the day is not a number', () => {
+      const result = validatePrisonerDetails({ ...validFormValues, prisonerDobDay: 'aa' })
+
+      expect(result.errors.prisonerDob).toBe('Enter ‘day’ as a number')
+    })
+
+    it('returns an error when the day is out of range', () => {
+      const result = validatePrisonerDetails({ ...validFormValues, prisonerDobDay: '32' })
+
+      expect(result.errors.prisonerDob).toBe('‘Day’ should be between 1 and 31')
+    })
+
+    it('returns an error when the month is not a number', () => {
+      const result = validatePrisonerDetails({ ...validFormValues, prisonerDobMonth: 'aa' })
+
+      expect(result.errors.prisonerDob).toBe('Enter ‘month’ as a number')
+    })
+
+    it('returns an error when the month is out of range', () => {
+      const result = validatePrisonerDetails({ ...validFormValues, prisonerDobMonth: '13' })
+
+      expect(result.errors.prisonerDob).toBe('‘Month’ should be between 1 and 12')
+    })
+
+    it('returns an error when the year is not a number', () => {
+      const result = validatePrisonerDetails({ ...validFormValues, prisonerDobYear: 'aa' })
+
+      expect(result.errors.prisonerDob).toBe('Enter ‘year’ as a number')
     })
   })
 
@@ -110,9 +140,9 @@ describe('validatePrisonerDetails', () => {
     it('returns an error when the prisoner number is missing', () => {
       const result = validatePrisonerDetails({ ...validFormValues, prisonerNumber: undefined })
 
-      expect(result.errors.prisonerNumber).toBe('Enter the prisoner’s number')
+      expect(result.errors.prisonerNumber).toBe('This field is required.')
       expect(result.errorList).toContainEqual({
-        text: 'Enter the prisoner’s number',
+        text: 'This field is required.',
         href: '#id_prisoner_number-label',
       })
     })
@@ -138,9 +168,9 @@ describe('validatePrisonerDetails', () => {
       const result = validatePrisonerDetails({})
 
       expect(result.errorList).toEqual([
-        { text: 'Enter the prisoner’s name', href: '#id_prisoner_name-label' },
-        { text: 'Enter the prisoner’s date of birth', href: '#id_prisoner_dob_0-label' },
-        { text: 'Enter the prisoner’s number', href: '#id_prisoner_number-label' },
+        { text: 'This field is required.', href: '#id_prisoner_name-label' },
+        { text: 'This field is required.', href: '#id_prisoner_dob_0-label' },
+        { text: 'This field is required.', href: '#id_prisoner_number-label' },
       ])
     })
   })
