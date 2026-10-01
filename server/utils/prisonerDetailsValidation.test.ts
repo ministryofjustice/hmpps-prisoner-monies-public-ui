@@ -22,7 +22,7 @@ describe('validatePrisonerDetails', () => {
       const result = validatePrisonerDetails({ ...validFormValues, prisonerName: undefined })
 
       expect(result.errors.prisonerName).toBe('Enter the prisoner’s name')
-      expect(result.errorList).toContainEqual({ text: 'Enter the prisoner’s name', href: '#prisoner-name' })
+      expect(result.errorList).toContainEqual({ text: 'Enter the prisoner’s name', href: '#id_prisoner_name-label' })
     })
 
     it('returns an error when the name is an empty string', () => {
@@ -50,7 +50,7 @@ describe('validatePrisonerDetails', () => {
       expect(result.errors.prisonerDob).toBe('Enter the prisoner’s date of birth')
       expect(result.errorList).toContainEqual({
         text: 'Enter the prisoner’s date of birth',
-        href: '#prisoner-dob-day',
+        href: '#id_prisoner_dob_0-label',
       })
     })
 
@@ -111,7 +111,10 @@ describe('validatePrisonerDetails', () => {
       const result = validatePrisonerDetails({ ...validFormValues, prisonerNumber: undefined })
 
       expect(result.errors.prisonerNumber).toBe('Enter the prisoner’s number')
-      expect(result.errorList).toContainEqual({ text: 'Enter the prisoner’s number', href: '#prisoner-number' })
+      expect(result.errorList).toContainEqual({
+        text: 'Enter the prisoner’s number',
+        href: '#id_prisoner_number-label',
+      })
     })
 
     it.each(['1234BC', 'AA234BC', 'A123BC', 'A1234B', 'A1234BCD'])(
@@ -135,9 +138,9 @@ describe('validatePrisonerDetails', () => {
       const result = validatePrisonerDetails({})
 
       expect(result.errorList).toEqual([
-        { text: 'Enter the prisoner’s name', href: '#prisoner-name' },
-        { text: 'Enter the prisoner’s date of birth', href: '#prisoner-dob-day' },
-        { text: 'Enter the prisoner’s number', href: '#prisoner-number' },
+        { text: 'Enter the prisoner’s name', href: '#id_prisoner_name-label' },
+        { text: 'Enter the prisoner’s date of birth', href: '#id_prisoner_dob_0-label' },
+        { text: 'Enter the prisoner’s number', href: '#id_prisoner_number-label' },
       ])
     })
   })

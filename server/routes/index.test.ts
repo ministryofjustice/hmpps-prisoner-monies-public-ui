@@ -128,11 +128,11 @@ describe('GET /debit-card/details', () => {
       .expect('Content-Type', /html/)
       .expect(200)
       .expect(res => {
-        expect(res.text).toContain('name="prisoner-name"')
-        expect(res.text).toContain('name="prisoner-dob-day"')
-        expect(res.text).toContain('name="prisoner-dob-month"')
-        expect(res.text).toContain('name="prisoner-dob-year"')
-        expect(res.text).toContain('name="prisoner-number"')
+        expect(res.text).toContain('name="prisoner_name"')
+        expect(res.text).toContain('name="prisoner_dob_0"')
+        expect(res.text).toContain('name="prisoner_dob_1"')
+        expect(res.text).toContain('name="prisoner_dob_2"')
+        expect(res.text).toContain('name="prisoner_number"')
       })
   })
 })
@@ -148,11 +148,11 @@ describe('POST /debit-card/details', () => {
       .post('/debit-card/details')
       .type('form')
       .send({
-        'prisoner-name': 'John Smith',
-        'prisoner-dob-day': '1',
-        'prisoner-dob-month': '2',
-        'prisoner-dob-year': '1990',
-        'prisoner-number': 'A1234BC',
+        prisoner_name: 'John Smith',
+        prisoner_dob_0: '1',
+        prisoner_dob_1: '2',
+        prisoner_dob_2: '1990',
+        prisoner_number: 'A1234BC',
       })
       .expect(302)
       .expect('Location', '/debit-card/amount')
@@ -168,12 +168,12 @@ describe('POST /debit-card/details', () => {
       .send({})
       .expect(200)
       .expect(res => {
-        expect(res.text).toContain('href="#prisoner-name"')
-        expect(res.text).toContain('id="prisoner-name"')
-        expect(res.text).toContain('href="#prisoner-dob-day"')
-        expect(res.text).toContain('id="prisoner-dob-day"')
-        expect(res.text).toContain('href="#prisoner-number"')
-        expect(res.text).toContain('id="prisoner-number"')
+        expect(res.text).toContain('href="#id_prisoner_name-label"')
+        expect(res.text).toContain('id="id_prisoner_name"')
+        expect(res.text).toContain('href="#id_prisoner_dob_0-label"')
+        expect(res.text).toContain('id="id_prisoner_dob_0"')
+        expect(res.text).toContain('href="#id_prisoner_number-label"')
+        expect(res.text).toContain('id="id_prisoner_number"')
       })
   })
 })

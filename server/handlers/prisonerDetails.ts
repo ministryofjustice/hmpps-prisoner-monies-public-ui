@@ -6,11 +6,11 @@ export const PRISONER_DETAILS_BACK_LINK_HREF = '/en-gb/payment-choice'
 
 function extractPrisonerDetailsFormValues(body: Record<string, string>): PrisonerDetailsFormValues {
   return {
-    prisonerName: body['prisoner-name'],
-    prisonerDobDay: body['prisoner-dob-day'],
-    prisonerDobMonth: body['prisoner-dob-month'],
-    prisonerDobYear: body['prisoner-dob-year'],
-    prisonerNumber: body['prisoner-number'],
+    prisonerName: body.prisoner_name,
+    prisonerDobDay: body.prisoner_dob_0,
+    prisonerDobMonth: body.prisoner_dob_1,
+    prisonerDobYear: body.prisoner_dob_2,
+    prisonerNumber: body.prisoner_number,
   }
 }
 

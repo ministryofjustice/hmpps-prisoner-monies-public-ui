@@ -53,13 +53,13 @@ export function validatePrisonerDetails(formValues: PrisonerDetailsFormValues): 
 
   const errorList: { text: string; href: string }[] = []
   if (errors.prisonerName) {
-    errorList.push({ text: errors.prisonerName, href: '#prisoner-name' })
+    errorList.push({ text: errors.prisonerName, href: '#id_prisoner_name-label' })
   }
   if (errors.prisonerDob) {
-    errorList.push({ text: errors.prisonerDob, href: '#prisoner-dob-day' })
+    errorList.push({ text: errors.prisonerDob, href: '#id_prisoner_dob_0-label' })
   }
   if (errors.prisonerNumber) {
-    errorList.push({ text: errors.prisonerNumber, href: '#prisoner-number' })
+    errorList.push({ text: errors.prisonerNumber, href: '#id_prisoner_number-label' })
   }
 
   return { errors, errorList }

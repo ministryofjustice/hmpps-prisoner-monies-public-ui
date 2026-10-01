@@ -20,11 +20,11 @@ const makeRes = (): { res: ResSubset; redirect: jest.Mock; render: jest.Mock } =
 const next = jest.fn() as unknown as NextFunction
 
 const validFormBody = {
-  'prisoner-name': 'John Smith',
-  'prisoner-dob-day': '1',
-  'prisoner-dob-month': '2',
-  'prisoner-dob-year': '1990',
-  'prisoner-number': 'A1234BC',
+  prisoner_name: 'John Smith',
+  prisoner_dob_0: '1',
+  prisoner_dob_1: '2',
+  prisoner_dob_2: '1990',
+  prisoner_number: 'A1234BC',
 }
 
 describe('prisonerDetailsGetHandler', () => {
@@ -71,7 +71,7 @@ describe('prisonerDetailsPostHandler', () => {
 
   it('redirects to the amount page when the prisoner is valid', async () => {
     sendMoneyToPrisonerService.getValidPrisoner.mockResolvedValue({
-      prisonerNumber: validFormBody['prisoner-number'],
+      prisonerNumber: validFormBody.prisoner_number,
       prisonerDOB: '1990-2-1',
     })
     const req = { body: validFormBody } as unknown as Request
@@ -98,11 +98,11 @@ describe('prisonerDetailsPostHandler', () => {
       errors: {},
       errorList: [],
       formValues: {
-        prisonerName: validFormBody['prisoner-name'],
-        prisonerDobDay: validFormBody['prisoner-dob-day'],
-        prisonerDobMonth: validFormBody['prisoner-dob-month'],
-        prisonerDobYear: validFormBody['prisoner-dob-year'],
-        prisonerNumber: validFormBody['prisoner-number'],
+        prisonerName: validFormBody.prisoner_name,
+        prisonerDobDay: validFormBody.prisoner_dob_0,
+        prisonerDobMonth: validFormBody.prisoner_dob_1,
+        prisonerDobYear: validFormBody.prisoner_dob_2,
+        prisonerNumber: validFormBody.prisoner_number,
       },
     })
     expect(redirect).not.toHaveBeenCalled()
