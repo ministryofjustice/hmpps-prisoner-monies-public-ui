@@ -2,13 +2,14 @@ import { Router } from 'express'
 
 import config from '../config'
 import startPageHandler from '../handlers/startPage'
+import { prisonerDetailsGetHandler, prisonerDetailsPostHandler } from '../handlers/prisonerDetails'
 import { Services } from '../services'
 
 export enum Page {
   SEARCH_OFFENDERS = 'SEARCH_OFFENDERS',
 }
 
-export default function routes(_services: Services): Router {
+export default function routes(services: Services): Router {
   const router = Router()
 
   router.get(
@@ -31,6 +32,17 @@ export default function routes(_services: Services): Router {
   router.get('/payment-choice', async (_req, res, _next) => {
     return res.status(404).send('Not Found')
     // return res.render('pages/payment-choice', { backLinkHref: '/en-gb/' })
+  })
+
+  router.get('/debit-card/details', prisonerDetailsGetHandler)
+
+  router.post('/debit-card/details', prisonerDetailsPostHandler(services.sendMoneyToPrisonerService))
+
+  router.get('/debit-card/amount', async (_req, res, _next) => {
+    // return res.status(404).send('Not Found')
+    return res.render('pages/payment-amount', {
+      backLinkHref: '/en-gb/debit-card/details',
+    })
   })
 
   router.get('/terms', async (_req, res, _next) => {

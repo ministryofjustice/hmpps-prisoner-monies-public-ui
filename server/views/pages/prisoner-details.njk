@@ -1,0 +1,109 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% set pageTitle = "Enter prisoner details - " + applicationName %}
+{% set mainClasses = "govuk-body" %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    <header>
+      <h1 class="govuk-heading-xl"><span class="govuk-caption-xl">Pay now by debit card</span> Enter prisoner details</h1>
+    </header>
+
+    {% if errorList and errorList.length %}
+    {{ govukErrorSummary({
+    titleText: "There was a problem",
+    errorList: errorList
+    }) }}
+    {% endif %}
+
+    <form method="post" action="/debit-card/details">
+
+      <fieldset class="govuk-fieldset">
+        <legend class="govuk-visually-hidden">Prisoner details</legend>
+
+        <div id="prisoner-name-wrapper">
+          {{ govukInput({
+          id: "prisoner-name",
+          name: "prisoner-name",
+          label: {
+          text: "Name"
+          },
+          classes: "govuk-input--width-20",
+          value: formValues.prisonerName,
+          errorMessage: { text: errors.prisonerName } if errors.prisonerName else undefined
+          }) }}
+        </div>
+
+        <div id="prisoner-dob-wrapper">
+          {{ govukDateInput({
+          id: "prisoner-dob",
+          namePrefix: "",
+          fieldset: {
+          legend: {
+          text: "Date of birth"
+          }
+          },
+          hint: {
+          text: "For example, 27 3 1985"
+          },
+          errorMessage: { text: errors.prisonerDob } if errors.prisonerDob else undefined,
+          items: [
+          {
+          id: "prisoner-dob-day",
+          name: "prisoner-dob-day",
+          classes: "govuk-input--width-2",
+          label: "Day",
+          value: formValues.prisonerDobDay
+          },
+          {
+          id: "prisoner-dob-month",
+          name: "prisoner-dob-month",
+          classes: "govuk-input--width-2",
+          label: "Month",
+          value: formValues.prisonerDobMonth
+          },
+          {
+          id: "prisoner-dob-year",
+          name: "prisoner-dob-year",
+          classes: "govuk-input--width-4",
+          label: "Year",
+          value: formValues.prisonerDobYear
+          }
+          ]
+          }) }}
+        </div>
+
+        <div id="prisoner-number-wrapper">
+          {{ govukInput({
+          id: "prisoner-number",
+          name: "prisoner-number",
+          label: {
+          text: "Prisoner number"
+          },
+          hint: {
+          text: "For example, A1234BC"
+          },
+          classes: "govuk-input--width-10 mtp-input--prisoner-number",
+          value: formValues.prisonerNumber,
+          errorMessage: { text: errors.prisonerNumber } if errors.prisonerNumber else undefined
+          }) }}
+        </div>
+      </fieldset>
+
+      <p>
+        <a id="id_next_btn" class="govuk-button" data-module="govuk-button" type="submit" href="{{ continueUrl }}">
+          Enter amount
+        </a>
+      </p>
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}
