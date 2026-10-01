@@ -1,6 +1,7 @@
 import { AuditServiceFactory } from '@ministryofjustice/hmpps-audit-client'
 import { dataAccess } from '../data'
 import ExampleService from './exampleService'
+import SendMoneyToPrisonerService from './sendMoneyToPrisonerService'
 import logger from '../../logger'
 import config from '../config'
 
@@ -13,6 +14,7 @@ export const services = () => {
     applicationInfo,
     auditService,
     exampleService: new ExampleService(exampleApiClient),
+    sendMoneyToPrisonerService: new SendMoneyToPrisonerService(),
   }
 }
 
