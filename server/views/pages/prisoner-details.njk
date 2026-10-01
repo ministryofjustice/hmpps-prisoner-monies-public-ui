@@ -23,6 +23,7 @@
     {% endif %}
 
     <form method="post" action="/debit-card/details">
+      <input type="hidden" name="_csrf" value="{{ csrfToken }}">
 
       <fieldset class="govuk-fieldset">
         <legend class="govuk-visually-hidden">Prisoner details</legend>
