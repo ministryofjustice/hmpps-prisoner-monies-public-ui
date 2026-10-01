@@ -53,7 +53,7 @@ generic-service:
     hmpps-prisoner-monies-public-ui-elasticache-redis:
       REDIS_HOST: 'primary_endpoint_address'
       REDIS_AUTH_TOKEN: 'auth_token'
-    hmpps-prisoner-monies-public-ui-application-insights:
+    hmpps-prisoner-monies-public-application-insights:
       APPLICATIONINSIGHTS_CONNECTION_STRING: "APPLICATIONINSIGHTS_CONNECTION_STRING"
     # This secret will need to be created in your namespace if you add audit integration
     # IRSA configuration in your namespace will also be required.
