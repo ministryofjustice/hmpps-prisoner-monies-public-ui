@@ -15,7 +15,7 @@ generic-service:
   ingress:
     enabled: true
     host: app-hostname.local # override per environment
-    tlsSecretName: hmpps-prisoner-monies-public-ui-cert
+    tlsSecretName: hmpps-prisoner-monies-send-money-cert
 
   livenessProbe:
     httpGet:
@@ -42,15 +42,15 @@ generic-service:
 
   namespace_secrets:
     # These secrets are created by terraform.
-    hmpps-prisoner-monies-public-ui-client-creds:
+    hmpps-prisoner-monies-public-client-creds:
       CLIENT_CREDS_CLIENT_ID: 'CLIENT_CREDS_CLIENT_ID'
       CLIENT_CREDS_CLIENT_SECRET: 'CLIENT_CREDS_CLIENT_SECRET'
-    hmpps-prisoner-monies-public-ui-auth-code:
+    hmpps-prisoner-monies-public-auth-code:
       AUTH_CODE_CLIENT_ID: 'AUTH_CODE_CLIENT_ID'
       AUTH_CODE_CLIENT_SECRET: 'AUTH_CODE_CLIENT_SECRET'
-    hmpps-prisoner-monies-public-ui-session-secret:
+    hmpps-prisoner-monies-public-session-secret:
       SESSION_SECRET: 'SESSION_SECRET'
-    hmpps-prisoner-monies-public-ui-elasticache-redis:
+    hmpps-prisoner-monies-public-elasticache-redis:
       REDIS_HOST: 'primary_endpoint_address'
       REDIS_AUTH_TOKEN: 'auth_token'
     hmpps-prisoner-monies-public-ui-application-insights:
