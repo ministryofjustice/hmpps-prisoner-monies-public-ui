@@ -5,11 +5,11 @@ generic-service:
   replicaCount: 2
 
   ingress:
-    host: prisoner-monies-public-ui-dev.hmpps.service.justice.gov.uk
+    host: prisoner-monies-public-dev.hmpps.service.justice.gov.uk
 
   env:
     LOG_LEVEL: 'debug'
-    INGRESS_URL: "https://prisoner-monies-public-ui-dev.hmpps.service.justice.gov.uk"
+    INGRESS_URL: "https://prisoner-monies-public-dev.hmpps.service.justice.gov.uk"
     HMPPS_AUTH_URL: "https://sign-in-dev.hmpps.service.justice.gov.uk/auth"
     TOKEN_VERIFICATION_API_URL: "https://token-verification-api-dev.prison.service.justice.gov.uk"
     EXAMPLE_API_URL: 'https://template-kotlin-dev.hmpps.service.justice.gov.uk'
