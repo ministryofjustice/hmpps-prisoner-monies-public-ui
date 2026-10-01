@@ -8,6 +8,7 @@ generic-service:
     host: prisoner-monies-public-dev.hmpps.service.justice.gov.uk
 
   env:
+    NODE_ENV: 'development'
     LOG_LEVEL: 'debug'
     INGRESS_URL: "https://prisoner-monies-public-dev.hmpps.service.justice.gov.uk"
     HMPPS_AUTH_URL: "https://sign-in-dev.hmpps.service.justice.gov.uk/auth"
