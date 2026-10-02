@@ -1,0 +1,27 @@
+// Mirrors money-to-prisoners-common's error-summary component styling
+// (mtp_common/assets-src/mtp_common/components/error-summary/_index.scss)
+// so that the nested per-field error lists (field label link followed by a
+// bulleted list of messages) render consistently with the legacy send-money service.
+%mtp-error-summary__non-link {
+  @include govuk-typography-weight-bold;
+  color: $govuk-error-colour;
+}
+
+.govuk-error-summary__list {
+  .mtp-error-summary__non-field-error {
+    @extend %mtp-error-summary__non-link;
+  }
+
+  .mtp-error-summary__field-error,
+  .mtp-error-summary__non-field-error {
+    ul {
+      @extend .govuk-list;
+      @extend .govuk-list--bullet;
+      margin-bottom: 0;
+
+      li {
+        @extend %mtp-error-summary__non-link;
+      }
+    }
+  }
+}

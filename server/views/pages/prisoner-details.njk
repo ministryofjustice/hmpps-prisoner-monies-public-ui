@@ -1,0 +1,132 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+
+{% set pageTitle = "Enter prisoner details - " + applicationName %}
+{% set mainClasses = "govuk-body" %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    <header>
+      <h1 class="govuk-heading-xl"><span class="govuk-caption-xl">Pay now by debit card</span> Enter prisoner details</h1>
+    </header>
+
+    {% if errorList and errorList.length %}
+    <div class="govuk-error-summary" data-module="govuk-error-summary">
+      <div role="alert">
+        <h2 class="govuk-error-summary__title">There was a problem</h2>
+        <div class="govuk-error-summary__body">
+          <ul class="govuk-list govuk-error-summary__list">
+            {% for fieldError in errorList %}
+            <li class="mtp-error-summary__field-error">
+              <a href="{{ fieldError.href }}">{{ fieldError.label }}</a>
+              <ul>
+                {% for message in fieldError.messages %}
+                <li>{{ message }}<span class="govuk-visually-hidden">.</span></li>
+                {% endfor %}
+              </ul>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <form method="post" action="/debit-card/details">
+      <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+      <fieldset class="govuk-fieldset">
+        <legend class="govuk-visually-hidden">Prisoner details</legend>
+
+        <div id="id_prisoner_name-wrapper">
+          {{ govukInput({
+          id: "id_prisoner_name",
+          name: "prisoner_name",
+          label: {
+          text: "Prisoner name"
+          },
+          classes: "govuk-input--width-20",
+          value: formValues.prisonerName,
+          errorMessage: { text: errors.prisonerName } if errors.prisonerName else undefined
+          }) }}
+        </div>
+
+        <div id="id_prisoner_dob-wrapper">
+          {% set prisonerDobErrorMessages %}
+          {% for message in errors.prisonerDob %}
+          <p class="govuk-error-message">{{ message }}<span class="govuk-visually-hidden">.</span></p>
+          {% endfor %}
+          {% endset %}
+          {{ govukDateInput({
+          id: "id_prisoner_dob",
+          namePrefix: "",
+          fieldset: {
+          legend: {
+          text: "Prisoner date of birth"
+          }
+          },
+          hint: {
+          text: "For example, 28 04 1996"
+          },
+          formGroup: {
+          classes: "govuk-form-group--error" if errors.prisonerDob else undefined,
+          beforeInputs: { HTML: prisonerDobErrorMessages | trim } if errors.prisonerDob else undefined
+          },
+          items: [
+          {
+          id: "id_prisoner_dob_0",
+          name: "prisoner_dob_0",
+          classes: "govuk-input--width-2" + (" govuk-input--error" if errors.prisonerDob),
+          label: "Day",
+          value: formValues.prisonerDobDay
+          },
+          {
+          id: "id_prisoner_dob_1",
+          name: "prisoner_dob_1",
+          classes: "govuk-input--width-2" + (" govuk-input--error" if errors.prisonerDob),
+          label: "Month",
+          value: formValues.prisonerDobMonth
+          },
+          {
+          id: "id_prisoner_dob_2",
+          name: "prisoner_dob_2",
+          classes: "govuk-input--width-4" + (" govuk-input--error" if errors.prisonerDob),
+          label: "Year",
+          value: formValues.prisonerDobYear
+          }
+          ]
+          }) }}
+        </div>
+
+        <div id="id_prisoner_number-wrapper">
+          {{ govukInput({
+          id: "id_prisoner_number",
+          name: "prisoner_number",
+          label: {
+          text: "Prisoner number"
+          },
+          hint: {
+          text: "For example, A1234BC"
+          },
+          classes: "govuk-input--width-10 mtp-input--prisoner-number",
+          value: formValues.prisonerNumber,
+          errorMessage: { text: errors.prisonerNumber } if errors.prisonerNumber else undefined
+          }) }}
+        </div>
+      </fieldset>
+
+      <p>
+        <button id="id_next_btn" class="govuk-button" data-module="govuk-button" type="submit">
+          Enter amount
+        </button>
+      </p>
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}
