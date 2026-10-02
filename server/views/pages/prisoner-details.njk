@@ -56,6 +56,11 @@
         </div>
 
         <div id="id_prisoner_dob-wrapper">
+          {% set prisonerDobErrorMessages %}
+          {% for message in errors.prisonerDob %}
+          <p class="govuk-error-message">{{ message }}<span class="govuk-visually-hidden">.</span></p>
+          {% endfor %}
+          {% endset %}
           {{ govukDateInput({
           id: "id_prisoner_dob",
           namePrefix: "",
@@ -67,26 +72,29 @@
           hint: {
           text: "For example, 28 04 1996"
           },
-          errorMessage: { html: errors.prisonerDob | join("<br>") } if errors.prisonerDob else undefined,
+          formGroup: {
+          classes: "govuk-form-group--error" if errors.prisonerDob else undefined,
+          beforeInputs: { HTML: prisonerDobErrorMessages | trim } if errors.prisonerDob else undefined
+          },
           items: [
           {
           id: "id_prisoner_dob_0",
           name: "prisoner_dob_0",
-          classes: "govuk-input--width-2",
+          classes: "govuk-input--width-2" + (" govuk-input--error" if errors.prisonerDob),
           label: "Day",
           value: formValues.prisonerDobDay
           },
           {
           id: "id_prisoner_dob_1",
           name: "prisoner_dob_1",
-          classes: "govuk-input--width-2",
+          classes: "govuk-input--width-2" + (" govuk-input--error" if errors.prisonerDob),
           label: "Month",
           value: formValues.prisonerDobMonth
           },
           {
           id: "id_prisoner_dob_2",
           name: "prisoner_dob_2",
-          classes: "govuk-input--width-4",
+          classes: "govuk-input--width-4" + (" govuk-input--error" if errors.prisonerDob),
           label: "Year",
           value: formValues.prisonerDobYear
           }
