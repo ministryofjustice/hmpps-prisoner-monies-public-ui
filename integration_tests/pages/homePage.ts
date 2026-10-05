@@ -1,5 +1,5 @@
 import { type Locator, type Page } from '@playwright/test'
-import BasePage from './basePage'
+import BasePage from '../utils/basePage'
 
 export default class HomePage extends BasePage {
   readonly startNowButton: Locator
