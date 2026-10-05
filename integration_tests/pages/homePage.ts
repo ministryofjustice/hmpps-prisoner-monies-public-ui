@@ -1,17 +1,32 @@
-import { expect, type Locator, type Page } from '@playwright/test'
-import AbstractPage from './abstractPage'
+import { type Locator, type Page } from '@playwright/test'
+import BasePage from '../utils/basePage'
 
-export default class HomePage extends AbstractPage {
-  readonly header: Locator
+export default class HomePage extends BasePage {
+  readonly startNowButton: Locator
+
+  h1Title = 'Send money to someone in prison'
+
+  protected url = '/'
 
   private constructor(page: Page) {
     super(page)
-    this.header = page.locator('h1', { hasText: 'Send money to someone in prison' })
+    this.startNowButton = page.getByRole('button', { name: 'Start now' })
+  }
+
+  static async goTo(page: Page): Promise<HomePage> {
+    const homePage = new HomePage(page)
+    await homePage.goto()
+    await homePage.expectH1Value()
+    return homePage
   }
 
   static async verifyOnPage(page: Page): Promise<HomePage> {
     const homePage = new HomePage(page)
-    await expect(homePage.header).toBeVisible()
+    await homePage.expectH1Value()
     return homePage
+  }
+
+  async clickStartNow() {
+    await this.continueButtonClick(this.startNowButton)
   }
 }
