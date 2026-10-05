@@ -40,8 +40,10 @@ export default class PrisonerDetailsPage extends BasePage {
   }
 
   static async goTo(page: Page): Promise<PrisonerDetailsPage> {
-    await page.goto('/debit-card/details')
-    return PrisonerDetailsPage.verifyOnPage(page)
+    const prisonerDetailsPage = new PrisonerDetailsPage(page)
+    await prisonerDetailsPage.goto()
+    await prisonerDetailsPage.expectH1Value()
+    return prisonerDetailsPage
   }
 
   static async verifyOnPage(page: Page): Promise<PrisonerDetailsPage> {

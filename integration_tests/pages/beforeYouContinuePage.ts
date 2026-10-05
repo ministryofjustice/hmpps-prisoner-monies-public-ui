@@ -17,8 +17,10 @@ export default class BeforeYouContinuePage extends BasePage {
   }
 
   static async goTo(page: Page): Promise<BeforeYouContinuePage> {
-    await page.goto('/en-gb/')
-    return BeforeYouContinuePage.verifyOnPage(page)
+    const beforeYouContinuePage = new BeforeYouContinuePage(page)
+    await beforeYouContinuePage.goto()
+    await beforeYouContinuePage.expectH1Value()
+    return beforeYouContinuePage
   }
 
   static async verifyOnPage(page: Page): Promise<BeforeYouContinuePage> {
