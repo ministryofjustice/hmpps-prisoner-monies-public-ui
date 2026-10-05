@@ -20,6 +20,12 @@ export default class HomePage extends BasePage {
     return homePage
   }
 
+  static async verifyOnPage(page: Page): Promise<HomePage> {
+    const homePage = new HomePage(page)
+    await homePage.expectH1Value()
+    return homePage
+  }
+
   async clickStartNow() {
     await this.continueButtonClick(this.startNowButton)
   }

@@ -6,6 +6,8 @@ export default class BeforeYouContinuePage extends BasePage {
 
   readonly privacyLink: Locator
 
+  readonly backLink: Locator
+
   h1Title = 'Before you continue'
 
   protected url = '/en-gb/'
@@ -14,6 +16,7 @@ export default class BeforeYouContinuePage extends BasePage {
     super(page)
     this.termsLink = page.getByRole('link', { name: 'terms and conditions' })
     this.privacyLink = page.getByRole('link', { name: 'privacy policy' })
+    this.backLink = page.getByRole('link', { name: 'Back' })
   }
 
   static async goTo(page: Page): Promise<BeforeYouContinuePage> {
