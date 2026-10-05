@@ -19,7 +19,7 @@ test.describe('Send money journey', () => {
     await homePage.clickStartNow()
 
     await expect(page).toHaveURL(/\/en-gb\/$/)
-    await expect(page.getByRole('heading', { level: 1, name: 'Before you continue' })).toBeVisible()
+    await BeforeYouContinuePage.verifyOnPage(page)
   })
 
   test('Before you continue page links to terms and privacy policy', async ({ page }) => {
