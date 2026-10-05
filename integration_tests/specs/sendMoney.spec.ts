@@ -35,6 +35,17 @@ test.describe('Send money journey', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'Privacy policy' })).toBeVisible()
   })
 
+  test.skip('Before you continue page continue button moves the user on to the next page', async ({ page }) => {
+    // Skipped: /payment-choice is currently an unimplemented 404 stub route (see server/routes/index.ts).
+    // Un-skip once the payment-choice page is implemented and chains through to prisoner details.
+    const beforeYouContinuePage = await BeforeYouContinuePage.goTo(page)
+
+    await beforeYouContinuePage.clickContinue()
+
+    await expect(page).toHaveURL(/\/debit-card\/details$/)
+    await PrisonerDetailsPage.verifyOnPage(page)
+  })
+
   test('Enter prisoner details page is reachable and has a back link', async ({ page }) => {
     const prisonerDetailsPage = await PrisonerDetailsPage.goTo(page)
 

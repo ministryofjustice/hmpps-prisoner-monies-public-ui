@@ -26,4 +26,8 @@ export default class BeforeYouContinuePage extends BasePage {
     await beforeYouContinuePage.expectH1Value()
     return beforeYouContinuePage
   }
+
+  async clickContinue() {
+    await this.continueButtonClick()
+  }
 }
