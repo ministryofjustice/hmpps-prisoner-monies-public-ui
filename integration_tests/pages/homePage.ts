@@ -13,6 +13,11 @@ export default class HomePage extends BasePage {
     this.startNowButton = page.getByRole('button', { name: 'Start now' })
   }
 
+  static async goTo(page: Page): Promise<HomePage> {
+    await page.goto('/')
+    return HomePage.verifyOnPage(page)
+  }
+
   static async verifyOnPage(page: Page): Promise<HomePage> {
     const homePage = new HomePage(page)
     await homePage.expectH1Value()

@@ -16,6 +16,11 @@ export default class BeforeYouContinuePage extends BasePage {
     this.privacyLink = page.getByRole('link', { name: 'privacy policy' })
   }
 
+  static async goTo(page: Page): Promise<BeforeYouContinuePage> {
+    await page.goto('/en-gb/')
+    return BeforeYouContinuePage.verifyOnPage(page)
+  }
+
   static async verifyOnPage(page: Page): Promise<BeforeYouContinuePage> {
     const beforeYouContinuePage = new BeforeYouContinuePage(page)
     await beforeYouContinuePage.expectH1Value()

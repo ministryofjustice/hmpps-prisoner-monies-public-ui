@@ -10,8 +10,6 @@ export type PrisonerDetailsFormInput = {
 }
 
 export default class PrisonerDetailsPage extends BasePage {
-  readonly header: Locator
-
   readonly backLink: Locator
 
   readonly errorSummary: Locator
@@ -32,7 +30,6 @@ export default class PrisonerDetailsPage extends BasePage {
 
   private constructor(page: Page) {
     super(page)
-    this.header = page.getByRole('heading', { level: 1, name: 'Enter prisoner details' })
     this.backLink = page.getByRole('link', { name: 'Back' })
     this.errorSummary = page.locator('.govuk-error-summary')
     this.prisonerNameInput = page.locator('#id_prisoner_name')
