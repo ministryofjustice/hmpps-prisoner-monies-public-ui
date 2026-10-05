@@ -1,7 +1,7 @@
 import { expect, type Locator, type Page } from '@playwright/test'
-import AbstractPage from './abstractPage'
+import BasePage from './basePage'
 
-export default class PaymentAmountPage extends AbstractPage {
+export default class PaymentAmountPage extends BasePage {
   readonly header: Locator
 
   private constructor(page: Page) {

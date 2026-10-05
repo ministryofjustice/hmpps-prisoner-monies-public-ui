@@ -1,5 +1,5 @@
-import { expect, type Locator, type Page } from '@playwright/test'
-import AbstractPage from './abstractPage'
+import { type Locator, type Page } from '@playwright/test'
+import BasePage from './basePage'
 
 export type PrisonerDetailsFormInput = {
   prisonerName?: string
@@ -9,7 +9,7 @@ export type PrisonerDetailsFormInput = {
   prisonerNumber?: string
 }
 
-export default class PrisonerDetailsPage extends AbstractPage {
+export default class PrisonerDetailsPage extends BasePage {
   readonly header: Locator
 
   readonly backLink: Locator
@@ -26,7 +26,9 @@ export default class PrisonerDetailsPage extends AbstractPage {
 
   readonly prisonerNumberInput: Locator
 
-  readonly submitButton: Locator
+  h1Title = 'Enter prisoner details'
+
+  protected url = '/debit-card/details'
 
   private constructor(page: Page) {
     super(page)
@@ -38,7 +40,6 @@ export default class PrisonerDetailsPage extends AbstractPage {
     this.prisonerDobMonthInput = page.locator('#id_prisoner_dob_1')
     this.prisonerDobYearInput = page.locator('#id_prisoner_dob_2')
     this.prisonerNumberInput = page.locator('#id_prisoner_number')
-    this.submitButton = page.locator('#id_next_btn')
   }
 
   static async goTo(page: Page): Promise<PrisonerDetailsPage> {
@@ -48,7 +49,7 @@ export default class PrisonerDetailsPage extends AbstractPage {
 
   static async verifyOnPage(page: Page): Promise<PrisonerDetailsPage> {
     const prisonerDetailsPage = new PrisonerDetailsPage(page)
-    await expect(prisonerDetailsPage.header).toBeVisible()
+    await prisonerDetailsPage.expectH1Value()
     return prisonerDetailsPage
   }
 
@@ -67,7 +68,7 @@ export default class PrisonerDetailsPage extends AbstractPage {
   }
 
   async submit() {
-    await this.submitButton.click()
+    await this.continueButtonClick()
   }
 
   errorMessageLink(label: string): Locator {
