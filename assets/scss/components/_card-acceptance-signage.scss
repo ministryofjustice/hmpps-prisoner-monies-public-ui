@@ -1,0 +1,32 @@
+// Mirrors send-money's mtp-card-acceptance-signage component: a large (160x146)
+// set of logos on tablet and above, swapped for a small (95x87) set below tablet.
+.app-card-acceptance-signage {
+  overflow: hidden;
+  margin-bottom: govuk-spacing(6);
+
+  @include govuk-media-query($until: tablet) {
+    margin-bottom: govuk-spacing(4);
+  }
+}
+
+.app-card-acceptance-signage--large {
+  display: flex;
+  align-items: center;
+
+  @include govuk-media-query($until: tablet) {
+    display: none;
+  }
+}
+
+.app-card-acceptance-signage--small {
+  display: none;
+
+  @include govuk-media-query($until: tablet) {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.app-card-acceptance-signage__logo {
+  margin-right: govuk-spacing(4);
+}

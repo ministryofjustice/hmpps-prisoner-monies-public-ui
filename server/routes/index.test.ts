@@ -86,13 +86,26 @@ describe('GET /payment-choice', () => {
 })
 
 describe('GET /terms', () => {
-  it('should render terms page', () => {
+  it('renders the terms and conditions content, including an unstyled contact-us link matching the original markup', () => {
     return request(app)
       .get('/terms')
       .expect('Content-Type', /html/)
       .expect(200)
       .expect(res => {
         expect(res.text).toContain('Terms and conditions')
+        expect(res.text).toContain('a href="/contact-us"')
+      })
+  })
+
+  it('shows the accepted card scheme logos at the same sizes as send-money (large: 160x146, small: 95x87)', () => {
+    return request(app)
+      .get('/terms')
+      .expect(200)
+      .expect(res => {
+        ;['visa', 'mastercard', 'maestro'].forEach(scheme => {
+          expect(res.text).toContain(`images/card-acceptance-signage/${scheme}.svg" width="160" height="146"`)
+          expect(res.text).toContain(`images/card-acceptance-signage/${scheme}.svg" width="95" height="87"`)
+        })
       })
   })
 })
