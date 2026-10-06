@@ -5,6 +5,7 @@ import { appWithAllRoutes, user } from './testutils/appSetup'
 import ExampleService from '../services/exampleService'
 import ExampleApiClient from '../data/exampleApiClient'
 import SendMoneyToPrisonerService from '../services/sendMoneyToPrisonerService'
+import { i18nextInitPromise } from '../i18n/i18n'
 
 jest.mock('@ministryofjustice/hmpps-audit-client')
 jest.mock('../services/exampleService')
@@ -15,6 +16,8 @@ const exampleService = new ExampleService({} as ExampleApiClient) as jest.Mocked
 const sendMoneyToPrisonerService = new SendMoneyToPrisonerService() as jest.Mocked<SendMoneyToPrisonerService>
 
 let app: Express
+
+beforeAll(() => i18nextInitPromise)
 
 beforeEach(() => {
   app = appWithAllRoutes({
@@ -86,13 +89,19 @@ describe('GET /payment-choice', () => {
 })
 
 describe('GET /terms', () => {
-  it('should render terms page', () => {
+  it('should redirect to the default language version', () => {
+    return request(app).get('/terms').expect(302).expect('Location', '/en-gb/terms')
+  })
+})
+
+describe('GET /contact-us', () => {
+  it('should render contact us page', () => {
     return request(app)
-      .get('/terms')
+      .get('/contact-us')
       .expect('Content-Type', /html/)
       .expect(200)
       .expect(res => {
-        expect(res.text).toContain('Terms and conditions')
+        expect(res.text).toContain('Contact us')
       })
   })
 })
@@ -109,15 +118,33 @@ describe('GET /privacy', () => {
   })
 })
 
-describe('GET /contact-us', () => {
-  it('should render contact us page', () => {
+describe('GET /en-gb/terms', () => {
+  it('should render the terms page in English', () => {
     return request(app)
-      .get('/contact-us')
+      .get('/en-gb/terms')
       .expect('Content-Type', /html/)
       .expect(200)
       .expect(res => {
-        expect(res.text).toContain('Contact us')
+        expect(res.text).toContain('Terms and conditions')
       })
+  })
+})
+
+describe('GET /cy/terms', () => {
+  it('should render the terms page translated into Welsh', () => {
+    return request(app)
+      .get('/cy/terms')
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain('Y gyfraith sy’n berthnasol')
+      })
+  })
+})
+
+describe('GET /:lang/terms with an unsupported prefix', () => {
+  it('should 404', () => {
+    return request(app).get('/fr/terms').expect(404)
   })
 })
 
