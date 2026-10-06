@@ -98,13 +98,48 @@ describe('GET /terms', () => {
 })
 
 describe('GET /privacy', () => {
-  it('should render privacy page', () => {
+  it('renders every section heading from the original send-money privacy policy', () => {
     return request(app)
       .get('/privacy')
       .expect('Content-Type', /html/)
       .expect(200)
       .expect(res => {
         expect(res.text).toContain('Privacy policy')
+        expect(res.text).toContain('Purpose')
+        expect(res.text).toContain('About personal information')
+        expect(res.text).toContain('Types of personal data we process')
+        expect(res.text).toContain('Purpose of processing and the lawful basis for the process')
+        expect(res.text).toContain('Who the information may be shared with')
+        expect(res.text).toContain('Details of transfers to third country and safeguards')
+        expect(res.text).toContain('Retention period for information collected')
+        expect(res.text).toContain('Access to personal information')
+        expect(res.text).toContain('When we ask you for personal data')
+        expect(res.text).toContain('Complaints')
+      })
+  })
+
+  it('links to every internal and external resource referenced in the original privacy policy', () => {
+    return request(app)
+      .get('/privacy')
+      .expect(200)
+      .expect(res => {
+        ;[
+          '/cookies',
+          'https://www.payments.service.gov.uk/',
+          'https://www.worldpay.com',
+          'https://www.payments.service.gov.uk/privacy',
+          'https://www.notifications.service.gov.uk/',
+          'https://www.notifications.service.gov.uk/privacy',
+          'https://www.zendesk.com/',
+          'https://www.zendesk.com/company/terms/',
+          'https://www.justice.gov.uk/about/hmps/contracted-out',
+          'https://www.justice.gov.uk/downloads/offenders/psipso/psi-2018/psi-04-2018-records-information-management-retention-policy.pdf',
+          'https://www.gov.uk/government/organisations/ministry-of-justice/about/personal-information-charter',
+          'mailto:privacy@justice.gov.uk',
+          'https://ico.org.uk/',
+        ].forEach(href => {
+          expect(res.text).toContain(`href="${href}"`)
+        })
       })
   })
 })
