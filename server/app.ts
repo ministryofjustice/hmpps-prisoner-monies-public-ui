@@ -10,6 +10,7 @@ import errorHandler from './errorHandler'
 import setUpCsrf from './middleware/setUpCsrf'
 // import setUpCurrentUser from './middleware/setUpCurrentUser'
 import setUpHealthChecks from './middleware/setUpHealthChecks'
+import setUpI18n from './middleware/setUpI18n'
 import setUpStaticResources from './middleware/setUpStaticResources'
 import setUpWebRequestParsing from './middleware/setUpRequestParsing'
 import setUpWebSecurity from './middleware/setUpWebSecurity'
@@ -35,6 +36,7 @@ export default function createApp(services: Services): express.Application {
   // app.use(authorisationMiddleware())
   app.use(setUpCsrf())
   // app.use(setUpCurrentUser())
+  app.use(setUpI18n())
 
   app.use(routes(services))
 
