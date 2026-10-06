@@ -9,7 +9,7 @@ import type { Services } from '../../services'
 import { HmppsUser } from '../../interfaces/hmppsUser'
 import setUpWebSession from '../../middleware/setUpWebSession'
 import type { ApplicationInfo } from '../../applicationInfo'
-import i18next, { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES } from '../../i18n/i18n'
+import i18next, { DEFAULT_LANGUAGE } from '../../i18n/i18n'
 
 jest.mock('@ministryofjustice/hmpps-audit-client')
 
@@ -54,7 +54,6 @@ function appSetup(services: Partial<Services>, production: boolean, userSupplier
       environmentName: '',
       environmentNameColour: '',
       language: DEFAULT_LANGUAGE,
-      supportedLanguages: SUPPORTED_LANGUAGES,
       t: i18next.getFixedT(DEFAULT_LANGUAGE),
     }
     next()

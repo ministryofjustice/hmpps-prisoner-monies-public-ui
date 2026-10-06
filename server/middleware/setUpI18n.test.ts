@@ -12,7 +12,6 @@ describe('setUpI18n', () => {
     app.get('/', (_req, res) => {
       res.json({
         language: res.locals.language,
-        supportedLanguages: res.locals.supportedLanguages,
         translated: res.locals.t('terms.lawHeading'),
         fallback: res.locals.t('terms.pageTitle'),
       })
@@ -25,7 +24,6 @@ describe('setUpI18n', () => {
 
     expect(response.body).toEqual({
       language: 'en',
-      supportedLanguages: ['en', 'cy'],
       translated: 'Applicable law',
       fallback: 'Terms and conditions',
     })
