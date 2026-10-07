@@ -110,9 +110,6 @@ describe('GET /terms', () => {
   })
 })
 
-// Literal legal copy below is intentionally duplicated from the original send-money privacy
-// policy. These are characterization tests protecting content parity during migration — do not
-// "simplify" them to lose substring checks, as that would defeat their purpose.
 const PRIVACY_POLICY_HEADINGS = [
   'Privacy policy',
   'Purpose',
