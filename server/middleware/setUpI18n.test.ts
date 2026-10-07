@@ -1,5 +1,5 @@
-import request from 'supertest'
 import express from 'express'
+import request from 'supertest'
 import setUpI18n from './setUpI18n'
 import { i18nextInitPromise } from '../i18n/i18n'
 
@@ -8,43 +8,57 @@ describe('setUpI18n', () => {
 
   function appWithI18n() {
     const app = express()
-    app.use(setUpI18n())
-    app.get('/', (_req, res) => {
+    const langRouter = setUpI18n()
+
+    const viewsRouter = express.Router()
+    viewsRouter.get('/', (_req, res) => {
       res.json({
         language: res.locals.language,
         translated: res.locals.t('terms.lawHeading'),
         fallback: res.locals.t('terms.pageTitle'),
       })
     })
+    langRouter.use('{/:lang}', viewsRouter)
+
+    app.use(langRouter)
     return app
   }
 
-  it('defaults to English', async () => {
-    const response = await request(appWithI18n()).get('/')
-
-    expect(response.body).toEqual({
-      language: 'en',
-      translated: 'Applicable law',
-      fallback: 'Terms and conditions',
-    })
+  it('redirects the bare root path to the default language', () => {
+    return request(appWithI18n()).get('/').expect(302).expect('Location', '/en-gb/')
   })
 
-  it('uses the language requested via the lng cookie', async () => {
-    const response = await request(appWithI18n()).get('/').set('Cookie', 'lng=cy')
-
-    expect(response.body).toMatchObject({
-      language: 'cy',
-      translated: 'Y gyfraith sy’n berthnasol',
-      // falls back to English since terms.pageTitle has no Welsh translation
-      fallback: 'Terms and conditions',
-    })
+  it('sets the language and translator for a supported language prefix', () => {
+    return request(appWithI18n())
+      .get('/en-gb/')
+      .expect(200)
+      .expect(res => {
+        expect(res.body.language).toBe('en')
+        expect(res.body.translated).toBe('Applicable law')
+      })
   })
 
-  it('falls back to English for an unsupported language', async () => {
-    const response = await request(appWithI18n()).get('/').set('Cookie', 'lng=fr')
+  it('translates into Welsh for the /cy prefix', () => {
+    return request(appWithI18n())
+      .get('/cy/')
+      .expect(200)
+      .expect(res => {
+        expect(res.body.language).toBe('cy')
+        expect(res.body.translated).toBe('Y gyfraith sy’n berthnasol')
+      })
+  })
 
-    expect(response.body).toMatchObject({
-      translated: 'Applicable law',
-    })
+  it('falls back to the default language when a translation key is missing', () => {
+    return request(appWithI18n())
+      .get('/cy/')
+      .expect(200)
+      .expect(res => {
+        // 'terms.pageTitle' only exists in the en translation file
+        expect(res.body.fallback).toBe('Terms and conditions')
+      })
+  })
+
+  it('404s for an unsupported language prefix', () => {
+    return request(appWithI18n()).get('/fr/').expect(404)
   })
 })

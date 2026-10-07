@@ -37,5 +37,10 @@
     "disclaimer2": "This includes loss of income or revenue, business, profits or contracts, anticipated savings, data, goodwill, tangible property or wasted time in connection with this service or any websites linked to it and any materials posted on it.",
     "disclaimer3": "This condition shall not prevent claims for loss of or damage to your tangible property or any other claims for direct financial loss that are not excluded by any of the categories set out above.",
     "disclaimer4": "This does not affect our liability for fraudulent misrepresentation or misrepresentation as to a fundamental matter, nor any other liability which cannot be excluded or limited under applicable law."
+  },
+  "notFound": {
+    "pageTitle": "Page not found",
+    "message": "If you entered a web address please check it was correct.",
+    "linkText": "Return to the home page"
   }
 }

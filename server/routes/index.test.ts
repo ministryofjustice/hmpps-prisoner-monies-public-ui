@@ -34,10 +34,10 @@ afterEach(() => {
   jest.resetAllMocks()
 })
 
-describe('GET /', () => {
-  it('should render start page', () => {
+describe('GET /info-page', () => {
+  it('should render info page', () => {
     return request(app)
-      .get('/')
+      .get('/info-page')
       .expect('Content-Type', /html/)
       .expect(200)
       .expect(res => {
@@ -59,86 +59,9 @@ describe('GET /info-page', () => {
   })
 })
 
-describe('GET /en-gb/', () => {
-  it('should render before you continue page', () => {
-    return request(app)
-      .get('/en-gb/')
-      .expect('Content-Type', /html/)
-      .expect(200)
-      .expect(res => {
-        expect(res.text).toContain('Before you continue')
-        expect(res.text).toContain('href="/payment-choice"')
-        expect(res.text).toContain('href="/terms"')
-        expect(res.text).toContain('href="/privacy"')
-        expect(res.text).toContain('href="/contact-us"')
-        expect(res.text).toContain('govuk-back-link')
-      })
-  })
-})
-
 describe('GET /payment-choice', () => {
   it('should render payment choice page', () => {
     return request(app).get('/payment-choice').expect('Content-Type', /html/).expect(404)
-    // .expect(res => {
-    //   expect(res.text).toContain('Pay now by debit card')
-    //   expect(res.text).toContain('id="id_debit_card"')
-    //   expect(res.text).toContain('href="/debit-card/details"')
-    //   expect(res.text).toContain('govuk-back-link')
-    // })
-  })
-})
-
-describe('GET /terms', () => {
-  it('should redirect to the default language version', () => {
-    return request(app).get('/terms').expect(302).expect('Location', '/en-gb/terms')
-  })
-})
-
-describe('GET /contact-us', () => {
-  it('should render contact us page', () => {
-    return request(app)
-      .get('/contact-us')
-      .expect('Content-Type', /html/)
-      .expect(200)
-      .expect(res => {
-        expect(res.text).toContain('Contact us')
-      })
-  })
-})
-
-describe('GET /privacy', () => {
-  it('should render privacy page', () => {
-    return request(app)
-      .get('/privacy')
-      .expect('Content-Type', /html/)
-      .expect(200)
-      .expect(res => {
-        expect(res.text).toContain('Privacy policy')
-      })
-  })
-})
-
-describe('GET /en-gb/terms', () => {
-  it('should render the terms page in English', () => {
-    return request(app)
-      .get('/en-gb/terms')
-      .expect('Content-Type', /html/)
-      .expect(200)
-      .expect(res => {
-        expect(res.text).toContain('Terms and conditions')
-      })
-  })
-})
-
-describe('GET /cy/terms', () => {
-  it('should render the terms page translated into Welsh', () => {
-    return request(app)
-      .get('/cy/terms')
-      .expect('Content-Type', /html/)
-      .expect(200)
-      .expect(res => {
-        expect(res.text).toContain('Y gyfraith sy’n berthnasol')
-      })
   })
 })
 
@@ -148,10 +71,69 @@ describe('GET /:lang/terms with an unsupported prefix', () => {
   })
 })
 
-describe('GET /debit-card/details', () => {
+describe.each([
+  ['en-gb', 'Before you continue'],
+  ['cy', 'Before you continue'],
+])('GET /%s/', (locale, expectedHeading) => {
+  it('should render before you continue page', () => {
+    return request(app)
+      .get(`/${locale}/`)
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain(expectedHeading)
+        expect(res.text).toContain(`href="/${locale}/payment-choice"`)
+        expect(res.text).toContain('href="/terms"')
+        expect(res.text).toContain('href="/privacy"')
+        expect(res.text).toContain('href="/contact-us"')
+        expect(res.text).toContain('govuk-back-link')
+      })
+  })
+})
+
+describe.each([
+  ['en-gb', 'Contact us'],
+  ['cy', 'Contact us'],
+])('GET /%s/contact-us', (locale, expectedHeading) => {
+  it('should render contact us page', () => {
+    return request(app)
+      .get(`/${locale}/contact-us`)
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => expect(res.text).toContain(expectedHeading))
+  })
+})
+
+describe.each([
+  ['en-gb', 'Privacy policy'],
+  ['cy', 'Privacy policy'],
+])('GET /%s/privacy', (locale, expectedHeading) => {
+  it('should render privacy page', () => {
+    return request(app)
+      .get(`/${locale}/privacy`)
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => expect(res.text).toContain(expectedHeading))
+  })
+})
+
+describe.each([
+  ['en-gb', 'Terms and conditions'],
+  ['cy', 'Y gyfraith sy’n berthnasol'],
+])('GET /%s/terms', (locale, expectedHeading) => {
+  it('renders the translated terms page', () => {
+    return request(app)
+      .get(`/${locale}/terms`)
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => expect(res.text).toContain(expectedHeading))
+  })
+})
+
+describe.each([['en-gb'], ['cy']])('GET /%s/debit-card/details', locale => {
   it('renders a form whose field names match what the handler reads from the request body', () => {
     return request(app)
-      .get('/debit-card/details')
+      .get(`/${locale}/debit-card/details`)
       .expect('Content-Type', /html/)
       .expect(200)
       .expect(res => {
@@ -164,7 +146,7 @@ describe('GET /debit-card/details', () => {
   })
 })
 
-describe('POST /debit-card/details', () => {
+describe.each([['en-gb'], ['cy']])('POST /%s/debit-card/details', locale => {
   it('redirects to the amount page when the prisoner details are valid', () => {
     sendMoneyToPrisonerService.getValidPrisoner.mockResolvedValue({
       prisonerNumber: 'A1234BC',
@@ -172,7 +154,7 @@ describe('POST /debit-card/details', () => {
     })
 
     return request(app)
-      .post('/debit-card/details')
+      .post(`/${locale}/debit-card/details`)
       .type('form')
       .send({
         prisoner_name: 'John Smith',
@@ -190,7 +172,7 @@ describe('POST /debit-card/details', () => {
 
   it('re-renders with an error summary whose links point at ids present on the page', () => {
     return request(app)
-      .post('/debit-card/details')
+      .post(`/${locale}/debit-card/details`)
       .type('form')
       .send({})
       .expect(200)

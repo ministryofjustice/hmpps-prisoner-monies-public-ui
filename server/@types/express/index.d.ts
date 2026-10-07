@@ -35,6 +35,7 @@ export declare global {
       buildNumber?: string
       t: TFunction
       language: string
+      urlLang: string
     }
   }
 }
