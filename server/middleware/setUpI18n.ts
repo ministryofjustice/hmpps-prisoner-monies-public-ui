@@ -47,7 +47,7 @@ export default function setUpI18n(): Router {
     const language = typeof langParam === 'string' ? SUPPORTED_LANGUAGES[langParam] : ''
 
     // for debugging different languages
-    console.log('Language param:', langParam, 'Request path:', req.path, 'Language:', language)
+    // console.log('Language param:', langParam, 'Request path:', req.path, 'Language:', language)
 
     if (!language) {
       if (process.env.NODE_ENV === 'production') {
