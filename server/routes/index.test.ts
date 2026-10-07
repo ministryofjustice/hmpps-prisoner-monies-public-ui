@@ -131,13 +131,23 @@ describe('GET /privacy', () => {
       })
   })
 
-  it('links to every internal and external resource referenced in the original privacy policy', () => {
+  it('links to every internal resource referenced in the original privacy policy', () => {
+    return request(app)
+      .get('/privacy')
+      .expect(200)
+      .expect(res => {
+        ;['/cookies', '/contact-us'].forEach(href => {
+          expect(res.text).toContain(`href="${href}"`)
+        })
+      })
+  })
+
+  it('links to every external resource referenced in the original privacy policy', () => {
     return request(app)
       .get('/privacy')
       .expect(200)
       .expect(res => {
         ;[
-          '/cookies',
           'https://www.payments.service.gov.uk/',
           'https://www.worldpay.com',
           'https://www.payments.service.gov.uk/privacy',
