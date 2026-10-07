@@ -110,15 +110,59 @@ describe('GET /terms', () => {
   })
 })
 
+const PRIVACY_POLICY_HEADINGS = [
+  'Privacy policy',
+  'Purpose',
+  'About personal information',
+  'Types of personal data we process',
+  'Purpose of processing and the lawful basis for the process',
+  'Who the information may be shared with',
+  'Details of transfers to third country and safeguards',
+  'Retention period for information collected',
+  'Access to personal information',
+  'When we ask you for personal data',
+  'Complaints',
+]
+
+const PRIVACY_POLICY_INTERNAL_LINKS = ['/cookies', '/contact-us']
+
+const PRIVACY_POLICY_EXTERNAL_LINKS = [
+  'https://www.payments.service.gov.uk/',
+  'https://www.worldpay.com',
+  'https://www.payments.service.gov.uk/privacy',
+  'https://www.notifications.service.gov.uk/',
+  'https://www.notifications.service.gov.uk/privacy',
+  'https://www.zendesk.com/',
+  'https://www.zendesk.com/company/terms/',
+  'https://www.justice.gov.uk/about/hmps/contracted-out',
+  'https://www.justice.gov.uk/downloads/offenders/psipso/psi-2018/psi-04-2018-records-information-management-retention-policy.pdf',
+  'https://www.gov.uk/government/organisations/ministry-of-justice/about/personal-information-charter',
+  'mailto:privacy@justice.gov.uk',
+  'https://ico.org.uk/',
+]
+
 describe('GET /privacy', () => {
-  it('should render privacy page', () => {
-    return request(app)
-      .get('/privacy')
-      .expect('Content-Type', /html/)
-      .expect(200)
-      .expect(res => {
-        expect(res.text).toContain('Privacy policy')
-      })
+  it('should render the privacy page', () => {
+    return request(app).get('/privacy').expect('Content-Type', /html/).expect(200)
+  })
+
+  it.each(PRIVACY_POLICY_HEADINGS)('renders the "%s" section heading', async heading => {
+    const res = await request(app).get('/privacy').expect(200)
+    expect(res.text).toContain(heading)
+  })
+
+  it.each(PRIVACY_POLICY_INTERNAL_LINKS)('includes links to the internal resource "%s"', async href => {
+    const res = await request(app).get('/privacy').expect(200)
+    expect(res.text).toContain(`href="${href}"`)
+  })
+
+  it.each(PRIVACY_POLICY_EXTERNAL_LINKS)('includes links to the external resource "%s"', async href => {
+    const res = await request(app).get('/privacy').expect(200)
+    expect(res.text).toContain(`href="${href}"`)
+  })
+
+  it('returns 404 for unsupported methods', () => {
+    return request(app).post('/privacy').expect(404)
   })
 })
 
