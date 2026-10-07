@@ -149,29 +149,20 @@ describe('GET /privacy', () => {
     return request(app).get('/privacy').expect('Content-Type', /html/).expect(200)
   })
 
-  it.each(PRIVACY_POLICY_HEADINGS)(
-    'renders the "%s" section heading from the original send-money privacy policy',
-    async heading => {
-      const res = await request(app).get('/privacy').expect(200)
-      expect(res.text).toContain(heading)
-    },
-  )
+  it.each(PRIVACY_POLICY_HEADINGS)('renders the "%s" section heading', async heading => {
+    const res = await request(app).get('/privacy').expect(200)
+    expect(res.text).toContain(heading)
+  })
 
-  it.each(PRIVACY_POLICY_INTERNAL_LINKS)(
-    'links to the internal resource "%s" referenced in the original privacy policy',
-    async href => {
-      const res = await request(app).get('/privacy').expect(200)
-      expect(res.text).toContain(`href="${href}"`)
-    },
-  )
+  it.each(PRIVACY_POLICY_INTERNAL_LINKS)('includes links to the internal resource "%s"', async href => {
+    const res = await request(app).get('/privacy').expect(200)
+    expect(res.text).toContain(`href="${href}"`)
+  })
 
-  it.each(PRIVACY_POLICY_EXTERNAL_LINKS)(
-    'links to the external resource "%s" referenced in the original privacy policy',
-    async href => {
-      const res = await request(app).get('/privacy').expect(200)
-      expect(res.text).toContain(`href="${href}"`)
-    },
-  )
+  it.each(PRIVACY_POLICY_EXTERNAL_LINKS)('includes links to the external resource "%s"', async href => {
+    const res = await request(app).get('/privacy').expect(200)
+    expect(res.text).toContain(`href="${href}"`)
+  })
 
   it('returns 404 for unsupported methods', () => {
     return request(app).post('/privacy').expect(404)
