@@ -104,7 +104,7 @@ describe('GET /terms', () => {
   })
 
   it.each(CARD_SCHEME_LOGOS)(
-    'renders the "%s" card scheme logo at a large (160x146) and small (95x87) size',
+    'renders the "%s" card scheme logo at both the large (160x146, tablet and above) and small (95x87, below tablet) sizes',
     async scheme => {
       const res = await request(app).get('/terms').expect(200)
       expect(res.text).toContain(`images/card-acceptance-signage/${scheme}.svg" width="160" height="146"`)
