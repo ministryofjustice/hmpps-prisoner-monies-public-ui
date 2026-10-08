@@ -23,7 +23,6 @@ export function validateAmount(_amount: string | undefined): AmountValidationRes
   }
 
   if (Number(_amount) === 0) {
-    console.log('inside nan')
     return { errors: { amount: 'Amount should be 1p or more' } }
   }
 
