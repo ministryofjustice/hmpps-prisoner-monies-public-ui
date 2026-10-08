@@ -36,4 +36,18 @@ describe('validateAmount', () => {
 
     expect(result.errors.amount).toBe('The amount you are trying to send is too large. Please enter a smaller amount')
   })
+
+  it('returns an empty errorList for a valid amount', () => {
+    const result = validateAmount('17')
+
+    expect(result.errorList).toEqual([])
+  })
+
+  it('returns an errorList entry pointing at the amount field when invalid', () => {
+    const result = validateAmount(undefined)
+
+    expect(result.errorList).toEqual([
+      { label: 'Amount', href: '#id_amount-label', messages: ['This field is required.'] },
+    ])
+  })
 })
