@@ -6,31 +6,34 @@ export type AmountValidationResult = {
   errors: AmountErrors
 }
 
-export function validateAmount(_amount: string | undefined): AmountValidationResult {
-  if (!_amount) {
-    return {
-      errors: {
-        amount: 'This field is required.',
-      },
-    }
+function amountError(message: string) {
+  return {
+    errors: {
+      amount: message,
+    },
   }
-  if (Number.isNaN(Number(_amount))) {
-    return {
-      errors: {
-        amount: 'Enter as a number',
-      },
-    }
+}
+
+export function validateAmount(_amount: string | undefined): AmountValidationResult {
+  const amountAsNumber = Number(_amount)
+
+  if (!_amount) {
+    return amountError('This field is required.')
+  }
+  if (Number.isNaN(amountAsNumber)) {
+    return amountError('Enter as a number')
   }
 
-  if (Number(_amount) === 0) {
-    return { errors: { amount: 'Amount should be 1p or more' } }
+  if (amountAsNumber === 0) {
+    return amountError('Amount should be 1p or more')
   }
 
   if (_amount.split('.')[1]?.length > 2) {
-    return { errors: { amount: 'Only use 2 decimal places' } }
+    return amountError('Only use 2 decimal places')
   }
-  if (Number(_amount) > 200) {
-    return { errors: { amount: 'The amount you are trying to send is too large. Please enter a smaller amount' } }
+
+  if (amountAsNumber > 200) {
+    return amountError('The amount you are trying to send is too large. Please enter a smaller amount')
   }
 
   return { errors: {} }
