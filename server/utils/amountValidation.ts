@@ -1,3 +1,7 @@
+export type AmountFormValues = {
+  amount?: string
+}
+
 export type AmountErrors = {
   amount?: string
 }
