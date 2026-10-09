@@ -8,12 +8,12 @@ import SendMoneyToPrisonerService from '../services/sendMoneyToPrisonerService'
 
 jest.mock('../services/sendMoneyToPrisonerService')
 
-type ResSubset = Pick<Response, 'redirect' | 'render'>
+type ResSubset = Pick<Response, 'redirect' | 'render' | 'locals'>
 
 const makeRes = (): { res: ResSubset; redirect: jest.Mock; render: jest.Mock } => {
   const redirect = jest.fn()
   const render = jest.fn()
-  const res = { redirect, render } as unknown as ResSubset
+  const res = { redirect, render, locals: { localePath: (path: string) => path } } as unknown as ResSubset
   return { res, redirect, render }
 }
 
@@ -36,6 +36,7 @@ describe('prisonerDetailsGetHandler', () => {
 
     expect(render).toHaveBeenCalledWith('pages/prisoner-details', {
       backLinkHref: PRISONER_DETAILS_BACK_LINK_HREF,
+      postDebitCardDetails: res.locals.localePath('/debit-card/details'),
       errors: {},
       errorList: [],
       formValues: {},
@@ -95,6 +96,7 @@ describe('prisonerDetailsPostHandler', () => {
 
     expect(render).toHaveBeenCalledWith('pages/prisoner-details', {
       backLinkHref: PRISONER_DETAILS_BACK_LINK_HREF,
+      postDebitCardDetails: res.locals.localePath('/debit-card/details'),
       errors: {},
       errorList: [],
       formValues: {

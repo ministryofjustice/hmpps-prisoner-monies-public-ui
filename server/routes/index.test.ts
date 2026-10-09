@@ -83,9 +83,9 @@ describe.each([
       .expect(res => {
         expect(res.text).toContain(expectedHeading)
         expect(res.text).toContain(`href="/${locale}/payment-choice"`)
-        expect(res.text).toContain('href="/terms"')
-        expect(res.text).toContain('href="/privacy"')
-        expect(res.text).toContain('href="/contact-us"')
+        expect(res.text).toContain(`href="/${locale}/terms"`)
+        expect(res.text).toContain(`href="/${locale}/privacy"`)
+        expect(res.text).toContain(`href="/${locale}/contact-us"`)
         expect(res.text).toContain('govuk-back-link')
       })
   })
@@ -164,7 +164,7 @@ describe.each([['en-gb'], ['cy']])('POST /%s/debit-card/details', locale => {
         prisoner_number: 'A1234BC',
       })
       .expect(302)
-      .expect('Location', '/debit-card/amount')
+      .expect('Location', `/${locale}/debit-card/amount`)
       .expect(() => {
         expect(sendMoneyToPrisonerService.getValidPrisoner).toHaveBeenCalledWith('A1234BC', '1990-2-1')
       })
