@@ -4,6 +4,7 @@ import middleware from 'i18next-http-middleware'
 import i18next from '../i18n/i18n'
 import config from '../config'
 import startPageHandler from '../handlers/startPage'
+import { buildLocalePath } from '../utils/locale'
 
 const SUPPORTED_LANGUAGES: Record<string, 'en-gb' | 'cy'> = {
   'en-gb': 'en-gb',
@@ -52,7 +53,7 @@ export default function setUpI18n(): { router: Router; langRouter: Router } {
       // set the locale, and handle i18n translation
       res.locals.locale = language
       res.locals.t = i18next.getFixedT(language)
-      res.locals.localePath = (path: string) => `/${language}${path.startsWith('/') ? path : `/${path}`}`
+      res.locals.localePath = (path: string) => buildLocalePath(language, path)
 
       next()
     },
