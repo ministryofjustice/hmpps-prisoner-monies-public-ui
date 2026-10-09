@@ -26,7 +26,7 @@ export default class PrisonerDetailsPage extends BasePage {
 
   h1Title = 'Enter prisoner details'
 
-  protected url = '/debit-card/details'
+  protected url = '/en-gb/debit-card/details'
 
   private constructor(page: Page) {
     super(page)
