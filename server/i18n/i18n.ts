@@ -4,8 +4,8 @@ import Backend from 'i18next-fs-backend'
 import middleware from 'i18next-http-middleware'
 import logger from '../../logger'
 
-export const SUPPORTED_LANGUAGES = ['en', 'cy'] as const
-export const DEFAULT_LANGUAGE = 'en'
+export const SUPPORTED_LANGUAGES = ['en-gb', 'cy'] as const
+export const DEFAULT_LANGUAGE = 'en-gb'
 
 // Reads translations lazily from disk, so migrating a language is just adding a
 // `server/i18n/locales/<lng>/translation.json` file - no code changes needed.
@@ -20,6 +20,7 @@ export const i18nextInitPromise = i18next
     supportedLngs: SUPPORTED_LANGUAGES,
     preload: SUPPORTED_LANGUAGES,
     defaultNS: 'translation',
+    lowerCaseLng: true,
     // Language is chosen via the /en-gb/ and /cy/ URL prefixes (see routes/index.ts), not a query param.
     detection: {
       order: ['cookie', 'header'],

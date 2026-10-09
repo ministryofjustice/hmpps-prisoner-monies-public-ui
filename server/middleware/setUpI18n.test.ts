@@ -8,19 +8,17 @@ describe('setUpI18n', () => {
 
   function appWithI18n() {
     const app = express()
-    const langRouter = setUpI18n()
+    const { router, langRouter } = setUpI18n()
 
-    const viewsRouter = express.Router()
-    viewsRouter.get('/', (_req, res) => {
+    langRouter.get('/', (_req, res) => {
       res.json({
-        language: res.locals.language,
+        language: res.locals.locale,
         translated: res.locals.t('terms.lawHeading'),
         fallback: res.locals.t('terms.pageTitle'),
       })
     })
-    langRouter.use('{/:lang}', viewsRouter)
 
-    app.use(langRouter)
+    app.use(router)
     return app
   }
 
@@ -33,7 +31,7 @@ describe('setUpI18n', () => {
       .get('/en-gb/')
       .expect(200)
       .expect(res => {
-        expect(res.body.language).toBe('en')
+        expect(res.body.language).toBe('en-gb')
         expect(res.body.translated).toBe('Applicable law')
       })
   })

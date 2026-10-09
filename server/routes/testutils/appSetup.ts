@@ -54,9 +54,9 @@ function appSetup(services: Partial<Services>, production: boolean, userSupplier
       applicationName: '',
       environmentName: '',
       environmentNameColour: '',
-      language: DEFAULT_LANGUAGE,
-      urlLang: 'en-gb', // default_langauge is 'en' from i18n, but our URLs look for en-gb
+      locale: DEFAULT_LANGUAGE,
       t: i18next.getFixedT(DEFAULT_LANGUAGE),
+      localePath: (path: string) => `/${DEFAULT_LANGUAGE}${path.startsWith('/') ? path : `/${path}`}`,
     }
     next()
   })
@@ -66,9 +66,11 @@ function appSetup(services: Partial<Services>, production: boolean, userSupplier
   })
   app.use(express.json())
   app.use(express.urlencoded({ extended: true }))
-  const langRouter = setUpI18n()
-  app.use(langRouter)
+
+  const { router, langRouter } = setUpI18n()
+  app.use(router)
   app.use(routes({ applicationInfo, ...services } as Services, langRouter))
+
   app.use((_req, _res, next) => next(new NotFound()))
   app.use(errorHandler(production))
 

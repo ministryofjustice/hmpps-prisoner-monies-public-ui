@@ -34,10 +34,10 @@ export default function createApp(services: Services): express.Application {
   // app.use(authorisationMiddleware())
   app.use(setUpCsrf())
   // app.use(setUpCurrentUser())
-  const langRouter = setUpI18n()
-  app.use(langRouter)
 
-  app.use(routes(services, langRouter))
+  const { router, langRouter } = setUpI18n()
+  app.use(router)
+  routes(services, langRouter)
 
   app.use((_req, res, next) => {
     if (process.env.NODE_ENV === 'production') {

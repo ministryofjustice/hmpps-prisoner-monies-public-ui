@@ -8,45 +8,39 @@ export enum Page {
 }
 
 export default function routes(services: Services, languageRouter: Router): Router {
-  const viewsRouter = Router()
-
-  viewsRouter.get('/', async (_req, res, _next) => {
+  languageRouter.get('/', async (_req, res, _next) => {
     return res.render('pages/before-you-continue', {
-      continueUrl: `/${res.locals.urlLang}/payment-choice`,
+      continueUrl: res.locals.localePath('/payment-choice'),
       backLinkHref: '/',
     })
   })
 
-  viewsRouter.get('/payment-choice', async (_req, res, _next) => {
-    return res.status(404).send('Not Found')
-    // return res.render('pages/payment-choice', { backLinkHref: `/${res.locals.language}/` })
+  languageRouter.get('/payment-choice', async (_req, res, _next) => {
+    return res.render('pages/payment-choice', {
+      backLinkHref: res.locals.localePath('/'),
+      continueUrl: res.locals.localePath('/debit-card/details'),
+    })
   })
 
-  viewsRouter.get('/debit-card/details', prisonerDetailsGetHandler)
+  languageRouter.get('/debit-card/details', prisonerDetailsGetHandler)
 
-  viewsRouter.post('/debit-card/details', prisonerDetailsPostHandler(services.sendMoneyToPrisonerService))
+  languageRouter.post('/debit-card/details', prisonerDetailsPostHandler(services.sendMoneyToPrisonerService))
 
-  viewsRouter.get('/debit-card/amount', async (_req, res, _next) => {
+  languageRouter.get('/debit-card/amount', async (_req, res, _next) => {
     return res.render('pages/payment-amount', {})
   })
 
-  viewsRouter.get('/terms', (_req, res, _next) => {
-    res.render('pages/terms')
-  })
-  viewsRouter.get('/terms', async (_req, res, _next) => {
+  languageRouter.get('/terms', async (_req, res, _next) => {
     return res.render('pages/terms')
   })
 
-  viewsRouter.get('/privacy', async (_req, res, _next) => {
+  languageRouter.get('/privacy', async (_req, res, _next) => {
     return res.render('pages/privacy')
   })
 
-  viewsRouter.get('/contact-us', async (_req, res, _next) => {
+  languageRouter.get('/contact-us', async (_req, res, _next) => {
     return res.render('pages/contact-us')
   })
-
-  // add the viewsRouter to the language group router
-  languageRouter.use('{/:lang}', viewsRouter)
 
   return languageRouter
 }

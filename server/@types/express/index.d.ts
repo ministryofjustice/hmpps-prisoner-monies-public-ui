@@ -34,8 +34,8 @@ export declare global {
       appInsightsApplicationName?: string
       buildNumber?: string
       t: TFunction
-      language: string
-      urlLang: string
+      locale: string
+      localePath: (path: string) => string
     }
   }
 }
