@@ -202,3 +202,25 @@ describe('GET /debit-card/amount', () => {
       })
   })
 })
+describe('POST /debit-card/amount', () => {
+  it('redirects to the check details page when the amount is valid', () => {
+    return request(app)
+      .post('/debit-card/amount')
+      .type('form')
+      .send({ amount: '17.50' })
+      .expect(302)
+      .expect('Location', '/debit-card/check')
+  })
+
+  it('re-renders with an error summary whose link points at the amount field', () => {
+    return request(app)
+      .post('/debit-card/amount')
+      .type('form')
+      .send({})
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain('href="#id_amount-label"')
+        expect(res.text).toContain('id="id_amount"')
+      })
+  })
+})

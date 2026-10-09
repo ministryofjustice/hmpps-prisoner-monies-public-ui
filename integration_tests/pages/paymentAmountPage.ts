@@ -6,7 +6,7 @@ export default class PaymentAmountPage extends BasePage {
 
   private constructor(page: Page) {
     super(page)
-    this.header = page.getByRole('heading', { level: 1, name: 'Amount' })
+    this.header = page.getByRole('heading', { level: 1, name: 'Enter amount to send' })
   }
 
   static async verifyOnPage(page: Page): Promise<PaymentAmountPage> {
