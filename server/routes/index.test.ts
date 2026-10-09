@@ -190,3 +190,15 @@ describe('POST /debit-card/details', () => {
       })
   })
 })
+
+describe('GET /debit-card/amount', () => {
+  it('renders a form whose field name matches what the handler reads from the request body', () => {
+    return request(app)
+      .get('/debit-card/amount')
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain('name="amount"')
+      })
+  })
+})

@@ -1,6 +1,7 @@
 {% extends "../partials/layout.njk" %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
 
-{% set pageTitle = "Amount - " + applicationName %}
+{% set pageTitle = "Enter amount to send - " + applicationName %}
 {% set mainClasses = "govuk-body" %}
 
 {% block content %}
@@ -8,8 +9,58 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
 
-    <h1 class="govuk-heading-xl">Amount</h1>
+    <header>
+      <h1 class="govuk-heading-xl"><span class="govuk-caption-xl">Pay now by debit card</span> Enter amount to send</h1>
+    </header>
 
+    {% if errorList and errorList.length %}
+    <div class="govuk-error-summary" data-module="govuk-error-summary">
+      <div role="alert">
+        <h2 class="govuk-error-summary__title">There was a problem</h2>
+        <div class="govuk-error-summary__body">
+          <ul class="govuk-list govuk-error-summary__list">
+            {% for fieldError in errorList %}
+            <li class="mtp-error-summary__field-error">
+              <a href="{{ fieldError.href }}">{{ fieldError.label }}</a>
+              <ul>
+                {% for message in fieldError.messages %}
+                <li>{{ message }}<span class="govuk-visually-hidden">.</span></li>
+                {% endfor %}
+              </ul>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <form method="post" action="/debit-card/amount">
+      <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+      <div id="id_amount-wrapper">
+        {{ govukInput({
+        id: "id_amount",
+        name: "amount",
+        label: {
+        text: "Amount"
+        },
+        prefix: {
+        text: "£"
+        },
+        classes: "govuk-input--width-5",
+        autocomplete: "off",
+        value: formValues.amount,
+        errorMessage: { text: errors.amount } if errors.amount else undefined
+        }) }}
+      </div>
+
+      <p>
+        <button id="id_next_btn" class="govuk-button" data-module="govuk-button" data-prevent-double-click="true" type="submit">
+          Check details
+        </button>
+      </p>
+    </form>
 
   </div>
 </div>
