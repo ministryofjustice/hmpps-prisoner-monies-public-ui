@@ -1,8 +1,11 @@
 import type { Express } from 'express'
 import request from 'supertest'
 import { appWithAllRoutes } from './routes/testutils/appSetup'
+import { i18nextInitPromise } from './i18n/i18n'
 
 let app: Express
+
+beforeAll(() => i18nextInitPromise)
 
 beforeEach(() => {
   app = appWithAllRoutes({})

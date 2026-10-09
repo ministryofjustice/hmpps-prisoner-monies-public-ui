@@ -6,7 +6,7 @@ export default class HomePage extends BasePage {
 
   h1Title = 'Send money to someone in prison'
 
-  protected url = '/'
+  protected url = '/start-page'
 
   private constructor(page: Page) {
     super(page)

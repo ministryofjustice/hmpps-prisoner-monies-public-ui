@@ -36,7 +36,7 @@
     </div>
     {% endif %}
 
-    <form method="post" action="/debit-card/details">
+    <form method="post" action="{{postDebitCardDetails}}">
       <input type="hidden" name="_csrf" value="{{ csrfToken }}">
 
       <fieldset class="govuk-fieldset">

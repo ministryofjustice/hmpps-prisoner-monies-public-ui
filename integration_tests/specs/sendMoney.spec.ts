@@ -35,13 +35,13 @@ test.describe('Send money journey', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'Privacy policy' })).toBeVisible()
   })
 
-  test('Before you continue page back link returns to the home page', async ({ page }) => {
+  test('Before you continue page back link returns to the start page', async ({ page }) => {
     const beforeYouContinuePage = await BeforeYouContinuePage.goTo(page)
 
     await expect(beforeYouContinuePage.backLink).toBeVisible()
     await beforeYouContinuePage.backLink.click()
 
-    await expect(page).toHaveURL(/^https?:\/\/[^/]+\/$/)
+    await expect(page).toHaveURL('start-page')
     await HomePage.verifyOnPage(page)
   })
 

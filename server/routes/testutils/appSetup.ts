@@ -9,6 +9,8 @@ import type { Services } from '../../services'
 import { HmppsUser } from '../../interfaces/hmppsUser'
 import setUpWebSession from '../../middleware/setUpWebSession'
 import type { ApplicationInfo } from '../../applicationInfo'
+import i18next, { DEFAULT_LANGUAGE } from '../../i18n/i18n'
+import setUpI18n from '../../middleware/setUpI18n'
 
 jest.mock('@ministryofjustice/hmpps-audit-client')
 
@@ -52,6 +54,9 @@ function appSetup(services: Partial<Services>, production: boolean, userSupplier
       applicationName: '',
       environmentName: '',
       environmentNameColour: '',
+      locale: DEFAULT_LANGUAGE,
+      t: i18next.getFixedT(DEFAULT_LANGUAGE),
+      localePath: (path: string) => `/${DEFAULT_LANGUAGE}${path.startsWith('/') ? path : `/${path}`}`,
     }
     next()
   })
@@ -61,7 +66,11 @@ function appSetup(services: Partial<Services>, production: boolean, userSupplier
   })
   app.use(express.json())
   app.use(express.urlencoded({ extended: true }))
-  app.use(routes({ applicationInfo, ...services } as Services))
+
+  const { router, langRouter } = setUpI18n()
+  app.use(router)
+  app.use(routes({ applicationInfo, ...services } as Services, langRouter))
+
   app.use((_req, _res, next) => next(new NotFound()))
   app.use(errorHandler(production))
 

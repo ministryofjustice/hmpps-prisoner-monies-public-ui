@@ -1,0 +1,26 @@
+{
+  "terms": {
+    "intro2": "Darllenwch nhw'n ofalus.",
+    "purpose1": "Mae’r telerau ac amodau hyn yn effeithio ar eich hawliau a’ch rhwymedigaethau dan y gyfraith.",
+    "update1": "Mae'n bosib y byddwn o bryd i'w gilydd yn diweddaru'r telerau ac amodau hyn.",
+    "update2": "Gall hyn ddigwydd os bydd newid yn y gyfraith neu i'r ffordd y mae'r gwasanaeth hwn yn gweithio.",
+    "update3": "Rydym yn argymell eich bod yn gwirio'r dudalen hon yn rheolaidd am unrhyw ddiweddariadau.",
+    "lawHeading": "Y gyfraith sy’n berthnasol",
+    "law1": "Bydd y defnydd a wnewch o’r gwasanaeth hwn ac unrhyw anghydfod sy’n codi o’i ddefnyddio yn cael ei reoli a’i ddehongli yn unol â chyfreithiau Cymru a Lloegr, yn cynnwys ond ddim yn gyfyngedig i:",
+    "responsible2": "Eich cyfrifoldeb chi yw bod yn ymwybodol o’r peryglon hyn ac osgoi defnyddio unrhyw gyfrifiadur lle mae posibilrwydd y gall eraill weld eich gwybodaeth bersonol.",
+    "responsible4": "Chi sy’n gyfrifol os ydych yn dewis gadael cyfrifiadur heb ei ddiogelu tra rydych yn y broses o anfon arian at garcharor.",
+    "responsible5": "Byddwn yn gwneud popeth y gallwch i wirio a phrofi’r gwasanaeth hwn pryd bynnag y byddwn yn ei ddiwygio neu ei ddiweddaru.",
+    "responsible6": "Fodd bynnag, mae’n rhaid i chi gymryd gofal eich hunan i sicrhau nad yw’r ffordd yr ydych yn cael mynediad i'r gwasanaeth hwn yn eich gadael yn agored i’r perygl o feirysau, cod cyfrifiadur maleisus neu ymyrraeth o fath arall a allai achosi difrod i’ch system gyfrifiadurol eich hunan.",
+    "responsible7a": "Ni ddylech gamddefnyddio ein gwasanaeth drwy gyflwyno’n fwriadol feirysau, ymwelwyr diwahoddiad, mwydod, bomiau rhesymeg neu unrhyw ddeunydd arall maleisus neu niweidiol i dechnoleg.",
+    "responsible7b": "Ni ddylech geisio cael mynediad heb awdurdod i'n gwasanaeth, y system lle caiff ein gwasanaeth ei storio nac unrhyw weinydd, cyfrifiadur neu gronfa ddata sy’n gysylltiedig â’n gwasanaeth. Ni ddylech ymosod ar ein gwefan drwy ymosodiad gwrthod gwasanaeth neu ymosodiad gwrthod gwasanaeth a ddosbarthwyd.",
+    "disclaimerHeading": "Ymwrthodiad",
+    "disclaimer1": "Nid ydym yn derbyn cyfrifoldeb am golled neu ddifrod sy’n dod i ran defnyddwyr y gwasanaeth hwn, naill ai’n uniongyrchol, yn anuniongyrchol neu’n ganlyniadol, pa un ai a yw’n cael ei achosi drwy gamwedd, tor-cytundeb neu fel arall.",
+    "disclaimer2": "Mae hyn yn cynnwys colli incwm neu refeniw, busnes, elw neu gytundebau, arbedion a ragwelwyd, data, ewyllys da, eiddo diriaethol neu wastraff amser sy’n gysylltiedig â’r gwasanaeth hwn neu unrhyw wefannau sy’n gysylltiedig ag ef ac unrhyw ddeunydd sy’n cael ei bostio arno.",
+    "disclaimer3": "Ni fydd yr amod hwn yn atal hawliadau am golled neu ddifrod i’ch eiddo diriaethol nac unrhyw hawliadau eraill am golled ariannol uniongyrchol nad ydynt wedi’i heithrio gan unrhyw rai o’r categorïau uchod."
+  },
+  "notFound": {
+    "pageTitle": "Ni ellir dod o hyd i’r dudalen",
+    "message": "Os gwnaethoch nodi cyfeiriad gwefan yna gwiriwch ei fod yn gywir.",
+    "linkText": "Dychwelyd i'r dudalen gartref"
+  }
+}
