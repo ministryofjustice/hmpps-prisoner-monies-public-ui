@@ -20,8 +20,11 @@ export default function setUpI18n(): { router: Router; langRouter: Router } {
     res.redirect('/en-gb/')
   })
 
-  // handle the info page route
-  router.get('/info-page', startPageHandler(config))
+  // handle the start page route
+  router.get('/start-page', startPageHandler(config))
+  router.get('/info-page', (_req, res, _next) => {
+    return res.render('pages/info-page')
+  })
 
   const langRouter = Router({ mergeParams: true })
   router.use(

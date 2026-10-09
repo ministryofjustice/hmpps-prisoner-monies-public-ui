@@ -34,10 +34,10 @@ afterEach(() => {
   jest.resetAllMocks()
 })
 
-describe('GET /info-page', () => {
+describe('GET /start-page', () => {
   it('should render info page', () => {
     return request(app)
-      .get('/info-page')
+      .get('/start-page')
       .expect('Content-Type', /html/)
       .expect(200)
       .expect(res => {
@@ -47,10 +47,10 @@ describe('GET /info-page', () => {
   })
 })
 
-describe('GET /info-page', () => {
+describe('GET /start-page', () => {
   it('should render info page', () => {
     return request(app)
-      .get('/info-page')
+      .get('/start-page')
       .expect('Content-Type', /html/)
       .expect(200)
       .expect(res => {

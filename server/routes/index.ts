@@ -9,9 +9,12 @@ export enum Page {
 
 export default function routes(services: Services, languageRouter: Router): Router {
   languageRouter.get('/', async (_req, res, _next) => {
+    // in production this will be set by env var
+    const backLinkStartPage = '/start-page'
+
     return res.render('pages/before-you-continue', {
       continueUrl: res.locals.localePath('/payment-choice'),
-      backLinkHref: '/',
+      backLinkHref: backLinkStartPage,
     })
   })
 
