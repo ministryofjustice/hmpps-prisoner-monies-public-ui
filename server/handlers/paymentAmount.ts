@@ -25,6 +25,7 @@ export function paymentAmountPostHandler(): RequestHandler {
     if (validationResult.errorList.length > 0) {
       return renderPaymentAmount(res, formValues, validationResult)
     }
+    req.session.sendMoney = { ...req.session.sendMoney, amount: formValues.amount }
     return res.redirect('/debit-card/check')
   }
 }

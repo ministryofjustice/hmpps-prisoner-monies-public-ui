@@ -53,3 +53,15 @@ describe('paymentAmountPostHandler error handling', () => {
     )
   })
 })
+
+describe('paymentAmountPostHandler success handling', () => {
+  it('stores the amount in the session and redirects to the check details page', async () => {
+    const req = { body: { amount: '10.00' }, session: {} } as unknown as Request
+    const { res, redirect } = makeRes()
+    const handler = paymentAmountPostHandler()
+    await handler(req, res as unknown as Response, next)
+
+    expect(req.session.sendMoney?.amount).toBe('10.00')
+    expect(redirect).toHaveBeenCalledWith('/debit-card/check')
+  })
+})
