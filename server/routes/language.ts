@@ -1,5 +1,4 @@
 import { Router } from 'express'
-import { prisonerDetailsGetHandler, prisonerDetailsPostHandler } from '../handlers/prisonerDetails'
 import { Services } from '../services'
 import debitCardRouter from './debit-card'
 

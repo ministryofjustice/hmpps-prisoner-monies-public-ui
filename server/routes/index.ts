@@ -12,16 +12,18 @@ export enum Page {
 export default function routes(services: Services): Router {
   const router = Router()
 
+  // redirect blank to the English start page
   router.get('/', (_req, res, _next) => {
     return res.redirect('/en-gb/')
   })
-  // handle the start page route
-  // move these to routes/index
+
+  // handle the place holder pages
   router.get('/start-page', startPageHandler(config))
   router.get('/info-page', (_req, res, _next) => {
     return res.render('pages/info-page')
   })
 
+  // configure the langauge specific routing
   router.use('/en-gb/', languageRouter(services))
   router.use('/cy/', languageRouter(services))
 
