@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { prisonerDetailsGetHandler, prisonerDetailsPostHandler } from '../handlers/prisonerDetails'
 import { Services } from '../services'
+import debitCardRouter from './debit-card'
 
 export enum Page {
   SEARCH_OFFENDERS = 'SEARCH_OFFENDERS',
@@ -26,25 +27,19 @@ export default function routes(services: Services): Router {
     })
   })
 
-  router.get('/debit-card/details', prisonerDetailsGetHandler)
-
-  router.post('/debit-card/details', prisonerDetailsPostHandler(services.sendMoneyToPrisonerService))
-
-  router.get('/debit-card/amount', async (_req, res, _next) => {
-    return res.render('pages/payment-amount', {})
-  })
-
   router.get('/terms', async (_req, res, _next) => {
-    return res.render('pages/terms')
+    return res.render(`pages/${res.locals.locale}/terms`)
   })
 
   router.get('/privacy', async (_req, res, _next) => {
-    return res.render('pages/privacy')
+    return res.render(`pages/${res.locals.locale}/privacy`)
   })
 
   router.get('/contact-us', async (_req, res, _next) => {
-    return res.render('pages/contact-us')
+    return res.render(`pages/${res.locals.locale}/contact-us`)
   })
+
+  router.use('/debit-card', debitCardRouter(services))
 
   return router
 }
