@@ -23,7 +23,7 @@ export default function createErrorHandler(production: boolean) {
     if (!res.locals.localePath) {
       const locale = detectLocaleFromPath(req.originalUrl)
       res.locals.locale = locale
-      res.locals.localePath = (path: string) => buildLocalePath(locale, path)
+      res.locals.localePath = buildLocalePath(res.locals.locale)
     }
 
     res.status(error.status || 500)

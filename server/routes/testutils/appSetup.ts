@@ -54,9 +54,9 @@ function appSetup(services: Partial<Services>, production: boolean, userSupplier
       applicationName: '',
       environmentName: '',
       environmentNameColour: '',
-      locale: DEFAULT_LANGUAGE,
-      t: i18next.getFixedT(DEFAULT_LANGUAGE),
-      localePath: (path: string) => `/${DEFAULT_LANGUAGE}${path.startsWith('/') ? path : `/${path}`}`,
+      locale: '',
+      t: i18next.getFixedT('empty'),
+      localePath: () => '',
     }
     next()
   })
@@ -67,9 +67,8 @@ function appSetup(services: Partial<Services>, production: boolean, userSupplier
   app.use(express.json())
   app.use(express.urlencoded({ extended: true }))
 
-  const { router, langRouter } = setUpI18n()
-  app.use(router)
-  app.use(routes({ applicationInfo, ...services } as Services, langRouter))
+  app.use(setUpI18n())
+  app.use(routes({ applicationInfo, ...services } as Services))
 
   app.use((_req, _res, next) => next(new NotFound()))
   app.use(errorHandler(production))

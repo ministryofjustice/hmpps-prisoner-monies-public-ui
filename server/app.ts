@@ -35,9 +35,8 @@ export default function createApp(services: Services): express.Application {
   app.use(setUpCsrf())
   // app.use(setUpCurrentUser())
 
-  const { router, langRouter } = setUpI18n()
-  app.use(router)
-  routes(services, langRouter)
+  app.use(setUpI18n())
+  app.use(routes(services))
 
   app.use((_req, res, next) => {
     if (process.env.NODE_ENV === 'production') {

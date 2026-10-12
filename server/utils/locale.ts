@@ -9,6 +9,7 @@ export function detectLocaleFromPath(path: string): 'en-gb' | 'cy' {
   return SUPPORTED_LANGUAGES[firstSegment] ?? DEFAULT_LANGUAGE
 }
 
-export function buildLocalePath(locale: string, path: string): string {
-  return `/${locale}${path.startsWith('/') ? path : `/${path}`}`
-}
+export const buildLocalePath =
+  (locale: string) =>
+  (path: string): string =>
+    `/${locale}${path.startsWith('/') ? path : `/${path}`}`

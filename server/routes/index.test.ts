@@ -186,3 +186,43 @@ describe.each([['en-gb'], ['cy']])('POST /%s/debit-card/details', locale => {
       })
   })
 })
+
+describe('language route test', () => {
+  it('redirects the bare root path to the default language', () => {
+    return request(app).get('/').expect(302).expect('Location', '/en-gb/')
+  })
+
+  it('sets the language and translator for a supported language prefix', () => {
+    return request(app)
+      .get('/en-gb/terms')
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain('<html lang="en-gb" ')
+        expect(res.text).toContain('Applicable law')
+      })
+  })
+
+  it('translates into Welsh for the /cy prefix', () => {
+    return request(app)
+      .get('/cy/terms')
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain('<html lang="cy" ')
+        expect(res.text).toContain('Y gyfraith sy’n berthnasol')
+      })
+  })
+
+  it('falls back to the default language when a translation key is missing', () => {
+    return request(app)
+      .get('/cy/')
+      .expect(200)
+      .expect(res => {
+        // 'terms.pageTitle' only exists in the en translation
+        expect(res.text).toContain('<a class="govuk-link" href="/cy/terms">terms and conditions</a>')
+      })
+  })
+
+  it('404s for an unsupported language prefix', () => {
+    return request(app).get('/fr/').expect(404)
+  })
+})

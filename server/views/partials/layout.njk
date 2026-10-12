@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block pageTitle %}{{pageTitle | default(applicationName)}}{% endblock %}
+{% set htmlLang = locale | default('en-gb')  %}
 
 {% block header %}
 {% include "./header.njk" %}
