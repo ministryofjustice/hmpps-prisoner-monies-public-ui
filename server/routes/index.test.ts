@@ -219,7 +219,7 @@ describe('POST /debit-card/amount', () => {
       .send({})
       .expect(200)
       .expect(res => {
-        expect(res.text).toContain('href="#id_amount-label"')
+        expect(res.text).toContain('href="#id_amount"')
         expect(res.text).toContain('id="id_amount"')
       })
   })

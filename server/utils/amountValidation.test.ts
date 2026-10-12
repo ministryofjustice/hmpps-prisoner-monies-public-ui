@@ -46,8 +46,6 @@ describe('validateAmount', () => {
   it('returns an errorList entry pointing at the amount field when invalid', () => {
     const result = validateAmount(undefined)
 
-    expect(result.errorList).toEqual([
-      { label: 'Amount', href: '#id_amount-label', messages: ['This field is required.'] },
-    ])
+    expect(result.errorList).toEqual([{ label: 'Amount', href: '#id_amount', messages: ['This field is required.'] }])
   })
 })

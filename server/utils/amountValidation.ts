@@ -38,7 +38,7 @@ export function validateAmount(_amount: string | undefined): AmountValidationRes
   }
 
   if (errors.amount) {
-    errorList.push({ label: 'Amount', href: '#id_amount-label', messages: [errors.amount] })
+    errorList.push({ label: 'Amount', href: '#id_amount', messages: [errors.amount] })
   }
 
   return { errors, errorList }
