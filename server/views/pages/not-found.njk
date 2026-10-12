@@ -1,20 +1,18 @@
-{% extends "../partials/layout.njk" %}
+{% extends "../partials/layout-two-thirds.njk" %}
 
 {% set pageTitle = t("notFound.pageTitle") + " - " + applicationName %}
 {% set mainClasses = "govuk-body" %}
 
-{% block content %}
+{% block page_content %}
 
 {% set mainClasses = "govuk-main-wrapper--l" %}
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-l">{{t("notFound.pageTitle")}}</h1>
-        <p class="govuk-body">
-          {{t("notFound.message")}}
-        </p>
-        <p class="govuk-body">
-          <a href="/" class="govuk-link">{{t("notFound.linkText")}}</a>
-        </p>
-    </div>
-  </div>
+
+    <h1 class="govuk-heading-l">{{t("notFound.pageTitle")}}</h1>
+    <p class="govuk-body">
+      {{t("notFound.message")}}
+    </p>
+    <p class="govuk-body">
+      <a href="/" class="govuk-link">{{t("notFound.linkText")}}</a>
+    </p>
+
 {% endblock %}
