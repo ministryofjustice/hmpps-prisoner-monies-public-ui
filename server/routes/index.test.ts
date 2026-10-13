@@ -5,7 +5,6 @@ import { appWithAllRoutes, user } from './testutils/appSetup'
 import ExampleService from '../services/exampleService'
 import ExampleApiClient from '../data/exampleApiClient'
 import SendMoneyToPrisonerService from '../services/sendMoneyToPrisonerService'
-import { i18nextInitPromise } from '../i18n/i18n'
 
 jest.mock('@ministryofjustice/hmpps-audit-client')
 jest.mock('../services/exampleService')
@@ -16,8 +15,6 @@ const exampleService = new ExampleService({} as ExampleApiClient) as jest.Mocked
 const sendMoneyToPrisonerService = new SendMoneyToPrisonerService() as jest.Mocked<SendMoneyToPrisonerService>
 
 let app: Express
-
-beforeAll(() => i18nextInitPromise)
 
 beforeEach(() => {
   app = appWithAllRoutes({
