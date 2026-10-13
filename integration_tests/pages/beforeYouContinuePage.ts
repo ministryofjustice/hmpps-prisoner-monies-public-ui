@@ -10,7 +10,7 @@ export default class BeforeYouContinuePage extends BasePage {
 
   h1Title = 'Before you continue'
 
-  protected url = '/en-gb/'
+  protected path = '/'
 
   private constructor(page: Page) {
     super(page)

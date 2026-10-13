@@ -9,8 +9,13 @@ import type { Services } from '../../services'
 import { HmppsUser } from '../../interfaces/hmppsUser'
 import setUpWebSession from '../../middleware/setUpWebSession'
 import type { ApplicationInfo } from '../../applicationInfo'
+import i18next, { i18nextInitPromise } from '../../i18n/i18n'
+import setUpI18n from '../../middleware/setUpI18n'
 
 jest.mock('@ministryofjustice/hmpps-audit-client')
+
+// every test file that imports appWithAllRoutes needs translations loaded before making requests
+beforeAll(() => i18nextInitPromise)
 
 export const user: HmppsUser = {
   name: 'FIRST LAST',
@@ -52,6 +57,9 @@ function appSetup(services: Partial<Services>, production: boolean, userSupplier
       applicationName: '',
       environmentName: '',
       environmentNameColour: '',
+      locale: '',
+      t: i18next.getFixedT('empty'),
+      localePath: () => '',
     }
     next()
   })
@@ -61,7 +69,10 @@ function appSetup(services: Partial<Services>, production: boolean, userSupplier
   })
   app.use(express.json())
   app.use(express.urlencoded({ extended: true }))
+
+  app.use(setUpI18n())
   app.use(routes({ applicationInfo, ...services } as Services))
+
   app.use((_req, _res, next) => next(new NotFound()))
   app.use(errorHandler(production))
 

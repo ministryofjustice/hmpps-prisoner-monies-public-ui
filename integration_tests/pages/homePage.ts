@@ -6,11 +6,16 @@ export default class HomePage extends BasePage {
 
   h1Title = 'Send money to someone in prison'
 
-  protected url = '/'
+  protected path = '/start-page'
 
   private constructor(page: Page) {
-    super(page)
+    // no locale specified, default to empty string
+    super(page, '')
     this.startNowButton = page.getByRole('button', { name: 'Start now' })
+  }
+
+  protected get url(): string {
+    return this.path
   }
 
   static async goTo(page: Page): Promise<HomePage> {

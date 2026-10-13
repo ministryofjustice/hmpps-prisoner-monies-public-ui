@@ -12,7 +12,7 @@ export default class PaymentAmountPage extends BasePage {
 
   readonly errorSummary: Locator
 
-  protected url = '/debit-card/amount'
+  protected path = '/debit-card/amount'
 
   private constructor(page: Page) {
     super(page)

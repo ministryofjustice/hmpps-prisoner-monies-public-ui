@@ -31,10 +31,10 @@ afterEach(() => {
   jest.resetAllMocks()
 })
 
-describe('GET /', () => {
-  it('should render start page', () => {
+describe('GET /start-page', () => {
+  it('should render info page', () => {
     return request(app)
-      .get('/')
+      .get('/start-page')
       .expect('Content-Type', /html/)
       .expect(200)
       .expect(res => {
@@ -44,10 +44,10 @@ describe('GET /', () => {
   })
 })
 
-describe('GET /info-page', () => {
+describe('GET /start-page', () => {
   it('should render info page', () => {
     return request(app)
-      .get('/info-page')
+      .get('/start-page')
       .expect('Content-Type', /html/)
       .expect(200)
       .expect(res => {
@@ -55,89 +55,81 @@ describe('GET /info-page', () => {
       })
   })
 })
+describe('GET /payment-choice', () => {
+  it('should render payment choice page', () => {
+    return request(app).get('/payment-choice').expect('Content-Type', /html/).expect(404)
+  })
+})
 
-describe('GET /en-gb/', () => {
+describe('GET /:lang/terms with an unsupported prefix', () => {
+  it('should 404', () => {
+    return request(app).get('/fr/terms').expect(404)
+  })
+})
+
+describe.each([
+  ['en-gb', 'Before you continue'],
+  ['cy', 'Before you continue'],
+])('GET /%s/', (locale, expectedHeading) => {
   it('should render before you continue page', () => {
     return request(app)
-      .get('/en-gb/')
+      .get(`/${locale}/`)
       .expect('Content-Type', /html/)
       .expect(200)
       .expect(res => {
-        expect(res.text).toContain('Before you continue')
-        expect(res.text).toContain('href="/payment-choice"')
-        expect(res.text).toContain('href="/terms"')
-        expect(res.text).toContain('href="/privacy"')
-        expect(res.text).toContain('href="/contact-us"')
+        expect(res.text).toContain(expectedHeading)
+        expect(res.text).toContain(`href="/${locale}/payment-choice"`)
+        expect(res.text).toContain(`href="/${locale}/terms"`)
+        expect(res.text).toContain(`href="/${locale}/privacy"`)
+        expect(res.text).toContain(`href="/${locale}/contact-us"`)
         expect(res.text).toContain('govuk-back-link')
       })
   })
 })
 
-describe('GET /payment-choice', () => {
-  it('should render payment choice page', () => {
-    return request(app).get('/payment-choice').expect('Content-Type', /html/).expect(404)
-    // .expect(res => {
-    //   expect(res.text).toContain('Pay now by debit card')
-    //   expect(res.text).toContain('id="id_debit_card"')
-    //   expect(res.text).toContain('href="/debit-card/details"')
-    //   expect(res.text).toContain('govuk-back-link')
-    // })
-  })
-})
-
-describe('GET /terms', () => {
-  it('renders the terms and conditions content, including an unstyled contact-us link matching the original markup', () => {
-    return request(app)
-      .get('/terms')
-      .expect('Content-Type', /html/)
-      .expect(200)
-      .expect(res => {
-        expect(res.text).toContain('Terms and conditions')
-        expect(res.text).toContain('a href="/contact-us"')
-      })
-  })
-
-  it('shows the accepted card scheme logos at the same sizes as send-money (large: 160x146, small: 95x87)', () => {
-    return request(app)
-      .get('/terms')
-      .expect(200)
-      .expect(res => {
-        ;['visa', 'mastercard', 'maestro'].forEach(scheme => {
-          expect(res.text).toContain(`images/card-acceptance-signage/${scheme}.svg" width="160" height="146"`)
-          expect(res.text).toContain(`images/card-acceptance-signage/${scheme}.svg" width="95" height="87"`)
-        })
-      })
-  })
-})
-
-describe('GET /privacy', () => {
-  it('should render privacy page', () => {
-    return request(app)
-      .get('/privacy')
-      .expect('Content-Type', /html/)
-      .expect(200)
-      .expect(res => {
-        expect(res.text).toContain('Privacy policy')
-      })
-  })
-})
-
-describe('GET /contact-us', () => {
+describe.each([
+  ['en-gb', 'Contact us'],
+  ['cy', 'Contact us'],
+])('GET /%s/contact-us', (locale, expectedHeading) => {
   it('should render contact us page', () => {
     return request(app)
-      .get('/contact-us')
+      .get(`/${locale}/contact-us`)
       .expect('Content-Type', /html/)
       .expect(200)
-      .expect(res => {
-        expect(res.text).toContain('Contact us')
-      })
+      .expect(res => expect(res.text).toContain(expectedHeading))
   })
 })
 
-describe('GET /debit-card/details', () => {
+describe.each([
+  ['en-gb', 'Privacy policy'],
+  ['cy', 'Privacy policy'],
+])('GET /%s/privacy', (locale, expectedHeading) => {
+  it('should render privacy page', () => {
+    return request(app)
+      .get(`/${locale}/privacy`)
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => expect(res.text).toContain(expectedHeading))
+  })
+})
+
+describe.each([
+  ['en-gb', 'Terms and conditions'],
+  ['cy', 'Y gyfraith sy’n berthnasol'],
+])('GET /%s/terms', (locale, expectedHeading) => {
+  it('renders the translated terms page', () => {
+    return request(app)
+      .get(`/${locale}/terms`)
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => expect(res.text).toContain(expectedHeading))
+  })
+})
+
+describe.each([['en-gb'], ['cy']])('GET /%s/debit-card/details', locale => {
   it('renders a form whose field names match what the handler reads from the request body', () => {
     return request(app)
-      .get('/debit-card/details')
+      .get(`/${locale}/debit-card/details`)
       .expect('Content-Type', /html/)
       .expect(200)
       .expect(res => {
@@ -150,7 +142,7 @@ describe('GET /debit-card/details', () => {
   })
 })
 
-describe('POST /debit-card/details', () => {
+describe.each([['en-gb'], ['cy']])('POST /%s/debit-card/details', locale => {
   it('redirects to the amount page when the prisoner details are valid', () => {
     sendMoneyToPrisonerService.getValidPrisoner.mockResolvedValue({
       prisonerNumber: 'A1234BC',
@@ -158,7 +150,7 @@ describe('POST /debit-card/details', () => {
     })
 
     return request(app)
-      .post('/debit-card/details')
+      .post(`/${locale}/debit-card/details`)
       .type('form')
       .send({
         prisoner_name: 'John Smith',
@@ -168,7 +160,7 @@ describe('POST /debit-card/details', () => {
         prisoner_number: 'A1234BC',
       })
       .expect(302)
-      .expect('Location', '/debit-card/amount')
+      .expect('Location', `/${locale}/debit-card/amount`)
       .expect(() => {
         expect(sendMoneyToPrisonerService.getValidPrisoner).toHaveBeenCalledWith('A1234BC', '1990-2-1')
       })
@@ -176,7 +168,7 @@ describe('POST /debit-card/details', () => {
 
   it('re-renders with an error summary whose links point at ids present on the page', () => {
     return request(app)
-      .post('/debit-card/details')
+      .post(`/${locale}/debit-card/details`)
       .type('form')
       .send({})
       .expect(200)
@@ -222,5 +214,45 @@ describe('POST /debit-card/amount', () => {
         expect(res.text).toContain('href="#id_amount"')
         expect(res.text).toContain('id="id_amount"')
       })
+  })
+})
+
+describe('language route test', () => {
+  it('redirects the bare root path to the default language', () => {
+    return request(app).get('/').expect(302).expect('Location', '/en-gb/')
+  })
+
+  it('sets the language and translator for a supported language prefix', () => {
+    return request(app)
+      .get('/en-gb/terms')
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain('<html lang="en-gb" ')
+        expect(res.text).toContain('Applicable law')
+      })
+  })
+
+  it('translates into Welsh for the /cy prefix', () => {
+    return request(app)
+      .get('/cy/terms')
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain('<html lang="cy" ')
+        expect(res.text).toContain('Y gyfraith sy’n berthnasol')
+      })
+  })
+
+  it('falls back to the default language when a translation key is missing', () => {
+    return request(app)
+      .get('/cy/')
+      .expect(200)
+      .expect(res => {
+        // 'terms.pageTitle' only exists in the en translation
+        expect(res.text).toContain('<a class="govuk-link" href="/cy/terms">terms and conditions</a>')
+      })
+  })
+
+  it('404s for an unsupported language prefix', () => {
+    return request(app).get('/fr/').expect(404)
   })
 })

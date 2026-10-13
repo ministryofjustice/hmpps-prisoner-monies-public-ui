@@ -4,7 +4,7 @@ import BasePage from '../utils/basePage'
 export default class CheckDetailsPage extends BasePage {
   h1Title = 'Check details'
 
-  protected url = '/debit-card/check'
+  protected path = '/debit-card/check'
 
   private constructor(page: Page) {
     super(page)

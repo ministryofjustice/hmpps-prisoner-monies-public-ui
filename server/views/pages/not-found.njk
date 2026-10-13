@@ -1,0 +1,18 @@
+{% extends "../partials/layout-two-thirds.njk" %}
+
+{% set pageTitle = t("notFound.pageTitle") + " - " + applicationName %}
+{% set mainClasses = "govuk-body" %}
+
+{% block page_content %}
+
+{% set mainClasses = "govuk-main-wrapper--l" %}
+
+    <h1 class="govuk-heading-l">{{t("notFound.pageTitle")}}</h1>
+    <p class="govuk-body">
+      {{t("notFound.message")}}
+    </p>
+    <p class="govuk-body">
+      <a href="/" class="govuk-link">{{t("notFound.linkText")}}</a>
+    </p>
+
+{% endblock %}

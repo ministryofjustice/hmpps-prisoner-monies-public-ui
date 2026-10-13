@@ -1,9 +1,9 @@
 import { Router } from 'express'
-
 import config from '../config'
 import startPageHandler from '../handlers/startPage'
 import { prisonerDetailsGetHandler, prisonerDetailsPostHandler } from '../handlers/prisonerDetails'
 import { paymentAmountGetHandler, paymentAmountPostHandler } from '../handlers/paymentAmount'
+import languageRouter from './language'
 import { Services } from '../services'
 
 export enum Page {
@@ -13,21 +13,15 @@ export enum Page {
 export default function routes(services: Services): Router {
   const router = Router()
 
-  router.get(
-    '/',
-    startPageHandler({
-      production: config.production,
-      productionStartPageUrl: config.productionStartPageUrl,
-      sendMoneyUrl: config.sendMoneyUrl,
-    }),
-  )
-
-  router.get('/info-page', async (_req, res, _next) => {
-    return res.render('pages/info-page')
+  // redirect blank to the English start page
+  router.get('/', (_req, res, _next) => {
+    return res.redirect('/en-gb/')
   })
 
-  router.get('/en-gb/', async (_req, res, _next) => {
-    return res.render('pages/before-you-continue', { continueUrl: '/payment-choice', backLinkHref: '/' })
+  // handle the place holder pages
+  router.get('/start-page', startPageHandler(config))
+  router.get('/info-page', (_req, res, _next) => {
+    return res.render('pages/info-page')
   })
 
   router.get('/payment-choice', async (_req, res, _next) => {
@@ -58,6 +52,9 @@ export default function routes(services: Services): Router {
   router.get('/contact-us', async (_req, res, _next) => {
     return res.render('pages/contact-us')
   })
+  // configure the langauge specific routing
+  router.use('/en-gb/', languageRouter(services))
+  router.use('/cy/', languageRouter(services))
 
   return router
 }
