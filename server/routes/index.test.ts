@@ -32,22 +32,23 @@ afterEach(() => {
 })
 
 describe('GET /start-page', () => {
-  it('should render info page', () => {
+  it('should render start-page page', () => {
     return request(app)
       .get('/start-page')
       .expect('Content-Type', /html/)
       .expect(200)
       .expect(res => {
         expect(res.text).toContain('Send money to someone in prison')
+        expect(res.text).toContain('Staying in touch with someone in prison')
         expect(res.text).toContain('Start now')
       })
   })
 })
 
-describe('GET /start-page', () => {
+describe('GET /info-page', () => {
   it('should render info page', () => {
     return request(app)
-      .get('/start-page')
+      .get('/info-page')
       .expect('Content-Type', /html/)
       .expect(200)
       .expect(res => {
