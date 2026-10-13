@@ -9,7 +9,7 @@ import type { Services } from '../../services'
 import { HmppsUser } from '../../interfaces/hmppsUser'
 import setUpWebSession from '../../middleware/setUpWebSession'
 import type { ApplicationInfo } from '../../applicationInfo'
-import i18next, { DEFAULT_LANGUAGE } from '../../i18n/i18n'
+import i18next from '../../i18n/i18n'
 import setUpI18n from '../../middleware/setUpI18n'
 
 jest.mock('@ministryofjustice/hmpps-audit-client')

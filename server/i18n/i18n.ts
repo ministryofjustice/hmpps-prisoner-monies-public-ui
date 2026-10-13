@@ -3,9 +3,7 @@ import i18next from 'i18next'
 import Backend from 'i18next-fs-backend'
 import middleware from 'i18next-http-middleware'
 import logger from '../../logger'
-
-export const SUPPORTED_LANGUAGES = ['en-gb', 'cy'] as const
-export const DEFAULT_LANGUAGE = 'en-gb'
+import { SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE } from '../utils/locale'
 
 // Reads translations lazily from disk, so migrating a language is just adding a
 // `server/i18n/locales/<lng>/translation.json` file - no code changes needed.

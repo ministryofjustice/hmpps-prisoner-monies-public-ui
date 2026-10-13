@@ -1,12 +1,12 @@
-export const SUPPORTED_LANGUAGES: Record<string, 'en-gb' | 'cy'> = {
-  'en-gb': 'en-gb',
-  cy: 'cy',
-}
-export const DEFAULT_LANGUAGE = 'en-gb'
+export const SUPPORTED_LANGUAGES = ['en-gb', 'cy'] as const
+export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number]
+export const DEFAULT_LANGUAGE: SupportedLanguage = 'en-gb'
 
-export function detectLocaleFromPath(path: string): 'en-gb' | 'cy' {
+const SUPPORTED_LANGUAGE_SET: ReadonlySet<string> = new Set(SUPPORTED_LANGUAGES)
+
+export function detectLocaleFromPath(path: string): SupportedLanguage {
   const firstSegment = path.split('/').filter(Boolean)[0]
-  return SUPPORTED_LANGUAGES[firstSegment] ?? DEFAULT_LANGUAGE
+  return SUPPORTED_LANGUAGE_SET.has(firstSegment) ? (firstSegment as SupportedLanguage) : DEFAULT_LANGUAGE
 }
 
 export const buildLocalePath =

@@ -1,6 +1,5 @@
 import { Router } from 'express'
 import languageRouter from './language'
-import { prisonerDetailsGetHandler, prisonerDetailsPostHandler } from '../handlers/prisonerDetails'
 import { Services } from '../services'
 import startPageHandler from '../handlers/startPage'
 import config from '../config'
