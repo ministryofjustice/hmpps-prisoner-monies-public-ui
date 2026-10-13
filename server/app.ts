@@ -38,14 +38,7 @@ export default function createApp(services: Services): express.Application {
   app.use(setUpI18n())
   app.use(routes(services))
 
-  app.use((_req, res, next) => {
-    if (process.env.NODE_ENV === 'production') {
-      res.status(404)
-      res.render('pages/not-found')
-      return
-    }
-    next(createError(404, 'Not found'))
-  })
+  app.use((_req, _res, next) => next(createError(404, 'Not found')))
   app.use(errorHandler(process.env.NODE_ENV === 'production'))
 
   return app

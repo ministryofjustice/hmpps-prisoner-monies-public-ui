@@ -26,6 +26,11 @@ export default function createErrorHandler(production: boolean) {
       res.locals.localePath = buildLocalePath(res.locals.locale)
     }
 
+    if (error.status === 404 && production) {
+      res.status(404)
+      return res.render('pages/not-found')
+    }
+
     res.status(error.status || 500)
 
     return res.render('pages/error')
