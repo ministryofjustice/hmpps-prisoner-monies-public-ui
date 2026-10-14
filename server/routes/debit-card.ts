@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { prisonerDetailsGetHandler, prisonerDetailsPostHandler } from '../handlers/prisonerDetails'
 import { Services } from '../services'
+import { paymentAmountGetHandler, paymentAmountPostHandler } from '../handlers/paymentAmount'
 
 // all pages that sit under /{locale}/debit-card/ in the application
 export default function routes(services: Services): Router {
@@ -10,9 +11,12 @@ export default function routes(services: Services): Router {
 
   router.post('/details', prisonerDetailsPostHandler(services.sendMoneyToPrisonerService))
 
-  router.get('/amount', async (_req, res, _next) => {
-    return res.render('pages/payment-amount', {})
-  })
+  router.get('/amount', paymentAmountGetHandler)
 
+  router.post('/amount', paymentAmountPostHandler())
+
+  router.get('/check', async (_req, res, _next) => {
+    return res.render('pages/check-details', {})
+  })
   return router
 }

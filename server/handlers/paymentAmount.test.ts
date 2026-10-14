@@ -1,14 +1,6 @@
 import type { NextFunction, Request, Response } from 'express'
 import { paymentAmountGetHandler, paymentAmountPostHandler } from './paymentAmount'
-
-type ResSubset = Pick<Response, 'redirect' | 'render'>
-
-const makeRes = (): { res: ResSubset; redirect: jest.Mock; render: jest.Mock } => {
-  const redirect = jest.fn()
-  const render = jest.fn()
-  const res = { redirect, render } as unknown as ResSubset
-  return { res, redirect, render }
-}
+import makeRes from '../testutils/mockResponse'
 
 const next = jest.fn() as unknown as NextFunction
 
@@ -20,6 +12,7 @@ describe('paymentAmountGetHandler', () => {
     paymentAmountGetHandler(req, res as unknown as Response, next)
 
     expect(render).toHaveBeenCalledWith('pages/payment-amount', {
+      postPaymentAmount: res.locals.localePath('/debit-card/amount'),
       errors: {},
       errorList: [],
       formValues: {},
@@ -62,6 +55,6 @@ describe('paymentAmountPostHandler success handling', () => {
     await handler(req, res as unknown as Response, next)
 
     expect(req.session.sendMoney?.amount).toBe('10.00')
-    expect(redirect).toHaveBeenCalledWith('/debit-card/check')
+    expect(redirect).toHaveBeenCalledWith(res.locals.localePath('/debit-card/check'))
   })
 })
