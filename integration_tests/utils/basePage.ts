@@ -18,15 +18,26 @@ export default class BasePage {
   /** phase banner that appears in the header, common to every page */
   readonly phaseBanner: Locator
 
+  // defaults to en-gb on init()
+  protected locale: string
+
   continueButtonId: string = '#id_next_btn'
 
   h1Title: string = ''
 
-  protected url: string = '<missing-url>'
+  protected path: string = '<missing-path>'
 
-  protected constructor(page: Page) {
+  protected constructor(page: Page, locale: string = 'en-gb') {
     this.page = page
     this.phaseBanner = page.getByTestId('header-phase-banner')
+    this.locale = locale
+  }
+
+  protected get url(): string {
+    /*
+      Build a valid path based on the locale + set path for the page.
+    */
+    return `/${this.locale}${this.path.startsWith('/') ? this.path : `/${this.path}`}`
   }
 
   async goto() {

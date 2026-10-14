@@ -24,13 +24,14 @@ describe('GET 404', () => {
       })
   })
 
-  it('should render content without stack in production mode', () => {
+  it('should render the custom not-found page without a stack in production mode', () => {
     return request(appWithAllRoutes({ production: true }))
       .get('/unknown')
       .expect(404)
       .expect('Content-Type', /html/)
       .expect(res => {
-        expect(res.text).toContain('Something went wrong. The error has been logged. Please try again')
+        expect(res.text).toContain('Page not found')
+        expect(res.text).toContain('If you entered a web address please check it was correct.')
         expect(res.text).not.toContain('NotFoundError: Not Found')
       })
   })

@@ -1,15 +1,7 @@
 import type { NextFunction, Request, Response } from 'express'
 import startPageHandler from './startPage'
 import type { startPageHandlerConfig } from './startPage'
-
-type ResSubset = Pick<Response, 'redirect' | 'render'>
-
-const makeRes = (): { res: ResSubset; redirect: jest.Mock; render: jest.Mock } => {
-  const redirect = jest.fn()
-  const render = jest.fn()
-  const res = { redirect, render } as unknown as ResSubset
-  return { res, redirect, render }
-}
+import makeRes from '../testutils/mockResponse'
 
 const URL_SEND_MONEY = 'http://localhost:3000'
 const URL_PRODUCTION_START_PAGE = 'https://www.gov.uk/send-prisoner-money'

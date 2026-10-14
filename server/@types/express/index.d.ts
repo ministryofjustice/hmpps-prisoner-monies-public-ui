@@ -1,3 +1,4 @@
+import type { TFunction } from 'i18next'
 import { HmppsUser } from '../../interfaces/hmppsUser'
 
 export declare module 'express-session' {
@@ -32,6 +33,9 @@ export declare global {
       appInsightsConnectionString?: string
       appInsightsApplicationName?: string
       buildNumber?: string
+      t: TFunction
+      locale: string
+      localePath: (path: string) => string
     }
   }
 }
