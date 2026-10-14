@@ -1,4 +1,9 @@
-import { validateAmount } from './amountValidation'
+import { validateAmount as validateAmountWithT } from './amountValidation'
+import i18next, { i18nextInitPromise } from '../i18n/i18n'
+
+beforeAll(() => i18nextInitPromise)
+
+const validateAmount = (amount: string | undefined) => validateAmountWithT(amount, i18next.getFixedT('en-gb'))
 
 describe('validateAmount', () => {
   it('returns no error for a valid whole-pound amount', () => {

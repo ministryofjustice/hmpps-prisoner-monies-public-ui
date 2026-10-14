@@ -21,7 +21,7 @@ export const paymentAmountGetHandler: RequestHandler = (_req, res) => {
 export function paymentAmountPostHandler(): RequestHandler {
   return async (req, res) => {
     const formValues = req.body
-    const validationResult = validateAmount(formValues.amount)
+    const validationResult = validateAmount(formValues.amount, res.locals.t)
 
     if (validationResult.errorList.length > 0) {
       return renderPaymentAmount(res, formValues, validationResult)
