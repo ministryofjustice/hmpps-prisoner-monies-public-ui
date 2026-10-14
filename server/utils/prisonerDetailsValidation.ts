@@ -1,3 +1,5 @@
+import type { TFunction } from 'i18next'
+
 export type PrisonerDetailsFormValues = {
   prisonerName?: string
   prisonerDobDay?: string
@@ -24,7 +26,6 @@ export type PrisonerDetailsValidationResult = {
 }
 
 const prisonerNumberRegex = /^[a-zA-Z]\d{4}[a-zA-Z]{2}$/
-const requiredFieldError = 'This field is required.'
 
 function isValidDate(day: number, month: number, year: number): boolean {
   const date = new Date(year, month - 1, day)
@@ -35,9 +36,9 @@ function isValidDate(day: number, month: number, year: number): boolean {
 // 'required' error is raised immediately. Otherwise, each part (day, month, year) is validated
 // independently and ALL resulting errors are collected (not just the first one found), only
 // falling back to a single 'Enter a valid date' error once every individual part is itself valid.
-function validatePrisonerDob(formValues: PrisonerDetailsFormValues): string[] {
+function validatePrisonerDob(formValues: PrisonerDetailsFormValues, t: TFunction): string[] {
   if (!formValues.prisonerDobDay || !formValues.prisonerDobMonth || !formValues.prisonerDobYear) {
-    return [requiredFieldError]
+    return [t('prisonerDetails.step1.errors.required')]
   }
 
   const day = Number(formValues.prisonerDobDay)
@@ -48,21 +49,21 @@ function validatePrisonerDob(formValues: PrisonerDetailsFormValues): string[] {
   const fieldErrors: string[] = []
 
   if (Number.isNaN(day)) {
-    fieldErrors.push('Enter ‘day’ as a number')
+    fieldErrors.push(t('prisonerDetails.step1.errors.dobDayNumber'))
   } else if (day < 1 || day > 31) {
-    fieldErrors.push('‘Day’ should be between 1 and 31')
+    fieldErrors.push(t('prisonerDetails.step1.errors.dobDayRange'))
   }
 
   if (Number.isNaN(month)) {
-    fieldErrors.push('Enter ‘month’ as a number')
+    fieldErrors.push(t('prisonerDetails.step1.errors.dobMonthNumber'))
   } else if (month < 1 || month > 12) {
-    fieldErrors.push('‘Month’ should be between 1 and 12')
+    fieldErrors.push(t('prisonerDetails.step1.errors.dobMonthRange'))
   }
 
   if (Number.isNaN(year)) {
-    fieldErrors.push('Enter ‘year’ as a number')
+    fieldErrors.push(t('prisonerDetails.step1.errors.dobYearNumber'))
   } else if (year < 1900 || year > currentYear) {
-    fieldErrors.push(`‘Year’ should be between 1900 and ${currentYear}`)
+    fieldErrors.push(t('prisonerDetails.step1.errors.dobYearRange', { currentYear }))
   }
 
   if (fieldErrors.length > 0) {
@@ -70,43 +71,54 @@ function validatePrisonerDob(formValues: PrisonerDetailsFormValues): string[] {
   }
 
   if (!isValidDate(day, month, year)) {
-    return ['Enter a valid date']
+    return [t('prisonerDetails.step1.errors.dobInvalid')]
   }
 
   return []
 }
 
-export function validatePrisonerDetails(formValues: PrisonerDetailsFormValues): PrisonerDetailsValidationResult {
+export function validatePrisonerDetails(
+  formValues: PrisonerDetailsFormValues,
+  t: TFunction,
+): PrisonerDetailsValidationResult {
   const errors: PrisonerDetailsErrors = {}
 
   if (!formValues.prisonerName) {
-    errors.prisonerName = requiredFieldError
+    errors.prisonerName = t('prisonerDetails.step1.errors.required')
   }
 
-  const prisonerDobErrors = validatePrisonerDob(formValues)
+  const prisonerDobErrors = validatePrisonerDob(formValues, t)
   if (prisonerDobErrors.length > 0) {
     errors.prisonerDob = prisonerDobErrors
   }
 
   if (!formValues.prisonerNumber) {
-    errors.prisonerNumber = requiredFieldError
+    errors.prisonerNumber = t('prisonerDetails.step1.errors.required')
   } else if (!prisonerNumberRegex.test(formValues.prisonerNumber)) {
-    errors.prisonerNumber = 'Incorrect prisoner number format'
+    errors.prisonerNumber = t('prisonerDetails.step1.errors.prisonerNumberFormat')
   }
 
   const errorList: PrisonerDetailsErrorListItem[] = []
   if (errors.prisonerName) {
-    errorList.push({ label: 'Prisoner name', href: '#id_prisoner_name-label', messages: [errors.prisonerName] })
+    errorList.push({
+      label: t('prisonerDetails.step1.fields.prisonerName.label'),
+      href: '#id_prisoner_name-label',
+      messages: [errors.prisonerName],
+    })
   }
   if (errors.prisonerDob) {
     errorList.push({
-      label: 'Prisoner date of birth',
+      label: t('prisonerDetails.step1.fields.prisonerDob.legend'),
       href: '#id_prisoner_dob_0-label',
       messages: errors.prisonerDob,
     })
   }
   if (errors.prisonerNumber) {
-    errorList.push({ label: 'Prisoner number', href: '#id_prisoner_number-label', messages: [errors.prisonerNumber] })
+    errorList.push({
+      label: t('prisonerDetails.step1.fields.prisonerNumber.label'),
+      href: '#id_prisoner_number-label',
+      messages: [errors.prisonerNumber],
+    })
   }
 
   return { errors, errorList }

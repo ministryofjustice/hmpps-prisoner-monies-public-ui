@@ -1,6 +1,15 @@
-import { validatePrisonerDetails, PrisonerDetailsFormValues } from './prisonerDetailsValidation'
+import {
+  validatePrisonerDetails as validatePrisonerDetailsWithT,
+  PrisonerDetailsFormValues,
+} from './prisonerDetailsValidation'
+import i18next, { i18nextInitPromise } from '../i18n/i18n'
 
 const currentYear = new Date().getFullYear()
+
+beforeAll(() => i18nextInitPromise)
+
+const validatePrisonerDetails = (formValues: PrisonerDetailsFormValues) =>
+  validatePrisonerDetailsWithT(formValues, i18next.getFixedT('en-gb'))
 
 const validFormValues: PrisonerDetailsFormValues = {
   prisonerName: 'John Smith',

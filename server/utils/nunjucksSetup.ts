@@ -13,7 +13,11 @@ export default function nunjucksSetup(app: express.Express): void {
   app.locals.asset_path = '/assets/'
   app.locals.applicationName = 'HMPPS Prisoner Monies Public Ui'
   app.locals.environmentName = config.environmentName
-  app.locals.environmentNameColour = config.environmentName === 'PRE-PRODUCTION' ? 'govuk-tag--green' : ''
+  const ENVIRONMENT_NAME_COLOURS: Record<string, string> = {
+    DEV: 'govuk-tag--blue',
+    'PRE-PRODUCTION': 'govuk-tag--green',
+  }
+  app.locals.environmentNameColour = ENVIRONMENT_NAME_COLOURS[config.environmentName?.toUpperCase()] || ''
   let assetManifest: Record<string, string> = {}
 
   try {
