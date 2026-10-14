@@ -47,6 +47,13 @@ export function prisonerDetailsPostHandler(sendMoneyToPrisonerService: SendMoney
     )
 
     if (validPrisoner) {
+      req.session = req.session ?? {}
+      req.session.sendMoney = {
+        ...req.session.sendMoney,
+        prisonerName: formValues.prisonerName,
+        prisonerDOB: `${formValues.prisonerDobDay}-${formValues.prisonerDobMonth}-${formValues.prisonerDobYear}`,
+        prisonerNumber: formValues.prisonerNumber,
+      }
       return res.redirect(res.locals.localePath('/debit-card/amount'))
     }
 

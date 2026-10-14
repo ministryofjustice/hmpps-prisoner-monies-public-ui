@@ -66,7 +66,7 @@ describe('prisonerDetailsPostHandler', () => {
   it('redirects to the amount page when the prisoner is valid', async () => {
     sendMoneyToPrisonerService.getValidPrisoner.mockResolvedValue({
       prisonerNumber: validFormBody.prisoner_number,
-      prisonerDOB: '1990-2-1',
+      prisonerDOB: `${validFormBody.prisoner_dob_0}-${validFormBody.prisoner_dob_1}-${validFormBody.prisoner_dob_0}`,
     })
     const req = { body: validFormBody } as unknown as Request
     const { res, redirect, render } = makeRes()
@@ -77,6 +77,42 @@ describe('prisonerDetailsPostHandler', () => {
     expect(sendMoneyToPrisonerService.getValidPrisoner).toHaveBeenCalledWith('A1234BC', '1990-2-1')
     expect(redirect).toHaveBeenCalledWith('/debit-card/amount')
     expect(render).not.toHaveBeenCalled()
+  })
+
+  it('stores the prisoner details in the session when the prisoner is valid', async () => {
+    sendMoneyToPrisonerService.getValidPrisoner.mockResolvedValue({
+      prisonerNumber: validFormBody.prisoner_number,
+      prisonerDOB: `${validFormBody.prisoner_dob_0}-${validFormBody.prisoner_dob_1}-${validFormBody.prisoner_dob_0}`,
+    })
+    const req = { body: validFormBody, session: {} } as unknown as Request
+    const { res } = makeRes()
+
+    const handler = prisonerDetailsPostHandler(sendMoneyToPrisonerService)
+    await handler(req, res as unknown as Response, next)
+
+    expect(req.session.sendMoney?.prisonerNumber).toBe(validFormBody.prisoner_number)
+  })
+
+  it('preserves other sendMoney session values already stored (e.g. amount)', async () => {
+    sendMoneyToPrisonerService.getValidPrisoner.mockResolvedValue({
+      prisonerNumber: validFormBody.prisoner_number,
+      prisonerDOB: `${validFormBody.prisoner_dob_0}-${validFormBody.prisoner_dob_1}-${validFormBody.prisoner_dob_2}`,
+    })
+    const req = {
+      body: validFormBody,
+      session: { sendMoney: { amount: '10.00' } },
+    } as unknown as Request
+    const { res } = makeRes()
+
+    const handler = prisonerDetailsPostHandler(sendMoneyToPrisonerService)
+    await handler(req, res as unknown as Response, next)
+
+    expect(req.session.sendMoney).toEqual({
+      amount: '10.00',
+      prisonerName: validFormBody.prisoner_name,
+      prisonerDOB: '1-2-1990',
+      prisonerNumber: validFormBody.prisoner_number,
+    })
   })
 
   it('re-renders with no field errors when the prisoner cannot be found', async () => {
