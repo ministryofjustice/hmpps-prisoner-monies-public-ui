@@ -2,10 +2,6 @@ import { Router } from 'express'
 import { Services } from '../services'
 import debitCardRouter from './debit-card'
 
-export enum Page {
-  SEARCH_OFFENDERS = 'SEARCH_OFFENDERS',
-}
-
 export default function routes(services: Services): Router {
   const router = Router()
 

@@ -1,12 +1,10 @@
 import { Router } from 'express'
-import languageRouter from './language'
 import { Services } from '../services'
+import languageRouter from './language'
 import startPageHandler from '../handlers/startPage'
 import config from '../config'
-
-export enum Page {
-  SEARCH_OFFENDERS = 'SEARCH_OFFENDERS',
-}
+import auditPageViewRequest from '../middleware/auditPageViewRequest'
+import Page from '../constants/pages'
 
 export default function routes(services: Services): Router {
   const router = Router()
@@ -17,8 +15,8 @@ export default function routes(services: Services): Router {
   })
 
   // handle the place holder pages
-  router.get('/start-page', startPageHandler(config))
-  router.get('/info-page', (_req, res, _next) => {
+  router.get('/start-page', auditPageViewRequest({ services, page: Page.START }), startPageHandler(config))
+  router.get('/info-page', auditPageViewRequest({ services, page: Page.STAY_IN_TOUCH }), (_req, res, _next) => {
     return res.render('pages/info-page')
   })
 
