@@ -24,7 +24,7 @@ describe('validatePrisonerDetails', () => {
       expect(result.errors.prisonerName).toBe('This field is required.')
       expect(result.errorList).toContainEqual({
         label: 'Prisoner name',
-        href: '#id_prisoner_name-label',
+        href: '#id_prisoner_name',
         messages: ['This field is required.'],
       })
     })
@@ -54,7 +54,7 @@ describe('validatePrisonerDetails', () => {
       expect(result.errors.prisonerDob).toEqual(['This field is required.'])
       expect(result.errorList).toContainEqual({
         label: 'Prisoner date of birth',
-        href: '#id_prisoner_dob_0-label',
+        href: '#id_prisoner_dob_0',
         messages: ['This field is required.'],
       })
     })
@@ -174,7 +174,7 @@ describe('validatePrisonerDetails', () => {
 
       expect(result.errorList).toContainEqual({
         label: 'Prisoner date of birth',
-        href: '#id_prisoner_dob_0-label',
+        href: '#id_prisoner_dob_0',
         messages: [
           '‘Day’ should be between 1 and 31',
           '‘Month’ should be between 1 and 12',
@@ -197,7 +197,7 @@ describe('validatePrisonerDetails', () => {
       expect(result.errors.prisonerNumber).toBe('This field is required.')
       expect(result.errorList).toContainEqual({
         label: 'Prisoner number',
-        href: '#id_prisoner_number-label',
+        href: '#id_prisoner_number',
         messages: ['This field is required.'],
       })
     })
@@ -223,13 +223,13 @@ describe('validatePrisonerDetails', () => {
       const result = validatePrisonerDetails({})
 
       expect(result.errorList).toEqual([
-        { label: 'Prisoner name', href: '#id_prisoner_name-label', messages: ['This field is required.'] },
+        { label: 'Prisoner name', href: '#id_prisoner_name', messages: ['This field is required.'] },
         {
           label: 'Prisoner date of birth',
-          href: '#id_prisoner_dob_0-label',
+          href: '#id_prisoner_dob_0',
           messages: ['This field is required.'],
         },
-        { label: 'Prisoner number', href: '#id_prisoner_number-label', messages: ['This field is required.'] },
+        { label: 'Prisoner number', href: '#id_prisoner_number', messages: ['This field is required.'] },
       ])
     })
   })

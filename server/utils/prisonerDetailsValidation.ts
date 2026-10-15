@@ -96,17 +96,17 @@ export function validatePrisonerDetails(formValues: PrisonerDetailsFormValues): 
 
   const errorList: PrisonerDetailsErrorListItem[] = []
   if (errors.prisonerName) {
-    errorList.push({ label: 'Prisoner name', href: '#id_prisoner_name-label', messages: [errors.prisonerName] })
+    errorList.push({ label: 'Prisoner name', href: '#id_prisoner_name', messages: [errors.prisonerName] })
   }
   if (errors.prisonerDob) {
     errorList.push({
       label: 'Prisoner date of birth',
-      href: '#id_prisoner_dob_0-label',
+      href: '#id_prisoner_dob_0',
       messages: errors.prisonerDob,
     })
   }
   if (errors.prisonerNumber) {
-    errorList.push({ label: 'Prisoner number', href: '#id_prisoner_number-label', messages: [errors.prisonerNumber] })
+    errorList.push({ label: 'Prisoner number', href: '#id_prisoner_number', messages: [errors.prisonerNumber] })
   }
 
   return { errors, errorList }

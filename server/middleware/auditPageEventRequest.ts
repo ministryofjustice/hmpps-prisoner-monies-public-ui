@@ -1,4 +1,4 @@
-import type { RequestHandler } from 'express'
+import type { Request, RequestHandler } from 'express'
 import ANONYMOUS_USER from '../constants/audit'
 import type { Services } from '../services'
 import AuditEvent from '../constants/events'
@@ -7,11 +7,11 @@ import AuditEvent from '../constants/events'
 export default function auditPageEventRequest({
   services,
   whatEvent,
-  eventDetails,
+  getEventDetails,
 }: {
   services: Services
   whatEvent: AuditEvent
-  eventDetails: Record<string, unknown>
+  getEventDetails: (req: Request) => Record<string, unknown>
 }): RequestHandler {
   const { auditService } = services
 
@@ -21,7 +21,7 @@ export default function auditPageEventRequest({
       who: ANONYMOUS_USER,
       what: whatEvent,
       subjectType: 'NOT_APPLICABLE',
-      details: eventDetails,
+      details: getEventDetails(req),
     })
 
     next()

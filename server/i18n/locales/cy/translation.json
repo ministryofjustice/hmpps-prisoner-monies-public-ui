@@ -25,5 +25,23 @@
     "pageTitle": "Ni ellir dod o hyd i’r dudalen",
     "message": "Os gwnaethoch nodi cyfeiriad gwefan yna gwiriwch ei fod yn gywir.",
     "linkText": "Dychwelyd i'r dudalen gartref"
+  },
+  "paymentAmount": {
+    "pageTitle": "Nodwch y swm yr ydych eisiau anfon",
+    "pageCaption": "Talu nawr gyda cherdyn debyd",
+    "errorSummaryTitle": "Roedd problem",
+    "fields": {
+      "amount": {
+        "label": "Swm"
+      }
+    },
+    "errors": {
+      "required": "Mae’n rhaid llenwi’r maes hwn.",
+      "notANumber": "Nodwch fel rhif",
+      "tooSmall": "Dylai'r swm fod yn 1c neu fwy",
+      "tooManyDecimalPlaces": "Defnyddiwch 2 le degol yn unig",
+      "tooLarge": "Mae'r swm rydych yn ceisio ei anfon yn rhy fawr. Nodwch swm llai"
+    },
+    "submit": "Gwirio'r manylion"
   }
 }

@@ -5,6 +5,8 @@ import { appWithAllRoutes, user } from './testutils/appSetup'
 import ExampleService from '../services/exampleService'
 import ExampleApiClient from '../data/exampleApiClient'
 import SendMoneyToPrisonerService from '../services/sendMoneyToPrisonerService'
+import ANONYMOUS_USER from '../constants/audit'
+import AuditEvent from '../constants/events'
 
 jest.mock('@ministryofjustice/hmpps-audit-client')
 jest.mock('../services/exampleService')
@@ -56,7 +58,6 @@ describe('GET /info-page', () => {
       })
   })
 })
-
 describe('GET /payment-choice', () => {
   it('should render payment choice page', () => {
     return request(app).get('/payment-choice').expect('Content-Type', /html/).expect(404)
@@ -176,12 +177,64 @@ describe.each([['en-gb'], ['cy']])('POST /%s/debit-card/details', locale => {
       .send({})
       .expect(200)
       .expect(res => {
-        expect(res.text).toContain('href="#id_prisoner_name-label"')
+        expect(res.text).toContain('href="#id_prisoner_name"')
         expect(res.text).toContain('id="id_prisoner_name"')
-        expect(res.text).toContain('href="#id_prisoner_dob_0-label"')
+        expect(res.text).toContain('href="#id_prisoner_dob_0"')
         expect(res.text).toContain('id="id_prisoner_dob_0"')
-        expect(res.text).toContain('href="#id_prisoner_number-label"')
+        expect(res.text).toContain('href="#id_prisoner_number"')
         expect(res.text).toContain('id="id_prisoner_number"')
+      })
+  })
+})
+
+describe.each([['en-gb'], ['cy']])('GET /%s/debit-card/amount', locale => {
+  it('renders a form whose field name matches what the handler reads from the request body', () => {
+    return request(app)
+      .get(`/${locale}/debit-card/amount`)
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain('name="amount"')
+      })
+  })
+})
+
+describe.each([['en-gb'], ['cy']])('POST /%s/debit-card/amount', locale => {
+  it('redirects to the check details page when the amount is valid', () => {
+    return request(app)
+      .post(`/${locale}/debit-card/amount`)
+      .type('form')
+      .send({ amount: '17.50' })
+      .expect(302)
+      .expect('Location', `/${locale}/debit-card/check`)
+  })
+
+  it('audits the submitted amount', () => {
+    return request(app)
+      .post(`/${locale}/debit-card/amount`)
+      .type('form')
+      .send({ amount: '17.50' })
+      .expect(302)
+      .expect(() => {
+        expect(auditService.logAuditEvent).toHaveBeenCalledWith({
+          correlationId: '4d0fd4da-ecc1-454d-8308-cdee6b8b91f7',
+          who: ANONYMOUS_USER,
+          what: AuditEvent.AMOUNT_TO_VALIDATE,
+          subjectType: 'NOT_APPLICABLE',
+          details: { amount: '17.50' },
+        })
+      })
+  })
+
+  it('re-renders with an error summary whose link points at the amount field', () => {
+    return request(app)
+      .post(`/${locale}/debit-card/amount`)
+      .type('form')
+      .send({})
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain('href="#id_amount"')
+        expect(res.text).toContain('id="id_amount"')
       })
   })
 })

@@ -3,6 +3,7 @@ import HomePage from '../pages/homePage'
 import BeforeYouContinuePage from '../pages/beforeYouContinuePage'
 import PrisonerDetailsPage, { type PrisonerDetailsFormInput } from '../pages/prisonerDetailsPage'
 import PaymentAmountPage from '../pages/paymentAmountPage'
+import CheckDetailsPage from '../pages/checkDetailsPage'
 
 const VALID_PRISONER_DETAILS: PrisonerDetailsFormInput = {
   prisonerName: 'John Smith',
@@ -82,5 +83,24 @@ test.describe('Send money journey', () => {
 
     await expect(page).toHaveURL(/\/debit-card\/amount$/)
     await PaymentAmountPage.verifyOnPage(page)
+  })
+
+  test('Submitting a valid amount moves the user on to the check details page', async ({ page }) => {
+    const amountPage = await PaymentAmountPage.goTo(page)
+    await amountPage.fillForm({ amount: '10.00' })
+
+    await amountPage.checkDetails()
+    await expect(page).toHaveURL(/\/debit-card\/check$/)
+    await CheckDetailsPage.verifyOnPage(page)
+  })
+
+  test('Submitting an empty amount shows a validation error', async ({ page }) => {
+    const amountPage = await PaymentAmountPage.goTo(page)
+
+    await amountPage.checkDetails()
+
+    await expect(page).toHaveURL(/\/debit-card\/amount$/)
+    await expect(amountPage.errorSummary).toBeVisible()
+    await expect(amountPage.errorMessageLink('Amount')).toBeVisible()
   })
 })

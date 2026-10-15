@@ -26,7 +26,7 @@ describe('auditPageEventRequest', () => {
     await auditPageEventRequest({
       services,
       whatEvent: AuditEvent.AMOUNT_TO_VALIDATE,
-      eventDetails,
+      getEventDetails: () => eventDetails,
     })(req, res, next)
 
     expect(logAuditEvent).toHaveBeenCalledWith({
@@ -42,7 +42,7 @@ describe('auditPageEventRequest', () => {
     await auditPageEventRequest({
       services,
       whatEvent: AuditEvent.AMOUNT_TO_VALIDATE,
-      eventDetails: {},
+      getEventDetails: () => ({}),
     })(req, res, next)
 
     expect(next).toHaveBeenCalled()
