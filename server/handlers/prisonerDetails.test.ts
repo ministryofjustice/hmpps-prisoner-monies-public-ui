@@ -7,8 +7,11 @@ import {
 import SendMoneyToPrisonerService from '../services/sendMoneyToPrisonerService'
 
 import makeRes from '../testutils/mockResponse'
+import i18next, { i18nextInitPromise } from '../i18n/i18n'
 
 jest.mock('../services/sendMoneyToPrisonerService')
+
+beforeAll(() => i18nextInitPromise)
 
 const next = jest.fn() as unknown as NextFunction
 
@@ -51,6 +54,7 @@ describe('prisonerDetailsPostHandler', () => {
   it('re-renders with validation errors when the form is invalid', async () => {
     const req = { body: {} } as unknown as Request
     const { res, render, redirect } = makeRes()
+    res.locals.t = i18next.getFixedT('en-gb')
 
     const handler = prisonerDetailsPostHandler(sendMoneyToPrisonerService)
     await handler(req, res as unknown as Response, next)
@@ -70,6 +74,7 @@ describe('prisonerDetailsPostHandler', () => {
     })
     const req = { body: validFormBody } as unknown as Request
     const { res, redirect, render } = makeRes()
+    res.locals.t = i18next.getFixedT('en-gb')
 
     const handler = prisonerDetailsPostHandler(sendMoneyToPrisonerService)
     await handler(req, res as unknown as Response, next)
@@ -119,6 +124,7 @@ describe('prisonerDetailsPostHandler', () => {
     sendMoneyToPrisonerService.getValidPrisoner.mockResolvedValue(undefined as never)
     const req = { body: validFormBody } as unknown as Request
     const { res, render, redirect } = makeRes()
+    res.locals.t = i18next.getFixedT('en-gb')
 
     const handler = prisonerDetailsPostHandler(sendMoneyToPrisonerService)
     await handler(req, res as unknown as Response, next)

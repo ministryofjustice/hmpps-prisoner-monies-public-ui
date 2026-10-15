@@ -35,7 +35,7 @@ export const prisonerDetailsGetHandler: RequestHandler = (_req, res) => {
 export function prisonerDetailsPostHandler(sendMoneyToPrisonerService: SendMoneyToPrisonerService): RequestHandler {
   return async (req, res) => {
     const formValues = extractPrisonerDetailsFormValues(req.body)
-    const validationResult = validatePrisonerDetails(formValues)
+    const validationResult = validatePrisonerDetails(formValues, res.locals.t)
 
     if (validationResult.errorList.length > 0) {
       return renderPrisonerDetails(res, formValues, validationResult)
