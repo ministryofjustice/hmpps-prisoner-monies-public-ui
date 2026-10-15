@@ -12,7 +12,7 @@ import AuditEvent from '../constants/events'
 export default function routes(services: Services): Router {
   const router = Router()
 
-  router.get('/details', prisonerDetailsGetHandler)
+  router.get('/details', auditPageViewRequest({ services, page: Page.DEBIT_CARD_DETAILS }), prisonerDetailsGetHandler)
 
   router.post('/details', prisonerDetailsPostHandler(services.sendMoneyToPrisonerService))
 
