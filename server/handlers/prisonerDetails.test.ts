@@ -23,6 +23,8 @@ const validFormBody = {
   prisoner_number: 'A1234BC',
 }
 
+const expectedPrisonerDOB = `${validFormBody.prisoner_dob_0}-${validFormBody.prisoner_dob_1}-${validFormBody.prisoner_dob_2}`
+
 describe('prisonerDetailsGetHandler', () => {
   it('renders the prisoner details page with empty form values and errors', () => {
     const req = {} as unknown as Request
@@ -70,7 +72,7 @@ describe('prisonerDetailsPostHandler', () => {
   it('redirects to the amount page when the prisoner is valid', async () => {
     sendMoneyToPrisonerService.getValidPrisoner.mockResolvedValue({
       prisonerNumber: validFormBody.prisoner_number,
-      prisonerDOB: `${validFormBody.prisoner_dob_0}-${validFormBody.prisoner_dob_1}-${validFormBody.prisoner_dob_0}`,
+      prisonerDOB: expectedPrisonerDOB,
     })
     const req = { body: validFormBody } as unknown as Request
     const { res, redirect, render } = makeRes()
@@ -79,7 +81,10 @@ describe('prisonerDetailsPostHandler', () => {
     const handler = prisonerDetailsPostHandler(sendMoneyToPrisonerService)
     await handler(req, res as unknown as Response, next)
 
-    expect(sendMoneyToPrisonerService.getValidPrisoner).toHaveBeenCalledWith('A1234BC', '1-2-1990')
+    expect(sendMoneyToPrisonerService.getValidPrisoner).toHaveBeenCalledWith(
+      validFormBody.prisoner_number,
+      expectedPrisonerDOB,
+    )
     expect(redirect).toHaveBeenCalledWith('/debit-card/amount')
     expect(render).not.toHaveBeenCalled()
   })
@@ -87,7 +92,7 @@ describe('prisonerDetailsPostHandler', () => {
   it('stores the prisoner details in the session when the prisoner is valid', async () => {
     sendMoneyToPrisonerService.getValidPrisoner.mockResolvedValue({
       prisonerNumber: validFormBody.prisoner_number,
-      prisonerDOB: `${validFormBody.prisoner_dob_0}-${validFormBody.prisoner_dob_1}-${validFormBody.prisoner_dob_0}`,
+      prisonerDOB: expectedPrisonerDOB,
     })
     const req = { body: validFormBody, session: {} } as unknown as Request
     const { res } = makeRes()
@@ -95,13 +100,15 @@ describe('prisonerDetailsPostHandler', () => {
     const handler = prisonerDetailsPostHandler(sendMoneyToPrisonerService)
     await handler(req, res as unknown as Response, next)
 
+    expect(req.session.sendMoney?.prisonerName).toBe(validFormBody.prisoner_name)
+    expect(req.session.sendMoney?.prisonerDOB).toBe(expectedPrisonerDOB)
     expect(req.session.sendMoney?.prisonerNumber).toBe(validFormBody.prisoner_number)
   })
 
   it('preserves other sendMoney session values already stored (e.g. amount)', async () => {
     sendMoneyToPrisonerService.getValidPrisoner.mockResolvedValue({
       prisonerNumber: validFormBody.prisoner_number,
-      prisonerDOB: `${validFormBody.prisoner_dob_0}-${validFormBody.prisoner_dob_1}-${validFormBody.prisoner_dob_2}`,
+      prisonerDOB: expectedPrisonerDOB,
     })
     const req = {
       body: validFormBody,
@@ -115,7 +122,7 @@ describe('prisonerDetailsPostHandler', () => {
     expect(req.session.sendMoney).toEqual({
       amount: '10.00',
       prisonerName: validFormBody.prisoner_name,
-      prisonerDOB: '1-2-1990',
+      prisonerDOB: expectedPrisonerDOB,
       prisonerNumber: validFormBody.prisoner_number,
     })
   })
