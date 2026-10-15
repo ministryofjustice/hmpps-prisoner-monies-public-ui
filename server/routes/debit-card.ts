@@ -15,7 +15,7 @@ export default function routes(services: Services): Router {
 
   router.post('/amount', paymentAmountPostHandler())
 
-  router.get('/check', async (_req, res, _next) => {
+  router.get('/check', (_req, res, _next) => {
     return res.render('pages/check-details', {})
   })
   return router
