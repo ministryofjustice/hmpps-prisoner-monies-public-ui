@@ -1,4 +1,7 @@
 {
+  "common": {
+    "serviceName": "Send money to someone in prison"
+  },
   "terms": {
     "pageTitle": "Terms and conditions",
     "intro1": "By using the ‘Send money to someone in prison’ service you agree to our privacy policy and to these terms and conditions.",
