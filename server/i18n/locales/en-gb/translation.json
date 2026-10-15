@@ -1,4 +1,7 @@
 {
+  "common": {
+    "serviceName": "Send money to someone in prison"
+  },
   "terms": {
     "pageTitle": "Terms and conditions",
     "intro1": "By using the ‘Send money to someone in prison’ service you agree to our privacy policy and to these terms and conditions.",
@@ -42,5 +45,23 @@
     "pageTitle": "Page not found",
     "message": "If you entered a web address please check it was correct.",
     "linkText": "Return to the home page"
+  },
+  "paymentAmount": {
+    "pageTitle": "Enter amount to send",
+    "pageCaption": "Pay now by debit card",
+    "errorSummaryTitle": "There was a problem",
+    "fields": {
+      "amount": {
+        "label": "Amount"
+      }
+    },
+    "errors": {
+      "required": "This field is required.",
+      "notANumber": "Enter as a number",
+      "tooSmall": "Amount should be 1p or more",
+      "tooManyDecimalPlaces": "Only use 2 decimal places",
+      "tooLarge": "The amount you are trying to send is too large. Please enter a smaller amount"
+    },
+    "submit": "Check details"
   }
 }

@@ -84,6 +84,7 @@ describe.each([
         expect(res.text).toContain(`href="/${locale}/privacy"`)
         expect(res.text).toContain(`href="/${locale}/contact-us"`)
         expect(res.text).toContain('govuk-back-link')
+        expect(res.text).toContain('class="app-user-agreement"')
       })
   })
 })
