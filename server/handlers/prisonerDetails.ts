@@ -41,9 +41,10 @@ export function prisonerDetailsPostHandler(sendMoneyToPrisonerService: SendMoney
       return renderPrisonerDetails(res, formValues, validationResult)
     }
 
+    const prisonerDOB = `${formValues.prisonerDobDay}-${formValues.prisonerDobMonth}-${formValues.prisonerDobYear}`
     const validPrisoner = await sendMoneyToPrisonerService.getValidPrisoner(
       formValues.prisonerNumber as string,
-      `${formValues.prisonerDobYear}-${formValues.prisonerDobMonth}-${formValues.prisonerDobDay}`,
+      prisonerDOB,
     )
 
     if (validPrisoner) {
@@ -51,7 +52,7 @@ export function prisonerDetailsPostHandler(sendMoneyToPrisonerService: SendMoney
       req.session.sendMoney = {
         ...req.session.sendMoney,
         prisonerName: formValues.prisonerName,
-        prisonerDOB: `${formValues.prisonerDobDay}-${formValues.prisonerDobMonth}-${formValues.prisonerDobYear}`,
+        prisonerDOB,
         prisonerNumber: formValues.prisonerNumber,
       }
       return res.redirect(res.locals.localePath('/debit-card/amount'))

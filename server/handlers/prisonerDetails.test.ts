@@ -79,7 +79,7 @@ describe('prisonerDetailsPostHandler', () => {
     const handler = prisonerDetailsPostHandler(sendMoneyToPrisonerService)
     await handler(req, res as unknown as Response, next)
 
-    expect(sendMoneyToPrisonerService.getValidPrisoner).toHaveBeenCalledWith('A1234BC', '1990-2-1')
+    expect(sendMoneyToPrisonerService.getValidPrisoner).toHaveBeenCalledWith('A1234BC', '1-2-1990')
     expect(redirect).toHaveBeenCalledWith('/debit-card/amount')
     expect(render).not.toHaveBeenCalled()
   })
