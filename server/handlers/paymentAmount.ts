@@ -19,7 +19,7 @@ export const paymentAmountGetHandler: RequestHandler = (_req, res) => {
 }
 
 export function paymentAmountPostHandler(): RequestHandler {
-  return async (req, res) => {
+  return (req, res) => {
     const formValues = req.body
     const validationResult = validateAmount(formValues.amount, res.locals.t)
 
