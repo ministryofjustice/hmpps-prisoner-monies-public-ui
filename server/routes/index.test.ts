@@ -7,6 +7,7 @@ import ExampleApiClient from '../data/exampleApiClient'
 import SendMoneyToPrisonerService from '../services/sendMoneyToPrisonerService'
 import ANONYMOUS_USER from '../constants/audit'
 import AuditEvent from '../constants/events'
+import i18next from '../i18n/i18n'
 
 jest.mock('@ministryofjustice/hmpps-audit-client')
 jest.mock('../services/exampleService')
@@ -72,7 +73,7 @@ describe('GET /:lang/terms with an unsupported prefix', () => {
 
 describe.each([
   ['en-gb', 'Before you continue'],
-  ['cy', 'Before you continue'],
+  ['cy', 'Cyn i chi barhau'],
 ])('GET /%s/', (locale, expectedHeading) => {
   it('should render before you continue page', () => {
     return request(app)
@@ -264,14 +265,22 @@ describe('language route test', () => {
       })
   })
 
-  it('falls back to the default language when a translation key is missing', () => {
+  it('translates the before you continue page into Welsh for the /cy prefix', () => {
     return request(app)
       .get('/cy/')
       .expect(200)
       .expect(res => {
-        // 'terms.pageTitle' only exists in the en translation
-        expect(res.text).toContain('<a class="govuk-link" href="/cy/terms">terms and conditions</a>')
+        expect(res.text).toContain('Cyn i chi barhau')
+        expect(res.text).toContain('<a class="govuk-link" href="/cy/terms">telerau ac amodau</a>')
+        expect(res.text).toContain('<a class="govuk-link" href="/cy/privacy">polisi preifatrwydd</a>')
       })
+  })
+
+  it('falls back to the default language when a translation key is missing', async () => {
+    await i18next.loadNamespaces('translation')
+    // 'terms.pageTitle' only exists in the en-gb translation, so the cy-fixed
+    // translator should fall back to the English value rather than the key itself
+    expect(i18next.getFixedT('cy')('terms.pageTitle')).toBe('Terms and conditions')
   })
 
   it('404s for an unsupported language prefix', () => {
