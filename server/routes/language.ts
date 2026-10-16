@@ -17,22 +17,22 @@ export default function routes(services: Services): Router {
     })
   })
 
-  router.get('/payment-choice', async (_req, res, _next) => {
+  router.get('/payment-choice', (_req, res, _next) => {
     return res.render('pages/payment-choice', {
       backLinkHref: res.locals.localePath('/'),
       continueUrl: res.locals.localePath('/debit-card/details'),
     })
   })
 
-  router.get('/terms', async (_req, res, _next) => {
+  router.get('/terms', (_req, res, _next) => {
     return res.render(`pages/${res.locals.locale}/terms`)
   })
 
-  router.get('/privacy', async (_req, res, _next) => {
+  router.get('/privacy', (_req, res, _next) => {
     return res.render(`pages/${res.locals.locale}/privacy`)
   })
 
-  router.get('/contact-us', async (_req, res, _next) => {
+  router.get('/contact-us', (_req, res, _next) => {
     return res.render(`pages/${res.locals.locale}/contact-us`)
   })
 
