@@ -10,7 +10,7 @@ export default function routes(services: Services): Router {
   const router = Router()
 
   // redirect blank to the English start page
-  router.get('/', (_req, res, _next) => {
+  router.get('/', auditPageViewRequest({ services, page: Page.BEFORE_YOU_CONTINUE }), (_req, res, _next) => {
     return res.redirect('/en-gb/')
   })
 
