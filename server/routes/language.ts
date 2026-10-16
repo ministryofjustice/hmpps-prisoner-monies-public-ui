@@ -22,22 +22,22 @@ export default function routes(services: Services): Router {
     },
   )
 
-  router.get(paths.PAYMENT_CHOICE, async (_req, res, _next) => {
+  router.get(paths.PAYMENT_CHOICE, (_req, res, _next) => {
     return res.render('pages/payment-choice', {
       backLinkHref: res.locals.localePath(paths.ROOT),
       continueUrl: res.locals.localePath(`${paths.DEBIT_CARD.ROOT}${paths.DEBIT_CARD.DETAILS}`),
     })
   })
 
-  router.get(paths.TERMS, async (_req, res, _next) => {
+  router.get(paths.TERMS, (_req, res, _next) => {
     return res.render(`pages/${res.locals.locale}/terms`)
   })
 
-  router.get(paths.PRIVACY, async (_req, res, _next) => {
+  router.get(paths.PRIVACY, (_req, res, _next) => {
     return res.render(`pages/${res.locals.locale}/privacy`)
   })
 
-  router.get(paths.CONTACT_US, async (_req, res, _next) => {
+  router.get(paths.CONTACT_US, (_req, res, _next) => {
     return res.render(`pages/${res.locals.locale}/contact-us`)
   })
 
