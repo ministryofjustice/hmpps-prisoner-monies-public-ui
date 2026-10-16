@@ -1,5 +1,6 @@
 import { type Locator, type Page } from '@playwright/test'
 import BasePage from '../utils/basePage'
+import paths from '../../server/constants/paths'
 
 export default class BeforeYouContinuePage extends BasePage {
   readonly termsLink: Locator
@@ -10,7 +11,7 @@ export default class BeforeYouContinuePage extends BasePage {
 
   h1Title = 'Before you continue'
 
-  protected path = '/'
+  protected path = paths.BEFORE_YOU_CONTINUE
 
   private constructor(page: Page) {
     super(page)

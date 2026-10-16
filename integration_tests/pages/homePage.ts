@@ -1,12 +1,13 @@
 import { type Locator, type Page } from '@playwright/test'
 import BasePage from '../utils/basePage'
+import path from '../../server/constants/paths'
 
 export default class HomePage extends BasePage {
   readonly startNowButton: Locator
 
   h1Title = 'Send money to someone in prison'
 
-  protected path = '/start-page'
+  protected path = path.START
 
   private constructor(page: Page) {
     // no locale specified, default to empty string

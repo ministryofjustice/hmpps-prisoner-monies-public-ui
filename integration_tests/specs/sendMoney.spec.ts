@@ -4,6 +4,7 @@ import BeforeYouContinuePage from '../pages/beforeYouContinuePage'
 import PrisonerDetailsPage, { type PrisonerDetailsFormInput } from '../pages/prisonerDetailsPage'
 import PaymentAmountPage from '../pages/paymentAmountPage'
 import CheckDetailsPage from '../pages/checkDetailsPage'
+import paths from '../../server/constants/paths'
 
 const VALID_PRISONER_DETAILS: PrisonerDetailsFormInput = {
   prisonerName: 'John Smith',
@@ -19,7 +20,7 @@ test.describe('Send money journey', () => {
 
     await homePage.clickStartNow()
 
-    await expect(page).toHaveURL(/\/en-gb\/$/)
+    await expect(page).toHaveURL(new RegExp(`${paths.LOCALE.EN_GB}$`))
     await BeforeYouContinuePage.verifyOnPage(page)
   })
 
@@ -27,12 +28,12 @@ test.describe('Send money journey', () => {
     const beforeYouContinuePage = await BeforeYouContinuePage.goTo(page)
 
     await beforeYouContinuePage.termsLink.click()
-    await expect(page).toHaveURL(/\/terms$/)
+    await expect(page).toHaveURL(new RegExp(`${paths.TERMS}$`))
     await expect(page.getByRole('heading', { level: 1, name: 'Terms and conditions' })).toBeVisible()
 
     await page.goBack()
     await beforeYouContinuePage.privacyLink.click()
-    await expect(page).toHaveURL(/\/privacy$/)
+    await expect(page).toHaveURL(new RegExp(`${paths.PRIVACY}$`))
     await expect(page.getByRole('heading', { level: 1, name: 'Privacy policy' })).toBeVisible()
   })
 
@@ -42,7 +43,7 @@ test.describe('Send money journey', () => {
     await expect(beforeYouContinuePage.backLink).toBeVisible()
     await beforeYouContinuePage.backLink.click()
 
-    await expect(page).toHaveURL('start-page')
+    await expect(page).toHaveURL(paths.START.slice(1))
     await HomePage.verifyOnPage(page)
   })
 
@@ -53,7 +54,7 @@ test.describe('Send money journey', () => {
 
     await beforeYouContinuePage.clickContinue()
 
-    await expect(page).toHaveURL(/\/debit-card\/details$/)
+    await expect(page).toHaveURL(new RegExp(`${paths.DEBIT_CARD.ROOT}${paths.DEBIT_CARD.DETAILS}$`))
     await PrisonerDetailsPage.verifyOnPage(page)
   })
 
@@ -68,7 +69,7 @@ test.describe('Send money journey', () => {
 
     await prisonerDetailsPage.submit()
 
-    await expect(page).toHaveURL(/\/debit-card\/details$/)
+    await expect(page).toHaveURL(new RegExp(`${paths.DEBIT_CARD.ROOT}${paths.DEBIT_CARD.DETAILS}$`))
     await expect(prisonerDetailsPage.errorSummary).toBeVisible()
     await expect(prisonerDetailsPage.errorMessageLink('Prisoner name')).toBeVisible()
     await expect(prisonerDetailsPage.errorMessageLink('Prisoner date of birth')).toBeVisible()
@@ -81,7 +82,7 @@ test.describe('Send money journey', () => {
     await prisonerDetailsPage.fillForm(VALID_PRISONER_DETAILS)
     await prisonerDetailsPage.submit()
 
-    await expect(page).toHaveURL(/\/debit-card\/amount$/)
+    await expect(page).toHaveURL(new RegExp(`${paths.DEBIT_CARD.ROOT}${paths.DEBIT_CARD.AMOUNT}$`))
     await PaymentAmountPage.verifyOnPage(page)
   })
 
@@ -90,7 +91,7 @@ test.describe('Send money journey', () => {
     await amountPage.fillForm({ amount: '10.00' })
 
     await amountPage.checkDetails()
-    await expect(page).toHaveURL(/\/debit-card\/check$/)
+    await expect(page).toHaveURL(new RegExp(`${paths.DEBIT_CARD.ROOT}${paths.DEBIT_CARD.CHECK}$`))
     await CheckDetailsPage.verifyOnPage(page)
   })
 
@@ -99,7 +100,7 @@ test.describe('Send money journey', () => {
 
     await amountPage.checkDetails()
 
-    await expect(page).toHaveURL(/\/debit-card\/amount$/)
+    await expect(page).toHaveURL(new RegExp(`${paths.DEBIT_CARD.ROOT}${paths.DEBIT_CARD.AMOUNT}$`))
     await expect(amountPage.errorSummary).toBeVisible()
     await expect(amountPage.errorMessageLink('Amount')).toBeVisible()
   })
