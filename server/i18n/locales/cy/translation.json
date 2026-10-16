@@ -34,8 +34,7 @@
     "pageTitle": "Ni ellir dod o hyd i’r dudalen",
     "message": "Os gwnaethoch nodi cyfeiriad gwefan yna gwiriwch ei fod yn gywir.",
     "linkText": "Dychwelyd i'r dudalen gartref"
-  },
-  "paymentAmount": {
+  },"paymentAmount": {
     "pageTitle": "Nodwch y swm yr ydych eisiau anfon",
     "pageCaption": "Talu nawr gyda cherdyn debyd",
     "errorSummaryTitle": "Roedd problem",
@@ -52,5 +51,39 @@
       "tooLarge": "Mae'r swm rydych yn ceisio ei anfon yn rhy fawr. Nodwch swm llai"
     },
     "submit": "Gwirio'r manylion"
+  },
+  "prisonerDetails": {
+    "pageTitle": "Talu nawr gyda cherdyn debyd",
+    "pageSubTitle": "Nodwch fanylion y carcharor",
+    "errorSummaryTitle": "Roedd problem",
+    "fieldsetLegend": "Manylion y carcharor",
+    "fields": {
+      "prisonerName": {
+        "label": "Enw'r carcharor"
+      },
+      "prisonerDob": {
+        "legend": "Dyddiad geni'r carcharor",
+        "hint": "Er enghraifft, 28 04 1996",
+        "day": "Diwrnod",
+        "month": "Mis",
+        "year": "Blwyddyn"
+      },
+      "prisonerNumber": {
+        "label": "Rhif y carcharor",
+        "hint": "Er enghraifft, A1234BC"
+      }
+    },
+    "errors": {
+      "required": "Mae’n rhaid llenwi’r maes hwn.",
+      "prisonerNumberFormat": "Fformat anghywir ar gyfer rhif y carcharor",
+      "dobDayNumber": "Nodwch ‘diwrnod’ fel rhif",
+      "dobDayRange": "Dylai ‘Diwrnod’ fod rhwng 1 a 31",
+      "dobMonthNumber": "Nodwch ‘mis’ fel rhif",
+      "dobMonthRange": "Dylai ‘Mis’ fod rhwng 1 a 12",
+      "dobYearNumber": "Nodwch ‘blwyddyn’ fel rhif",
+      "dobYearRange": "Dylai ‘Blwyddyn’ fod rhwng 1900 a {{currentYear}}",
+      "dobInvalid": "Nodwch ddyddiad dilys"
+    },
+    "submit": "Nodwch y swm"
   }
 }

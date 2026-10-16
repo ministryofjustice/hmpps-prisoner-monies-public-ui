@@ -7,8 +7,11 @@ import {
 import SendMoneyToPrisonerService from '../services/sendMoneyToPrisonerService'
 
 import makeRes from '../testutils/mockResponse'
+import i18next, { i18nextInitPromise } from '../i18n/i18n'
 
 jest.mock('../services/sendMoneyToPrisonerService')
+
+beforeAll(() => i18nextInitPromise)
 
 const next = jest.fn() as unknown as NextFunction
 
@@ -19,6 +22,8 @@ const validFormBody = {
   prisoner_dob_2: '1990',
   prisoner_number: 'A1234BC',
 }
+
+const expectedPrisonerDOB = `${validFormBody.prisoner_dob_0}-${validFormBody.prisoner_dob_1}-${validFormBody.prisoner_dob_2}`
 
 describe('prisonerDetailsGetHandler', () => {
   it('renders the prisoner details page with empty form values and errors', () => {
@@ -51,6 +56,7 @@ describe('prisonerDetailsPostHandler', () => {
   it('re-renders with validation errors when the form is invalid', async () => {
     const req = { body: {} } as unknown as Request
     const { res, render, redirect } = makeRes()
+    res.locals.t = i18next.getFixedT('en-gb')
 
     const handler = prisonerDetailsPostHandler(sendMoneyToPrisonerService)
     await handler(req, res as unknown as Response, next)
@@ -66,23 +72,66 @@ describe('prisonerDetailsPostHandler', () => {
   it('redirects to the amount page when the prisoner is valid', async () => {
     sendMoneyToPrisonerService.getValidPrisoner.mockResolvedValue({
       prisonerNumber: validFormBody.prisoner_number,
-      prisonerDOB: '1990-2-1',
+      prisonerDOB: expectedPrisonerDOB,
     })
     const req = { body: validFormBody } as unknown as Request
     const { res, redirect, render } = makeRes()
+    res.locals.t = i18next.getFixedT('en-gb')
 
     const handler = prisonerDetailsPostHandler(sendMoneyToPrisonerService)
     await handler(req, res as unknown as Response, next)
 
-    expect(sendMoneyToPrisonerService.getValidPrisoner).toHaveBeenCalledWith('A1234BC', '1990-2-1')
+    expect(sendMoneyToPrisonerService.getValidPrisoner).toHaveBeenCalledWith(
+      validFormBody.prisoner_number,
+      expectedPrisonerDOB,
+    )
     expect(redirect).toHaveBeenCalledWith('/debit-card/amount')
     expect(render).not.toHaveBeenCalled()
+  })
+
+  it('stores the prisoner details in the session when the prisoner is valid', async () => {
+    sendMoneyToPrisonerService.getValidPrisoner.mockResolvedValue({
+      prisonerNumber: validFormBody.prisoner_number,
+      prisonerDOB: expectedPrisonerDOB,
+    })
+    const req = { body: validFormBody, session: {} } as unknown as Request
+    const { res } = makeRes()
+
+    const handler = prisonerDetailsPostHandler(sendMoneyToPrisonerService)
+    await handler(req, res as unknown as Response, next)
+
+    expect(req.session.sendMoney?.prisonerName).toBe(validFormBody.prisoner_name)
+    expect(req.session.sendMoney?.prisonerDOB).toBe(expectedPrisonerDOB)
+    expect(req.session.sendMoney?.prisonerNumber).toBe(validFormBody.prisoner_number)
+  })
+
+  it('preserves other sendMoney session values already stored (e.g. amount)', async () => {
+    sendMoneyToPrisonerService.getValidPrisoner.mockResolvedValue({
+      prisonerNumber: validFormBody.prisoner_number,
+      prisonerDOB: expectedPrisonerDOB,
+    })
+    const req = {
+      body: validFormBody,
+      session: { sendMoney: { amount: '10.00' } },
+    } as unknown as Request
+    const { res } = makeRes()
+
+    const handler = prisonerDetailsPostHandler(sendMoneyToPrisonerService)
+    await handler(req, res as unknown as Response, next)
+
+    expect(req.session.sendMoney).toEqual({
+      amount: '10.00',
+      prisonerName: validFormBody.prisoner_name,
+      prisonerDOB: expectedPrisonerDOB,
+      prisonerNumber: validFormBody.prisoner_number,
+    })
   })
 
   it('re-renders with no field errors when the prisoner cannot be found', async () => {
     sendMoneyToPrisonerService.getValidPrisoner.mockResolvedValue(undefined as never)
     const req = { body: validFormBody } as unknown as Request
     const { res, render, redirect } = makeRes()
+    res.locals.t = i18next.getFixedT('en-gb')
 
     const handler = prisonerDetailsPostHandler(sendMoneyToPrisonerService)
     await handler(req, res as unknown as Response, next)

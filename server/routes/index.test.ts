@@ -59,6 +59,7 @@ describe('GET /info-page', () => {
       })
   })
 })
+
 describe('GET /payment-choice', () => {
   it('should render payment choice page', () => {
     return request(app).get('/payment-choice').expect('Content-Type', /html/).expect(404)
@@ -167,7 +168,7 @@ describe.each([['en-gb'], ['cy']])('POST /%s/debit-card/details', locale => {
       .expect(302)
       .expect('Location', `/${locale}/debit-card/amount`)
       .expect(() => {
-        expect(sendMoneyToPrisonerService.getValidPrisoner).toHaveBeenCalledWith('A1234BC', '1990-2-1')
+        expect(sendMoneyToPrisonerService.getValidPrisoner).toHaveBeenCalledWith('A1234BC', '1-2-1990')
       })
   })
 

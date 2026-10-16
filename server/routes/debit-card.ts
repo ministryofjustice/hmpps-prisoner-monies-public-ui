@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { prisonerDetailsGetHandler, prisonerDetailsPostHandler } from '../handlers/prisonerDetails'
 import { Services } from '../services'
+import checkDetailsGetHandler from '../handlers/checkDetails'
 import { paymentAmountGetHandler, paymentAmountPostHandler } from '../handlers/paymentAmount'
 import auditPageViewRequest from '../middleware/auditPageViewRequest'
 import Page from '../constants/pages'
@@ -27,8 +28,6 @@ export default function routes(services: Services): Router {
     paymentAmountPostHandler(),
   )
 
-  router.get('/check', (_req, res, _next) => {
-    return res.render('pages/check-details', {})
-  })
+  router.get('/check', checkDetailsGetHandler)
   return router
 }

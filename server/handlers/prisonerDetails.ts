@@ -35,18 +35,26 @@ export const prisonerDetailsGetHandler: RequestHandler = (_req, res) => {
 export function prisonerDetailsPostHandler(sendMoneyToPrisonerService: SendMoneyToPrisonerService): RequestHandler {
   return async (req, res) => {
     const formValues = extractPrisonerDetailsFormValues(req.body)
-    const validationResult = validatePrisonerDetails(formValues)
+    const validationResult = validatePrisonerDetails(formValues, res.locals.t)
 
     if (validationResult.errorList.length > 0) {
       return renderPrisonerDetails(res, formValues, validationResult)
     }
 
+    const prisonerDOB = `${formValues.prisonerDobDay}-${formValues.prisonerDobMonth}-${formValues.prisonerDobYear}`
     const validPrisoner = await sendMoneyToPrisonerService.getValidPrisoner(
       formValues.prisonerNumber as string,
-      `${formValues.prisonerDobYear}-${formValues.prisonerDobMonth}-${formValues.prisonerDobDay}`,
+      prisonerDOB,
     )
 
     if (validPrisoner) {
+      req.session = req.session ?? {}
+      req.session.sendMoney = {
+        ...req.session.sendMoney,
+        prisonerName: formValues.prisonerName,
+        prisonerDOB,
+        prisonerNumber: formValues.prisonerNumber,
+      }
       return res.redirect(res.locals.localePath('/debit-card/amount'))
     }
 
