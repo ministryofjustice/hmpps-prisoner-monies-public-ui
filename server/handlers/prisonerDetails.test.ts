@@ -5,6 +5,7 @@ import {
   PRISONER_DETAILS_BACK_LINK_HREF,
 } from './prisonerDetails'
 import SendMoneyToPrisonerService from '../services/sendMoneyToPrisonerService'
+import { debitCardPaths } from '../constants/paths'
 
 import makeRes from '../testutils/mockResponse'
 
@@ -29,7 +30,7 @@ describe('prisonerDetailsGetHandler', () => {
 
     expect(render).toHaveBeenCalledWith('pages/prisoner-details', {
       backLinkHref: PRISONER_DETAILS_BACK_LINK_HREF,
-      postDebitCardDetails: res.locals.localePath('/debit-card/details'),
+      postDebitCardDetails: res.locals.localePath(debitCardPaths.PRISONER_DETAILS),
       errors: {},
       errorList: [],
       formValues: {},
@@ -75,7 +76,7 @@ describe('prisonerDetailsPostHandler', () => {
     await handler(req, res as unknown as Response, next)
 
     expect(sendMoneyToPrisonerService.getValidPrisoner).toHaveBeenCalledWith('A1234BC', '1990-2-1')
-    expect(redirect).toHaveBeenCalledWith('/debit-card/amount')
+    expect(redirect).toHaveBeenCalledWith(debitCardPaths.PAYMENT_AMOUNT)
     expect(render).not.toHaveBeenCalled()
   })
 
@@ -89,7 +90,7 @@ describe('prisonerDetailsPostHandler', () => {
 
     expect(render).toHaveBeenCalledWith('pages/prisoner-details', {
       backLinkHref: PRISONER_DETAILS_BACK_LINK_HREF,
-      postDebitCardDetails: res.locals.localePath('/debit-card/details'),
+      postDebitCardDetails: res.locals.localePath(debitCardPaths.PRISONER_DETAILS),
       errors: {},
       errorList: [],
       formValues: {

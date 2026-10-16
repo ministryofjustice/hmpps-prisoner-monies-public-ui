@@ -6,24 +6,23 @@ import auditPageViewRequest from '../middleware/auditPageViewRequest'
 import Page from '../constants/pages'
 import auditPageEventRequest from '../middleware/auditPageEventRequest'
 import AuditEvent from '../constants/events'
-import paths from '../constants/paths'
+import { debitCardPaths } from '../constants/paths'
 
-// all pages that sit under /{locale}/debit-card/ in the application
 export default function routes(services: Services): Router {
   const router = Router()
 
-  router.get(paths.DEBIT_CARD.DETAILS, prisonerDetailsGetHandler)
+  router.get(debitCardPaths.PRISONER_DETAILS, prisonerDetailsGetHandler)
 
-  router.post(paths.DEBIT_CARD.DETAILS, prisonerDetailsPostHandler(services.sendMoneyToPrisonerService))
+  router.post(debitCardPaths.PRISONER_DETAILS, prisonerDetailsPostHandler(services.sendMoneyToPrisonerService))
 
   router.get(
-    paths.DEBIT_CARD.AMOUNT,
+    debitCardPaths.PAYMENT_AMOUNT,
     auditPageViewRequest({ services, page: Page.DEBIT_CARD_AMOUNT }),
     paymentAmountGetHandler,
   )
 
   router.post(
-    paths.DEBIT_CARD.AMOUNT,
+    debitCardPaths.PAYMENT_AMOUNT,
     auditPageEventRequest({
       services,
       whatEvent: AuditEvent.AMOUNT_TO_VALIDATE,
@@ -32,7 +31,7 @@ export default function routes(services: Services): Router {
     paymentAmountPostHandler(),
   )
 
-  router.get(paths.DEBIT_CARD.CHECK, (_req, res, _next) => {
+  router.get(debitCardPaths.CHECK_DETAILS, (_req, res, _next) => {
     return res.render('pages/check-details', {})
   })
   return router

@@ -1,28 +1,24 @@
-const paths = {
+export const paths = {
+  // top-level pages, not under a locale
   ROOT: '/',
   START: '/start-page',
   STAY_IN_TOUCH: '/info-page',
 
-  // where the locale-specific router is mounted, see server/routes/index.ts
-  LOCALE: {
-    EN_GB: '/en-gb/',
-    CY: '/cy/',
-  },
+  // locale prefixes the locale router is mounted at, see server/routes/index.ts
+  LOCALE_EN_GB: '/en-gb/',
+  LOCALE_CY: '/cy/',
 
-  // locale-relative paths, mounted under both LOCALE.EN_GB and LOCALE.CY
+  // pages relative to the locale root, e.g. /en-gb/payment-choice
   BEFORE_YOU_CONTINUE: '/',
   PAYMENT_CHOICE: '/payment-choice',
   TERMS: '/terms',
   PRIVACY: '/privacy',
   CONTACT_US: '/contact-us',
-
-  // debit card routes, mounted under ROOT within the locale router, see server/routes/debit-card.ts
-  DEBIT_CARD: {
-    ROOT: '/debit-card',
-    DETAILS: '/details',
-    AMOUNT: '/amount',
-    CHECK: '/check',
-  },
 }
 
-export default paths
+// debit card pages, see server/routes/debit-card.ts
+export const debitCardPaths = {
+  PRISONER_DETAILS: '/debit-card/details',
+  PAYMENT_AMOUNT: '/debit-card/amount',
+  CHECK_DETAILS: '/debit-card/check',
+}

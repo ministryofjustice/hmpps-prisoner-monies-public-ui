@@ -1,6 +1,6 @@
 import { type Locator, type Page } from '@playwright/test'
 import BasePage from '../utils/basePage'
-import paths from '../../server/constants/paths'
+import { paths } from '../../server/constants/paths'
 
 export default class BeforeYouContinuePage extends BasePage {
   readonly termsLink: Locator

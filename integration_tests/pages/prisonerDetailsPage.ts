@@ -1,6 +1,6 @@
 import { type Locator, type Page } from '@playwright/test'
 import BasePage from '../utils/basePage'
-import paths from '../../server/constants/paths'
+import { debitCardPaths } from '../../server/constants/paths'
 
 export type PrisonerDetailsFormInput = {
   prisonerName?: string
@@ -27,7 +27,7 @@ export default class PrisonerDetailsPage extends BasePage {
 
   h1Title = 'Enter prisoner details'
 
-  protected path = `${paths.DEBIT_CARD.ROOT}${paths.DEBIT_CARD.DETAILS}`
+  protected path = debitCardPaths.PRISONER_DETAILS
 
   private constructor(page: Page) {
     super(page)
