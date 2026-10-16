@@ -2,6 +2,15 @@
   "common": {
     "serviceName": "Send money to someone in prison"
   },
+  "beforeYouContinue": {
+    "pageTitle": "Before you continue",
+    "intro1": "We run compliance checks to prevent fraud and other criminal behaviour.",
+    "intro2": "By using this service you're agreeing to these checks and our",
+    "termsLink": "terms and conditions",
+    "and": "and",
+    "privacyLink": "privacy policy",
+    "continue": "Continue"
+  },
   "terms": {
     "pageTitle": "Terms and conditions",
     "intro1": "By using the ‘Send money to someone in prison’ service you agree to our privacy policy and to these terms and conditions.",
