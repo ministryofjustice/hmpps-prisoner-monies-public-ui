@@ -129,6 +129,22 @@ describe.each([
   })
 })
 
+describe.each([
+  ['en-gb', 'Cookies'],
+  ['cy', 'Cwcis'],
+])('GET /%s/cookies', (locale, expectedHeading) => {
+  it('renders the cookies page listing only the session cookie', () => {
+    return request(app)
+      .get(`/${locale}/cookies`)
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain(expectedHeading)
+        expect(res.text).toContain('hmpps-prisoner-monies-public-ui.session')
+      })
+  })
+})
+
 describe.each([['en-gb'], ['cy']])('GET /%s/debit-card/details', locale => {
   it('renders a form whose field names match what the handler reads from the request body', () => {
     return request(app)

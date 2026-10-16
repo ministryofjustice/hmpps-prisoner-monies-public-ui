@@ -19,11 +19,10 @@ export const i18nextInitPromise = i18next
     preload: SUPPORTED_LANGUAGES,
     defaultNS: 'translation',
     lowerCaseLng: true,
-    // Language is chosen via the /en-gb/ and /cy/ URL prefixes (see routes/index.ts), not a query param.
+    // Language is chosen via the /en-gb/ and /cy/ URL prefixes (see routes/index.ts), not a cookie or query param.
     detection: {
-      order: ['cookie', 'header'],
-      lookupCookie: 'lng',
-      caches: ['cookie'],
+      order: ['header'],
+      caches: false,
     },
     interpolation: {
       escapeValue: false, // nunjucks already escapes output
