@@ -3,40 +3,45 @@ import { Services } from '../services'
 import debitCardRouter from './debit-card'
 import auditPageViewRequest from '../middleware/auditPageViewRequest'
 import Page from '../constants/pages'
+import paths from '../constants/paths'
 
 export default function routes(services: Services): Router {
   const router = Router()
 
-  router.get('/', auditPageViewRequest({ services, page: Page.BEFORE_YOU_CONTINUE }), (_req, res, _next) => {
-    // in production this will be set by env var
-    const backLinkStartPage = '/start-page'
+  router.get(
+    paths.BEFORE_YOU_CONTINUE,
+    auditPageViewRequest({ services, page: Page.BEFORE_YOU_CONTINUE }),
+    (_req, res, _next) => {
+      // in production this will be set by env var
+      const backLinkStartPage = paths.START
 
-    return res.render('pages/before-you-continue', {
-      continueUrl: res.locals.localePath('/payment-choice'),
-      backLinkHref: backLinkStartPage,
-    })
-  })
+      return res.render('pages/before-you-continue', {
+        continueUrl: res.locals.localePath(paths.PAYMENT_CHOICE),
+        backLinkHref: backLinkStartPage,
+      })
+    },
+  )
 
-  router.get('/payment-choice', async (_req, res, _next) => {
+  router.get(paths.PAYMENT_CHOICE, async (_req, res, _next) => {
     return res.render('pages/payment-choice', {
-      backLinkHref: res.locals.localePath('/'),
-      continueUrl: res.locals.localePath('/debit-card/details'),
+      backLinkHref: res.locals.localePath(paths.ROOT),
+      continueUrl: res.locals.localePath(`${paths.DEBIT_CARD.ROOT}${paths.DEBIT_CARD.DETAILS}`),
     })
   })
 
-  router.get('/terms', async (_req, res, _next) => {
+  router.get(paths.TERMS, async (_req, res, _next) => {
     return res.render(`pages/${res.locals.locale}/terms`)
   })
 
-  router.get('/privacy', async (_req, res, _next) => {
+  router.get(paths.PRIVACY, async (_req, res, _next) => {
     return res.render(`pages/${res.locals.locale}/privacy`)
   })
 
-  router.get('/contact-us', async (_req, res, _next) => {
+  router.get(paths.CONTACT_US, async (_req, res, _next) => {
     return res.render(`pages/${res.locals.locale}/contact-us`)
   })
 
-  router.use('/debit-card', debitCardRouter(services))
+  router.use(paths.DEBIT_CARD.ROOT, debitCardRouter(services))
 
   return router
 }

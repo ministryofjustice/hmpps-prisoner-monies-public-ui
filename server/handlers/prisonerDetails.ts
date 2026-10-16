@@ -1,8 +1,9 @@
 import type { RequestHandler } from 'express'
 import SendMoneyToPrisonerService from '../services/sendMoneyToPrisonerService'
 import { validatePrisonerDetails, PrisonerDetailsFormValues } from '../utils/prisonerDetailsValidation'
+import paths from '../constants/paths'
 
-export const PRISONER_DETAILS_BACK_LINK_HREF = '/payment-choice'
+export const PRISONER_DETAILS_BACK_LINK_HREF = paths.PAYMENT_CHOICE
 
 function extractPrisonerDetailsFormValues(body: Record<string, string>): PrisonerDetailsFormValues {
   return {
@@ -21,7 +22,7 @@ function renderPrisonerDetails(
 ) {
   return res.render('pages/prisoner-details', {
     backLinkHref: res.locals.localePath(PRISONER_DETAILS_BACK_LINK_HREF),
-    postDebitCardDetails: res.locals.localePath('/debit-card/details'),
+    postDebitCardDetails: res.locals.localePath(`${paths.DEBIT_CARD.ROOT}${paths.DEBIT_CARD.DETAILS}`),
     errors,
     errorList,
     formValues,
@@ -47,7 +48,7 @@ export function prisonerDetailsPostHandler(sendMoneyToPrisonerService: SendMoney
     )
 
     if (validPrisoner) {
-      return res.redirect(res.locals.localePath('/debit-card/amount'))
+      return res.redirect(res.locals.localePath(`${paths.DEBIT_CARD.ROOT}${paths.DEBIT_CARD.AMOUNT}`))
     }
 
     return renderPrisonerDetails(res, formValues)

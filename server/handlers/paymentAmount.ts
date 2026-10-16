@@ -1,5 +1,6 @@
 import { RequestHandler } from 'express'
 import { AmountFormValues, validateAmount } from '../utils/amountValidation'
+import paths from '../constants/paths'
 
 function renderPaymentAmount(
   res: Parameters<RequestHandler>[1],
@@ -7,7 +8,7 @@ function renderPaymentAmount(
   { errors, errorList }: ReturnType<typeof validateAmount> = { errors: {}, errorList: [] },
 ) {
   return res.render('pages/payment-amount', {
-    postPaymentAmount: res.locals.localePath('/debit-card/amount'),
+    postPaymentAmount: res.locals.localePath(`${paths.DEBIT_CARD.ROOT}${paths.DEBIT_CARD.AMOUNT}`),
     errors,
     errorList,
     formValues,
@@ -27,6 +28,6 @@ export function paymentAmountPostHandler(): RequestHandler {
       return renderPaymentAmount(res, formValues, validationResult)
     }
     req.session.sendMoney = { ...req.session.sendMoney, amount: formValues.amount }
-    return res.redirect(res.locals.localePath('/debit-card/check'))
+    return res.redirect(res.locals.localePath(`${paths.DEBIT_CARD.ROOT}${paths.DEBIT_CARD.CHECK}`))
   }
 }
