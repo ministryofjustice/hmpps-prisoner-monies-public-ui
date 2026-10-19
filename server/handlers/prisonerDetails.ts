@@ -36,6 +36,10 @@ export const prisonerDetailsGetHandler: RequestHandler = (_req, res) => {
 export function prisonerDetailsPostHandler(sendMoneyToPrisonerService: SendMoneyToPrisonerService): RequestHandler {
   return async (req, res) => {
     const formValues = extractPrisonerDetailsFormValues(req.body)
+
+    formValues.prisonerNumber = formValues.prisonerNumber?.trim().toUpperCase() as string
+    formValues.prisonerName = formValues.prisonerName?.trim()
+
     const validationResult = validatePrisonerDetails(formValues, res.locals.t)
 
     if (validationResult.errorList.length > 0) {
@@ -43,10 +47,7 @@ export function prisonerDetailsPostHandler(sendMoneyToPrisonerService: SendMoney
     }
 
     const prisonerDOB = `${formValues.prisonerDobDay}-${formValues.prisonerDobMonth}-${formValues.prisonerDobYear}`
-    const validPrisoner = await sendMoneyToPrisonerService.getValidPrisoner(
-      formValues.prisonerNumber as string,
-      prisonerDOB,
-    )
+    const validPrisoner = await sendMoneyToPrisonerService.getValidPrisoner(formValues.prisonerNumber, prisonerDOB)
 
     if (validPrisoner) {
       req.session = req.session ?? {}

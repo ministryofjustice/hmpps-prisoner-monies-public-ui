@@ -152,4 +152,97 @@ describe('prisonerDetailsPostHandler', () => {
     })
     expect(redirect).not.toHaveBeenCalled()
   })
+
+  describe('prisoner number normalisation', () => {
+    it('uppercases a lowercase prisoner number before looking up the prisoner', async () => {
+      sendMoneyToPrisonerService.getValidPrisoner.mockResolvedValue({
+        prisonerNumber: 'A1234BC',
+        prisonerDOB: expectedPrisonerDOB,
+      })
+      const req = {
+        body: { ...validFormBody, prisoner_number: 'a1234bc' },
+      } as unknown as Request
+      const { res } = makeRes()
+      res.locals.t = i18next.getFixedT('en-gb')
+
+      const handler = prisonerDetailsPostHandler(sendMoneyToPrisonerService)
+      await handler(req, res as unknown as Response, next)
+
+      expect(sendMoneyToPrisonerService.getValidPrisoner).toHaveBeenCalledWith('A1234BC', expectedPrisonerDOB)
+    })
+
+    it('trims whitespace before storing it in the session', async () => {
+      sendMoneyToPrisonerService.getValidPrisoner.mockResolvedValue({
+        prisonerNumber: 'A1234BC',
+        prisonerDOB: expectedPrisonerDOB,
+      })
+      const req = {
+        body: { ...validFormBody, prisoner_number: '  a1234Bc  ' },
+        session: {},
+      } as unknown as Request
+      const { res } = makeRes()
+      res.locals.t = i18next.getFixedT('en-gb')
+
+      const handler = prisonerDetailsPostHandler(sendMoneyToPrisonerService)
+      await handler(req, res as unknown as Response, next)
+
+      expect(req.session.sendMoney?.prisonerNumber).toBe('A1234BC')
+    })
+
+    it('redisplays the uppercased prisoner number when the prisoner cannot be found', async () => {
+      sendMoneyToPrisonerService.getValidPrisoner.mockResolvedValue(undefined as never)
+      const req = {
+        body: { ...validFormBody, prisoner_number: 'a1234bc' },
+      } as unknown as Request
+      const { res, render } = makeRes()
+      res.locals.t = i18next.getFixedT('en-gb')
+
+      const handler = prisonerDetailsPostHandler(sendMoneyToPrisonerService)
+      await handler(req, res as unknown as Response, next)
+
+      expect(render).toHaveBeenCalledWith(
+        'pages/prisoner-details',
+        expect.objectContaining({
+          formValues: expect.objectContaining({ prisonerNumber: 'A1234BC' }),
+        }),
+      )
+    })
+
+    it('still rejects an invalid prisoner number format once normalised, without looking it up', async () => {
+      const req = { body: { ...validFormBody, prisoner_number: 'a123bc' } } as unknown as Request
+      const { res, render } = makeRes()
+      res.locals.t = i18next.getFixedT('en-gb')
+
+      const handler = prisonerDetailsPostHandler(sendMoneyToPrisonerService)
+      await handler(req, res as unknown as Response, next)
+
+      expect(sendMoneyToPrisonerService.getValidPrisoner).not.toHaveBeenCalled()
+      expect(render).toHaveBeenCalledWith(
+        'pages/prisoner-details',
+        expect.objectContaining({
+          errorList: expect.arrayContaining([expect.objectContaining({ href: '#id_prisoner_number' })]),
+        }),
+      )
+    })
+  })
+
+  describe('prisoner name normalisation', () => {
+    it('trims leading and trailing whitespace from the prisoner name before storing it in the session', async () => {
+      sendMoneyToPrisonerService.getValidPrisoner.mockResolvedValue({
+        prisonerNumber: validFormBody.prisoner_number,
+        prisonerDOB: expectedPrisonerDOB,
+      })
+      const req = {
+        body: { ...validFormBody, prisoner_name: '  John Smith  ' },
+        session: {},
+      } as unknown as Request
+      const { res } = makeRes()
+      res.locals.t = i18next.getFixedT('en-gb')
+
+      const handler = prisonerDetailsPostHandler(sendMoneyToPrisonerService)
+      await handler(req, res as unknown as Response, next)
+
+      expect(req.session.sendMoney?.prisonerName).toBe('John Smith')
+    })
+  })
 })
