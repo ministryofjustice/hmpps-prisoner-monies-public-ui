@@ -1,6 +1,6 @@
 {% extends "../partials/layout.njk" %}
 
-{% set pageTitle = "Before you continue - " + applicationName %}
+{% set pageTitle = t("beforeYouContinue.pageTitle") + " - " + applicationName %}
 {% set mainClasses = "govuk-body" %}
 
 {% block content %}
@@ -10,18 +10,18 @@
     <div class="govuk-grid-column-two-thirds">
       <div class="app-user-agreement__contents">
 
-        <h1 class="govuk-heading-xl">Before you continue</h1>
+        <h1 class="govuk-heading-xl">{{ t("beforeYouContinue.pageTitle") }}</h1>
 
         <p class="govuk-body-l">
-          We run compliance checks to prevent fraud and other criminal behaviour.
+          {{ t("beforeYouContinue.intro1") }}
         </p>
         <p class="govuk-body-l">
-          By using this service you're agreeing to these checks and our
-          <a class="govuk-link" href="{{ localePath('/terms') }}">terms and conditions</a> and
-          <a class="govuk-link" href="{{ localePath('/privacy') }}">privacy policy</a>
+          {{ t("beforeYouContinue.intro2") }}
+          <a class="govuk-link" href="{{ localePath('/terms') }}">{{ t("beforeYouContinue.termsLink") }}</a> {{ t("beforeYouContinue.and") }}
+          <a class="govuk-link" href="{{ localePath('/privacy') }}">{{ t("beforeYouContinue.privacyLink") }}</a>
         </p>
 
-        <a id="id_next_btn" class="govuk-button" data-module="govuk-button" href="{{ continueUrl }}">Continue</a>
+        <a id="id_next_btn" class="govuk-button" data-module="govuk-button" href="{{ continueUrl }}">{{ t("beforeYouContinue.continue") }}</a>
 
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { expect, type Locator, type Page } from '@playwright/test'
 import BasePage from '../utils/basePage'
+import { debitCardPaths } from '../../server/constants/paths'
 
 export type PaymentAmountFormInput = {
   amount?: string
@@ -12,7 +13,7 @@ export default class PaymentAmountPage extends BasePage {
 
   readonly errorSummary: Locator
 
-  protected path = '/debit-card/amount'
+  protected path = debitCardPaths.PAYMENT_AMOUNT
 
   private constructor(page: Page) {
     super(page)

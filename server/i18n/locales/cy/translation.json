@@ -2,6 +2,15 @@
   "common": {
     "serviceName": "Anfon arian at rywun sydd yn y carchar"
   },
+  "beforeYouContinue": {
+    "pageTitle": "Cyn i chi barhau",
+    "intro1": "Rydym yn cynnal gwiriadau cydymffurfiaeth i atal twyll ac ymddygiad troseddol arall.",
+    "intro2": "Drwy ddefnyddio’r gwasanaeth hwn rydych yn cytuno i’r gwiriadau hyn a’n",
+    "termsLink": "telerau ac amodau",
+    "and": "a’n",
+    "privacyLink": "polisi preifatrwydd",
+    "continue": "Parhau"
+  },
   "terms": {
     "intro2": "Darllenwch nhw'n ofalus.",
     "purpose1": "Mae’r telerau ac amodau hyn yn effeithio ar eich hawliau a’ch rhwymedigaethau dan y gyfraith.",
