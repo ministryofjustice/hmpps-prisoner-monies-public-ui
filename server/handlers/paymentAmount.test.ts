@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from 'express'
 import { paymentAmountGetHandler, paymentAmountPostHandler } from './paymentAmount'
+import { debitCardPaths } from '../constants/paths'
 import makeRes from '../testutils/mockResponse'
 import i18next, { i18nextInitPromise } from '../i18n/i18n'
 
@@ -15,7 +16,7 @@ describe('paymentAmountGetHandler', () => {
     paymentAmountGetHandler(req, res as unknown as Response, next)
 
     expect(render).toHaveBeenCalledWith('pages/payment-amount', {
-      postPaymentAmount: res.locals.localePath('/debit-card/amount'),
+      postPaymentAmount: res.locals.localePath(debitCardPaths.PAYMENT_AMOUNT),
       errors: {},
       errorList: [],
       formValues: {},
@@ -61,6 +62,6 @@ describe('paymentAmountPostHandler success handling', () => {
     await handler(req, res as unknown as Response, next)
 
     expect(req.session.sendMoney?.amount).toBe('10.00')
-    expect(redirect).toHaveBeenCalledWith(res.locals.localePath('/debit-card/check'))
+    expect(redirect).toHaveBeenCalledWith(res.locals.localePath(debitCardPaths.CHECK_DETAILS))
   })
 })

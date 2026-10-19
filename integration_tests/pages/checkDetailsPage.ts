@@ -1,10 +1,11 @@
 import { type Page } from '@playwright/test'
 import BasePage from '../utils/basePage'
+import { debitCardPaths } from '../../server/constants/paths'
 
 export default class CheckDetailsPage extends BasePage {
   h1Title = 'Check details'
 
-  protected path = '/debit-card/check'
+  protected path = debitCardPaths.CHECK_DETAILS
 
   private constructor(page: Page) {
     super(page)
