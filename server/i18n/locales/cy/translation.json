@@ -74,7 +74,7 @@
       }
     },
     "errors": {
-      "required": "Mae’n rhaid llenwi’r maes hwn.",
+      "required": "Mae’n rhaid llenwi’r maes hwn",
       "prisonerNumberFormat": "Fformat anghywir ar gyfer rhif y carcharor",
       "dobDayNumber": "Nodwch ‘diwrnod’ fel rhif",
       "dobDayRange": "Dylai ‘Diwrnod’ fod rhwng 1 a 31",

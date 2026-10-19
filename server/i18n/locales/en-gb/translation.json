@@ -95,7 +95,7 @@
         }
       },
       "errors": {
-        "required": "This field is required.",
+        "required": "This field is required",
         "prisonerNumberFormat": "Incorrect prisoner number format",
         "dobDayNumber": "Enter ‘day’ as a number",
         "dobDayRange": "‘Day’ should be between 1 and 31",

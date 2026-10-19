@@ -27,7 +27,7 @@ type PrisonerDetailsMessages = {
 
 const messages: Record<Locale, PrisonerDetailsMessages> = {
   'en-gb': {
-    required: 'This field is required.',
+    required: 'This field is required',
     prisonerNameLabel: 'Prisoner name',
     prisonerDobLabel: 'Prisoner date of birth',
     prisonerNumberLabel: 'Prisoner number',
@@ -41,7 +41,7 @@ const messages: Record<Locale, PrisonerDetailsMessages> = {
     dobInvalid: 'Enter a valid date',
   },
   cy: {
-    required: 'Mae’n rhaid llenwi’r maes hwn.',
+    required: 'Mae’n rhaid llenwi’r maes hwn',
     prisonerNameLabel: "Enw'r carcharor",
     prisonerDobLabel: "Dyddiad geni'r carcharor",
     prisonerNumberLabel: 'Rhif y carcharor',
