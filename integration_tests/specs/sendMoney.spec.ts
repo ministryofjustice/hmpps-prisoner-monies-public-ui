@@ -74,6 +74,14 @@ test.describe('Send money journey', () => {
     await expect(prisonerDetailsPage.errorMessageLink('Prisoner name')).toBeVisible()
     await expect(prisonerDetailsPage.errorMessageLink('Prisoner date of birth')).toBeVisible()
     await expect(prisonerDetailsPage.errorMessageLink('Prisoner number')).toBeVisible()
+    await expect(prisonerDetailsPage.prisonerNameErrorMessage).toBeVisible()
+    await expect(prisonerDetailsPage.prisonerNameErrorMessage).toContainText('This field is required')
+
+    await expect(prisonerDetailsPage.prisonerDobErrorMessage).toBeVisible()
+    await expect(prisonerDetailsPage.prisonerDobErrorMessage).toContainText('This field is required')
+
+    await expect(prisonerDetailsPage.prisonerNumberErrorMessage).toBeVisible()
+    await expect(prisonerDetailsPage.prisonerNumberErrorMessage).toContainText('This field is required')
   })
 
   test('Submitting valid prisoner details moves the user on to the amount page', async ({ page }) => {

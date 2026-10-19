@@ -25,6 +25,12 @@ export default class PrisonerDetailsPage extends BasePage {
 
   readonly prisonerNumberInput: Locator
 
+  readonly prisonerNameErrorMessage: Locator
+
+  readonly prisonerDobErrorMessage: Locator
+
+  readonly prisonerNumberErrorMessage: Locator
+
   h1Title = 'Enter prisoner details'
 
   protected path = debitCardPaths.PRISONER_DETAILS
@@ -32,12 +38,16 @@ export default class PrisonerDetailsPage extends BasePage {
   private constructor(page: Page) {
     super(page)
     this.backLink = page.getByRole('link', { name: 'Back' })
-    this.errorSummary = page.locator('.govuk-error-summary')
     this.prisonerNameInput = page.locator('#id_prisoner_name')
     this.prisonerDobDayInput = page.locator('#id_prisoner_dob_0')
     this.prisonerDobMonthInput = page.locator('#id_prisoner_dob_1')
     this.prisonerDobYearInput = page.locator('#id_prisoner_dob_2')
     this.prisonerNumberInput = page.locator('#id_prisoner_number')
+
+    this.errorSummary = page.locator('.govuk-error-summary')
+    this.prisonerNameErrorMessage = page.locator('#id_prisoner_name-wrapper .govuk-error-message')
+    this.prisonerDobErrorMessage = page.locator('#id_prisoner_dob-wrapper .govuk-error-message')
+    this.prisonerNumberErrorMessage = page.locator('#id_prisoner_number-wrapper .govuk-error-message')
   }
 
   static async goTo(page: Page): Promise<PrisonerDetailsPage> {

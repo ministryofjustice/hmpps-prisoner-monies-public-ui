@@ -7,8 +7,6 @@
 
 {% block content %}
 
-
-
     <header>
       <h1 class="govuk-heading-xl"><span class="govuk-caption-xl">
        {{ t("prisonerDetails.pageTitle") }}
@@ -75,10 +73,7 @@
           hint: {
           text: t("prisonerDetails.fields.prisonerDob.hint")
           },
-          formGroup: {
-          classes: "govuk-form-group--error" if errors.prisonerDob else undefined,
-          beforeInputs: { HTML: prisonerDobErrorMessages | trim } if errors.prisonerDob else undefined
-          },
+          errorMessage: { html: prisonerDobErrorMessages } if errors.prisonerDob else undefined,
           items: [
           {
           id: "id_prisoner_dob_0",
