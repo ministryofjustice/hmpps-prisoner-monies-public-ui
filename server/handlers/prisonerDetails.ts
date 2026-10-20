@@ -17,8 +17,8 @@ function extractPrisonerDetailsFormValues(body: Record<string, string>): Prisone
 function formatPrisonerDetails(formValues: PrisonerDetailsFormValues) {
   return {
     ...formValues,
-    prisonerName: formValues.prisonerName?.trim() as string,
-    prisonerNumber: formValues.prisonerNumber?.trim().toUpperCase() as string,
+    prisonerName: typeof formValues.prisonerName === 'string' ? formValues.prisonerName.trim() : '',
+    prisonerNumber: typeof formValues.prisonerNumber === 'string' ? formValues.prisonerNumber.trim().toUpperCase() : '',
   }
 }
 
