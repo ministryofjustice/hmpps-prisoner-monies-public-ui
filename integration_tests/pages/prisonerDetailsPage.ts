@@ -1,4 +1,4 @@
-import { type Locator, type Page } from '@playwright/test'
+import { type Locator, type Page, expect } from '@playwright/test'
 import BasePage from '../utils/basePage'
 import { debitCardPaths } from '../../server/constants/paths'
 
@@ -83,5 +83,16 @@ export default class PrisonerDetailsPage extends BasePage {
 
   errorMessageLink(label: string): Locator {
     return this.errorSummary.getByRole('link', { name: label })
+  }
+
+  async verifyErrorMessagesVisible(expectedMessage = 'This field is required') {
+    await expect(this.prisonerNameErrorMessage).toBeVisible()
+    await expect(this.prisonerNameErrorMessage).toContainText(expectedMessage)
+
+    await expect(this.prisonerDobErrorMessage).toBeVisible()
+    await expect(this.prisonerDobErrorMessage).toContainText(expectedMessage)
+
+    await expect(this.prisonerNumberErrorMessage).toBeVisible()
+    await expect(this.prisonerNumberErrorMessage).toContainText(expectedMessage)
   }
 }
