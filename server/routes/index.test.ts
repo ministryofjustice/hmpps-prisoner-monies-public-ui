@@ -131,6 +131,80 @@ describe.each([
   })
 })
 
+describe.each([
+  ['en-gb', 'Cookies'],
+  ['cy', 'Cwcis'],
+])('GET /%s/cookies', (locale, expectedHeading) => {
+  it('renders the cookies placeholder page and audits the page view', () => {
+    return request(app)
+      .get(`/${locale}/cookies`)
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain(expectedHeading)
+        expect(auditService.logPageView).toHaveBeenCalledWith('COOKIES', {
+          correlationId: expect.any(String),
+          who: ANONYMOUS_USER,
+        })
+      })
+  })
+})
+
+describe.each([
+  ['en-gb', 'Accessibility statement'],
+  ['cy', 'Accessibility statement'],
+])('GET /%s/accessibility', (locale, expectedHeading) => {
+  it('renders the accessibility placeholder page and audits the page view', () => {
+    return request(app)
+      .get(`/${locale}/accessibility`)
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain(expectedHeading)
+        expect(auditService.logPageView).toHaveBeenCalledWith('ACCESSIBILITY', {
+          correlationId: expect.any(String),
+          who: ANONYMOUS_USER,
+        })
+      })
+  })
+})
+
+describe.each([
+  ['en-gb', 'Help'],
+  ['cy', 'Cymorth'],
+])('GET /%s/help', (locale, expectedHeading) => {
+  it('renders the help placeholder page and audits the page view', () => {
+    return request(app)
+      .get(`/${locale}/help`)
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain(expectedHeading)
+        expect(auditService.logPageView).toHaveBeenCalledWith('HELP', {
+          correlationId: expect.any(String),
+          who: ANONYMOUS_USER,
+        })
+      })
+  })
+})
+
+describe.each([['en-gb'], ['cy']])('GET /%s/ footer', locale => {
+  it('links to the terms, privacy, cookies, accessibility and help pages', () => {
+    return request(app)
+      .get(`/${locale}/`)
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain(`href="/${locale}/terms"`)
+        expect(res.text).toContain(`href="/${locale}/privacy"`)
+        expect(res.text).toContain(`href="/${locale}/cookies"`)
+        expect(res.text).toContain(`href="/${locale}/accessibility"`)
+        expect(res.text).toContain(`href="/${locale}/help"`)
+        expect(res.text).toContain('href="https://mojdigital.blog.gov.uk/"')
+      })
+  })
+})
+
 describe.each([['en-gb'], ['cy']])('GET /%s/debit-card/details', locale => {
   it('renders a form whose field names match what the handler reads from the request body', () => {
     return request(app)
