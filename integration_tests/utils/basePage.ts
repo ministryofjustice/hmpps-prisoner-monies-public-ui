@@ -21,6 +21,9 @@ export default class BasePage {
   /** main content area, scoped to exclude the common header/footer */
   readonly mainContent: Locator
 
+  /** footer, common to every page */
+  readonly footer: Locator
+
   // defaults to en-gb on init()
   protected locale: string
 
@@ -34,6 +37,7 @@ export default class BasePage {
     this.page = page
     this.phaseBanner = page.getByTestId('header-phase-banner')
     this.mainContent = page.locator('#main-content')
+    this.footer = page.locator('footer.govuk-template__footer')
     this.locale = locale
   }
 
