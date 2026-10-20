@@ -43,11 +43,17 @@ These are the defaults for this `prisoner-money` workspace. **Don't assume they 
 | `views.py` View class (`get`/`post`/`form_valid`) | `server/handlers/<page>.ts` exporting `xGetHandler` / `xPostHandler(services...)` | Mirror naming/shape in `handlers/prisonerDetails.ts` |
 | `forms.py` Form + `clean_*` methods | `server/utils/<page>Validation.ts` exporting `validateX(formValues)` returning `{ errors, errorList }` | Mirror `utils/prisonerDetailsValidation.ts`; preserve Django's error messages/ordering where reasonable |
 | `templates/send_money/*.html` (Django tags + `govuk_frontend_jinja` macros) | `server/views/pages/*.njk` using `govuk-frontend` macros (`govuk/components/.../macro.njk`) | Keep the two-thirds layout via `{% extends "../partials/layout-two-thirds.njk" %}` unless the page needs full width |
-| Hardcoded English strings in Django templates | i18n keys via `t("namespace.key")`, added to **both** `server/i18n/locales/en-gb/translation.json` and `server/i18n/locales/cy/translation.json` | Follow `not-found.njk` / `layout.njk` — do not hardcode copy like the older `prisoner-details.njk` does |
+| Page copy (English + translated) | Either per-locale static templates **or** `t("namespace.key")` i18n keys | Depends on page type — see **Static Pages vs Interactive Journey Pages** below |
 | Session-stored form state (`unserialise_from_session`) | Express session (`req.session`) / `res.locals`, per existing pattern in the target repo | Check how already-migrated pages persist state before introducing a new pattern |
 | Calls to `money-to-prisoners-api`, GOV.UK Pay, GOV.UK Notify (`payments.py`, `utils.py`, `mail.py`) | Stub method on a `server/services/*Service.ts` class | **Flag, don't implement** — see below |
 | (Django doesn't audit page views) | `auditPageViewRequest({ services, page: Page.X })` middleware on the GET route | Add a new entry to the `Page` enum in `server/constants/pages.ts`; mirror usage in `routes/index.ts` |
 | (Django doesn't audit form submissions/searches) | `auditService.logAuditEvent({ correlationId: req.id, who, what, subjectType, subjectId, details })` called from the POST handler, or a dedicated middleware like `auditSearchRequest` | Only needed where the submission is a meaningful business event (e.g. a search, a completed step) — not every POST |
+
+## Static Pages vs Interactive Journey Pages
+Not every migrated page should use `t(...)` translation keys — choose the approach based on the page's content, and ask the user if it's not obvious which bucket a page falls into:
+- **Heavy, static, prose-heavy pages** (terms and conditions, privacy policy, accessibility statement, cookies policy, and similar legal/policy pages): migrate as **separate per-locale templates** with each locale's full prose written directly into its own file — `server/views/pages/en-gb/<page>.njk` and `server/views/pages/cy/<page>.njk` — mirroring the existing `terms.njk` / `privacy.njk` pattern. Don't break this kind of content into dozens of `t()` keys; copy each locale's legacy prose verbatim into its file (see **Link Text & Translations** for sourcing the Welsh text).
+- **Minimal-text, interactive journey pages** (forms, payment steps, prompts, confirmations, error pages): migrate using `t("namespace.key")` i18n keys added to both `translation.json` files, per the existing pattern (`before-you-continue.njk`, `not-found.njk`, `payment-amount.njk`).
+- **If a page mixes both** (e.g. a form preceded by a few paragraphs of legal-style text), **ask the user** which approach they want before building the template rather than picking one yourself.
 
 ## Link Text & Translations
 - **Copy link/button/label text verbatim from the legacy source** — read the actual Django template or form field, don't paraphrase (e.g. "Terms and conditions", not "Terms & Conditions" or "T&Cs").
@@ -78,7 +84,7 @@ Django/Jinja2 templates in the legacy app rarely contain the full picture in one
 5. Port form validation into `server/utils/<page>Validation.ts`, matching Django's validation rules and error messages as closely as sensible for GOV.UK error summary conventions.
 6. Build the Nunjucks template in `server/views/pages/<page>.njk` using GOV.UK Design System component macros (`govukInput`, `govukDateInput`, `govukButton`, error summary, etc.) — don't hand-roll markup GOV.UK Frontend already provides.
 7. If a reference project was confirmed in **Step 0**, check its `server/views/` and `assets/scss/` (components/overrides) for equivalent pages or patterns before writing the template or any new SCSS/JS — prefer matching its conventions over introducing a new one-off style in this repo. Skip this step entirely if no reference project was confirmed.
-8. Add translation keys to both locale `translation.json` files and reference them with `t(...)` in the template instead of hardcoding English copy — follow **Link Text & Translations** above; never invent a non-English translation.
+8. Add page copy per **Static Pages vs Interactive Journey Pages** above — either as per-locale static templates, or as translation keys in both locale `translation.json` files referenced with `t(...)`. Either way, follow **Link Text & Translations** below; never invent a non-English translation.
 9. Add a new `Page` entry in `server/constants/pages.ts` and register `auditPageViewRequest({ services, page })` on the GET route so the page view is audited (every migrated page needs this, even if the Django view never recorded one).
 10. If the page submits a meaningful business event (search, completed step, etc.), audit it via `auditService.logAuditEvent(...)` from the POST handler or a dedicated middleware (see `auditSearchRequest.ts`) — not needed for purely internal/validation-only POSTs.
 11. For any backend/business logic identified in step 2, add a stub (see below) rather than implementing it.
@@ -100,7 +106,7 @@ When a Django view relies on logic not yet implemented in Express (API calls, GO
 - [ ] Validation mirrors Django's rules/messages
 - [ ] Template uses GOV.UK Frontend macros, not raw HTML for form controls
 - [ ] Template/SCSS/JS checked against the reference project (if one was confirmed in Step 0) and follows its conventions rather than inventing new ones
-- [ ] All page copy goes through `t("...")`, added to `en-gb` and `cy` locale files
+- [ ] Page copy follows **Static Pages vs Interactive Journey Pages** (static prose pages get per-locale templates; journey pages use `t("...")` keys added to `en-gb` and `cy` locale files)
 - [ ] Link/button text matches the legacy wording verbatim, every anchor's target matches the legacy `href`/`{% url %}` resolution (migrated as-is, not redesigned), and every non-English translation is copied from an existing legacy `.po` file (not invented) — unmatched strings are left in English and flagged
 - [ ] Page view is audited (`Page` enum entry + `auditPageViewRequest` on the GET route)
 - [ ] Meaningful submitted events (if any) are audited via `auditService.logAuditEvent`
