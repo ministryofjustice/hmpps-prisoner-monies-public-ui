@@ -23,12 +23,17 @@ These are the defaults for this `prisoner-money` workspace. **Don't assume they 
 - Any request to "migrate", "port", or "recreate" a Django view/page/form in a new Express service
 - Handles **one page/view at a time** — for a multi-page flow, repeat the procedure per page
 
+## When Unsure, Ask
+- If anything is ambiguous, contradictory, or you can't pin down its source — a template variable with no obvious provider, conflicting content between two overrides, an unclear validation rule, which flow a page belongs to, scope of the migration, etc. — **stop and ask the user**. Don't silently guess or pick the "most likely" interpretation.
+- This applies at every step: folder/project confirmation, template tracing, translations, validation behaviour, planning, and implementation.
+
 ## Before Starting
 0. **Confirm the project folders first.** Check whether the Configuration defaults above exist in the current workspace:
    - If they do, use them without asking.
    - If they don't (different workspace, renamed/missing folders, or the skill is being run outside this setup), stop and ask the user for: the legacy Django project folder, the target Express project folder, and (optionally) a reference project for code/HTML/CSS style conventions — don't guess paths or invent a reference project.
 1. Which Django view to migrate — find it in `<legacy project>/mtp_send_money/apps/send_money/{views.py,urls.py,forms.py}` and its template under `templates/send_money/`.
 2. What URL path the new page should live at (e.g. `/debit-card/amount`) and which feature route file it belongs in.
+3. **Propose a plan and wait for approval — do not write any code yet.** Lay out the migration as a high-level bullet-point plan: which files will be added/changed, new routes/handlers/templates, i18n keys needed, the `Page`/audit entries, any backend logic that will be flagged as a stub, and any open questions from **When Unsure, Ask**. Present this so the user can decide whether they want a sweeping migration (whole page/flow in one go) or small incremental changes (e.g. routing first, then template, then validation). Only proceed to the Procedure below once the user explicitly agrees to the plan.
 
 ## File Mapping Reference
 
@@ -46,14 +51,27 @@ These are the defaults for this `prisoner-money` workspace. **Don't assume they 
 
 ## Link Text & Translations
 - **Copy link/button/label text verbatim from the legacy source** — read the actual Django template or form field, don't paraphrase (e.g. "Terms and conditions", not "Terms & Conditions" or "T&Cs").
+- **Trust the legacy anchor tag's target as correct.** Assume the URL/route a legacy `<a href>` or `{% url %}` tag points to is intentional and should be migrated as-is — don't invent a different destination, "fix", or reorganise it. If a target page hasn't been migrated to Express yet, create a placeholder page for it (see the footer migration precedent) rather than dropping or redirecting the link elsewhere.
+- **Verify every anchor tag you migrate**, including ones in shared partials/layouts the page pulls in (per **Template Tag & Inheritance Tracing** below) — check the resolved `href` actually matches what the legacy `{% url %}`/reverse lookup resolves to, not just what it looks like in the raw template.
 - **Never invent or auto-generate a translation.** For non-English locales (`cy`), copy the exact existing translation from the legacy project's translation catalogue:
   - `money-to-prisoners-send-money/mtp_send_money/translations/<locale>/LC_MESSAGES/django.po` — search for the English text as a `msgid` and use its `msgstr`
   - Shared/library strings (header, footer, common components) may instead live in the installed `mtp_common` package — check `money-to-prisoners-send-money/venv/lib/*/site-packages/mtp_common/` if the string isn't in the local `django.po`
 - **If no legacy translation can be found** (brand-new placeholder copy, or the string's source is an untranslated dependency), leave the English text in that locale's `translation.json` too and call it out in your final summary as needing a professional translation — do not guess or machine-translate it yourself.
 - This applies even to short, "obvious" strings like page titles — only use a Welsh (or other locale) string once you've found its verbatim match in an existing `.po` file.
 
+## Template Tag & Inheritance Tracing
+Django/Jinja2 templates in the legacy app rarely contain the full picture in one file — a page's real rendered output is assembled from template inheritance, block overrides, includes, custom tags, and context processors. **Always reverse-engineer the full chain below before writing the Express template** — skimming only the page's own `.html` file risks silently missing content, conditional branches, or the wrong data source:
+- **Follow the full `{% extends %}` chain**, not just the first hop. Local templates often extend `templates/base.html`, which itself extends a base template from the installed `mtp_common` package — find that package under `money-to-prisoners-send-money/venv/lib/*/site-packages/mtp_common/templates/` and read it too.
+- **Resolve every `{% block %}` the page overrides against its parent's block definitions.** A block can be empty/default in the parent template and only get real content from a child override several inheritance levels away (or vice versa) — check both ends, don't assume the override you found is the only one in play.
+- **Follow every `{% include %}`** to the included template's actual content, including includes inside `mtp_common`.
+- **Read any custom template tags/filters** referenced via `{% load ... %}` — find their Python implementation in the local app's `templatetags/` or the installed package, since they can render conditional/dynamic markup that isn't visible from the HTML alone.
+- **Check `context_processors.py`** (and any other context processors registered in Django settings) for every variable the template references (e.g. `{{ some_var }}` or `{% if some_var %}`). Don't assume a context processor that defines a plausible-looking variable is actually the one powering the template — verify the variable name is the exact one the template reads, and check whether the variable is actually used anywhere (unused/dead context processors do exist).
+- **Trace `{% if %}` / `{% for %}` conditions against real settings/feature flags**, not just whichever branch appears first, so you migrate the branch that's actually reachable in production.
+- Do this *before* building the Express route/handler/template (feeds into Procedure step 1 below). If a template variable or tag's source can't be found, say so explicitly in your final summary rather than guessing what it renders.
+
 ## Procedure
-1. Read the Django view, its form class, and its template in full.
+(Only begin once the user has approved the plan from **Before Starting** step 3.)
+1. Read the Django view, its form class, and its template in full, reverse-engineering the whole template inheritance/include/tag chain per **Template Tag & Inheritance Tracing** above.
 2. Identify every piece of backend/business logic the view performs (API calls, payment processing, DB/session reads, emails).
 3. Add/extend the route in `server/routes/<feature>.ts`.
 4. Write the handler(s) in `server/handlers/<page>.ts`, following the GET-renders / POST-validates-then-redirects pattern.
@@ -75,13 +93,15 @@ When a Django view relies on logic not yet implemented in Express (API calls, GO
 - Call out every flagged stub in your final summary to the user so it can be tracked.
 
 ## Completion Checklist
+- [ ] Plan was presented as bullet points and explicitly approved by the user before any code was written
+- [ ] Full template inheritance/include/tag chain traced per **Template Tag & Inheritance Tracing** (not just the page's own `.html` file)
 - [ ] Route registered and reachable at the correct path
 - [ ] Handler covers GET (render) and POST (validate + redirect) where the Django view did
 - [ ] Validation mirrors Django's rules/messages
 - [ ] Template uses GOV.UK Frontend macros, not raw HTML for form controls
 - [ ] Template/SCSS/JS checked against the reference project (if one was confirmed in Step 0) and follows its conventions rather than inventing new ones
 - [ ] All page copy goes through `t("...")`, added to `en-gb` and `cy` locale files
-- [ ] Link/button text matches the legacy wording verbatim, and every non-English translation is copied from an existing legacy `.po` file (not invented) — unmatched strings are left in English and flagged
+- [ ] Link/button text matches the legacy wording verbatim, every anchor's target matches the legacy `href`/`{% url %}` resolution (migrated as-is, not redesigned), and every non-English translation is copied from an existing legacy `.po` file (not invented) — unmatched strings are left in English and flagged
 - [ ] Page view is audited (`Page` enum entry + `auditPageViewRequest` on the GET route)
 - [ ] Meaningful submitted events (if any) are audited via `auditService.logAuditEvent`
 - [ ] Backend/API logic is stubbed with a `TODO` comment, not implemented
