@@ -7,19 +7,27 @@ argument-hint: 'Django view/page to migrate (and target URL path if not obvious)
 # Django to Express Page Migration
 
 ## Configuration
-- **Reference project** (best-practice example for code style and HTML/CSS/SCSS, optional): `/Users/alex.stockford/Documents/Git/probation/hmpps-probation-check-in-ui`
-  - Leave this value blank to skip the reference-project step below.
+These are the defaults for this `prisoner-money` workspace. **Don't assume they apply** — if any of these folders aren't present when the skill is invoked (only one repo is open, paths differ, or this is a different workspace entirely), ask the user to confirm all three before doing anything else (see **Step 0** below).
+
+- **Legacy Django project** (source): `money-to-prisoners-send-money`
+  - Views/forms/URLs live under `mtp_send_money/apps/send_money/`, templates under `mtp_send_money/templates/`, translations under `mtp_send_money/translations/<locale>/LC_MESSAGES/django.po`.
+- **Express target project**: `hmpps-prisoner-monies-public-ui`
+  - Routes/handlers/views/i18n live under `server/`, as detailed in the File Mapping Reference below.
+- **Reference project** (best-practice example for code style and HTML/CSS/SCSS, optional): `~/Documents/Git/probation/hmpps-probation-check-in-ui`
+  - Not everyone has a reference project — ask "do you have a reference project for code/style conventions?" if this one isn't available, and skip the reference-project step below if they say no.
   - This is a sibling HMPPS Express/Nunjucks GOV.UK service built on the same template (same `assets/scss` and `views` layout), kept here as a reference because it's further along in adopting current conventions than some pages in this repo.
-  - Update this path if the team adopts a different reference project.
+  - Update this default if the team adopts a different reference project.
 
 ## When to Use
-- Migrating a page from `money-to-prisoners-send-money` (Django) to its Express/Nunjucks replacement in `hmpps-prisoner-monies-public-ui`
-- Any request to "migrate", "port", or "recreate" a Django view/page/form in the new service
+- Migrating a page from a legacy Django app to its Express/Nunjucks replacement
+- Any request to "migrate", "port", or "recreate" a Django view/page/form in a new Express service
 - Handles **one page/view at a time** — for a multi-page flow, repeat the procedure per page
 
 ## Before Starting
-Confirm with the user if not already clear from the request:
-1. Which Django view to migrate — find it in `money-to-prisoners-send-money/mtp_send_money/apps/send_money/{views.py,urls.py,forms.py}` and its template under `templates/send_money/`.
+0. **Confirm the project folders first.** Check whether the Configuration defaults above exist in the current workspace:
+   - If they do, use them without asking.
+   - If they don't (different workspace, renamed/missing folders, or the skill is being run outside this setup), stop and ask the user for: the legacy Django project folder, the target Express project folder, and (optionally) a reference project for code/HTML/CSS style conventions — don't guess paths or invent a reference project.
+1. Which Django view to migrate — find it in `<legacy project>/mtp_send_money/apps/send_money/{views.py,urls.py,forms.py}` and its template under `templates/send_money/`.
 2. What URL path the new page should live at (e.g. `/debit-card/amount`) and which feature route file it belongs in.
 
 ## File Mapping Reference
@@ -51,7 +59,7 @@ Confirm with the user if not already clear from the request:
 4. Write the handler(s) in `server/handlers/<page>.ts`, following the GET-renders / POST-validates-then-redirects pattern.
 5. Port form validation into `server/utils/<page>Validation.ts`, matching Django's validation rules and error messages as closely as sensible for GOV.UK error summary conventions.
 6. Build the Nunjucks template in `server/views/pages/<page>.njk` using GOV.UK Design System component macros (`govukInput`, `govukDateInput`, `govukButton`, error summary, etc.) — don't hand-roll markup GOV.UK Frontend already provides.
-7. If a reference project is set in **Configuration**, check its `server/views/` and `assets/scss/` (components/overrides) for equivalent pages or patterns before writing the template or any new SCSS/JS — prefer matching its conventions over introducing a new one-off style in this repo.
+7. If a reference project was confirmed in **Step 0**, check its `server/views/` and `assets/scss/` (components/overrides) for equivalent pages or patterns before writing the template or any new SCSS/JS — prefer matching its conventions over introducing a new one-off style in this repo. Skip this step entirely if no reference project was confirmed.
 8. Add translation keys to both locale `translation.json` files and reference them with `t(...)` in the template instead of hardcoding English copy — follow **Link Text & Translations** above; never invent a non-English translation.
 9. Add a new `Page` entry in `server/constants/pages.ts` and register `auditPageViewRequest({ services, page })` on the GET route so the page view is audited (every migrated page needs this, even if the Django view never recorded one).
 10. If the page submits a meaningful business event (search, completed step, etc.), audit it via `auditService.logAuditEvent(...)` from the POST handler or a dedicated middleware (see `auditSearchRequest.ts`) — not needed for purely internal/validation-only POSTs.
@@ -71,7 +79,7 @@ When a Django view relies on logic not yet implemented in Express (API calls, GO
 - [ ] Handler covers GET (render) and POST (validate + redirect) where the Django view did
 - [ ] Validation mirrors Django's rules/messages
 - [ ] Template uses GOV.UK Frontend macros, not raw HTML for form controls
-- [ ] Template/SCSS/JS checked against the reference project (if configured) and follows its conventions rather than inventing new ones
+- [ ] Template/SCSS/JS checked against the reference project (if one was confirmed in Step 0) and follows its conventions rather than inventing new ones
 - [ ] All page copy goes through `t("...")`, added to `en-gb` and `cy` locale files
 - [ ] Link/button text matches the legacy wording verbatim, and every non-English translation is copied from an existing legacy `.po` file (not invented) — unmatched strings are left in English and flagged
 - [ ] Page view is audited (`Page` enum entry + `auditPageViewRequest` on the GET route)
