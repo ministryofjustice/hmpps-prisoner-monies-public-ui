@@ -7,11 +7,16 @@ import Page from '../constants/pages'
 import auditPageEventRequest from '../middleware/auditPageEventRequest'
 import AuditEvent from '../constants/events'
 import { debitCardPaths } from '../constants/paths'
+import checkDetailsGetHandler from '../handlers/checkDetails'
 
 export default function routes(services: Services): Router {
   const router = Router()
 
-  router.get(debitCardPaths.PRISONER_DETAILS, prisonerDetailsGetHandler)
+  router.get(
+    debitCardPaths.PRISONER_DETAILS,
+    auditPageViewRequest({ services, page: Page.DEBIT_CARD_DETAILS }),
+    prisonerDetailsGetHandler,
+  )
 
   router.post(debitCardPaths.PRISONER_DETAILS, prisonerDetailsPostHandler(services.sendMoneyToPrisonerService))
 
@@ -31,8 +36,7 @@ export default function routes(services: Services): Router {
     paymentAmountPostHandler(),
   )
 
-  router.get(debitCardPaths.CHECK_DETAILS, (_req, res, _next) => {
-    return res.render('pages/check-details', {})
-  })
+  router.get(debitCardPaths.CHECK_DETAILS, checkDetailsGetHandler)
+
   return router
 }

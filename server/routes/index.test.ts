@@ -59,6 +59,7 @@ describe('GET /info-page', () => {
       })
   })
 })
+
 describe('GET /payment-choice', () => {
   it('should render payment choice page', () => {
     return request(app).get('/payment-choice').expect('Content-Type', /html/).expect(404)
@@ -151,7 +152,7 @@ describe.each([['en-gb'], ['cy']])('POST /%s/debit-card/details', locale => {
   it('redirects to the amount page when the prisoner details are valid', () => {
     sendMoneyToPrisonerService.getValidPrisoner.mockResolvedValue({
       prisonerNumber: 'A1234BC',
-      prisonerDOB: '1990-2-1',
+      prisonerDOB: '1-2-1990',
     })
 
     return request(app)
@@ -167,7 +168,7 @@ describe.each([['en-gb'], ['cy']])('POST /%s/debit-card/details', locale => {
       .expect(302)
       .expect('Location', `/${locale}/debit-card/amount`)
       .expect(() => {
-        expect(sendMoneyToPrisonerService.getValidPrisoner).toHaveBeenCalledWith('A1234BC', '1990-2-1')
+        expect(sendMoneyToPrisonerService.getValidPrisoner).toHaveBeenCalledWith('A1234BC', '1-2-1990')
       })
   })
 

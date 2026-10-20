@@ -72,5 +72,40 @@
       "tooLarge": "The amount you are trying to send is too large. Please enter a smaller amount"
     },
     "submit": "Check details"
+  },
+  "prisonerDetails": {
+      "pageTitle": "Pay now by debit card",
+      "pageSubTitle": "Enter prisoner details",
+      "errorSummaryTitle": "There was a problem",
+      "fieldsetLegend": "Prisoner details",
+      "fields": {
+        "prisonerName": {
+          "label": "Prisoner name"
+        },
+        "prisonerDob": {
+          "legend": "Prisoner date of birth",
+          "hint": "For example, 28 04 1989",
+          "day": "Day",
+          "month": "Month",
+          "year": "Year"
+        },
+        "prisonerNumber": {
+          "label": "Prisoner number",
+          "hint": "For example, A1234BC"
+        }
+      },
+      "errors": {
+        "required": "This field is required",
+        "prisonerNumberFormat": "Incorrect prisoner number format",
+        "prisonerNameCardNumber": "Please do not enter your debit card number here",
+        "dobDayNumber": "Enter ‘day’ as a number",
+        "dobDayRange": "‘Day’ should be between 1 and 31",
+        "dobMonthNumber": "Enter ‘month’ as a number",
+        "dobMonthRange": "‘Month’ should be between 1 and 12",
+        "dobYearNumber": "Enter ‘year’ as a number",
+        "dobYearRange": "‘Year’ should be between 1900 and {{currentYear}}",
+        "dobInvalid": "Enter a valid date"
+      },
+      "submit": "Enter amount"
   }
 }

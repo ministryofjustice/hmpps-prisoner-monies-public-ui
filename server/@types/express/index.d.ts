@@ -6,6 +6,8 @@ export declare module 'express-session' {
   interface SessionData {
     returnTo: string
     sendMoney?: {
+      prisonerName?: string
+      prisonerDOB?: string
       prisonerNumber?: string
       amount?: string
     }
