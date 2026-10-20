@@ -59,7 +59,7 @@
         <div id="id_prisoner_dob-wrapper">
           {% set prisonerDobErrorMessages %}
           {% for message in errors.prisonerDob %}
-          <p class="govuk-error-message">{{ message }}<span class="govuk-visually-hidden">.</span></p>
+          <span>{{ message }}<span class="govuk-visually-hidden">.</span></span>{% if not loop.last %}<br>{% endif %}
           {% endfor %}
           {% endset %}
           {{ govukDateInput({
