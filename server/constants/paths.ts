@@ -14,6 +14,7 @@ export const paths = {
   TERMS: '/terms',
   PRIVACY: '/privacy',
   CONTACT_US: '/contact-us',
+  HELP: '/help/',
 }
 
 // debit card pages, see server/routes/debit-card.ts

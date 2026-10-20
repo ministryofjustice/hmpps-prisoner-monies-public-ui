@@ -7,6 +7,7 @@ import ExampleApiClient from '../data/exampleApiClient'
 import SendMoneyToPrisonerService from '../services/sendMoneyToPrisonerService'
 import ANONYMOUS_USER from '../constants/audit'
 import AuditEvent from '../constants/events'
+import Page from '../constants/pages'
 import i18next from '../i18n/i18n'
 
 jest.mock('@ministryofjustice/hmpps-audit-client')
@@ -85,7 +86,7 @@ describe.each([
         expect(res.text).toContain(`href="/${locale}/payment-choice"`)
         expect(res.text).toContain(`href="/${locale}/terms"`)
         expect(res.text).toContain(`href="/${locale}/privacy"`)
-        expect(res.text).toContain(`href="/${locale}/contact-us"`)
+        expect(res.text).toContain(`href="/${locale}/help/"`)
         expect(res.text).toContain('govuk-back-link')
         expect(res.text).toContain('class="app-user-agreement"')
       })
@@ -119,15 +120,43 @@ describe.each([
 })
 
 describe.each([
-  ['en-gb', 'Terms and conditions'],
-  ['cy', 'Y gyfraith sy’n berthnasol'],
-])('GET /%s/terms', (locale, expectedHeading) => {
-  it('renders the translated terms page', () => {
+  ['en-gb', 'Terms and conditions', 'Please read them carefully.'],
+  ['cy', 'Telerau ac amodau', "Darllenwch nhw'n ofalus."],
+])('GET /%s/terms', (locale, expectedHeading, expectedCopy) => {
+  it('renders and audits the terms page with the legacy help link', () => {
     return request(app)
       .get(`/${locale}/terms`)
       .expect('Content-Type', /html/)
       .expect(200)
-      .expect(res => expect(res.text).toContain(expectedHeading))
+      .expect(res => {
+        expect(res.text).toContain(expectedHeading)
+        expect(res.text).toContain(expectedCopy)
+        expect(res.text).toContain('card-acceptance-signage/visa.svg')
+        expect(res.text).toContain(`href="/${locale}/help/"`)
+        expect(auditService.logPageView).toHaveBeenCalledWith(
+          Page.TERMS,
+          expect.objectContaining({ who: ANONYMOUS_USER }),
+        )
+      })
+  })
+})
+
+describe.each([
+  ['en-gb', 'Help'],
+  ['cy', 'Cymorth'],
+])('GET /%s/help/', (locale, expectedHeading) => {
+  it('renders and audits the help placeholder', () => {
+    return request(app)
+      .get(`/${locale}/help/`)
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain(expectedHeading)
+        expect(auditService.logPageView).toHaveBeenCalledWith(
+          Page.HELP,
+          expect.objectContaining({ who: ANONYMOUS_USER }),
+        )
+      })
   })
 })
 

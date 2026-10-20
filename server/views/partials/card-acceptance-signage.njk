@@ -1,0 +1,9 @@
+{# Mirrors send-money's card_acceptance_signage template tag; height keeps the 160x146 aspect ratio #}
+{% set signageHeight = (146 * width / 160) | round %}
+{% for card in ["visa", "mastercard", "maestro"] %}
+<div class="app-card-acceptance-signage__logo">
+  <svg width="{{ width }}" height="{{ signageHeight }}" focusable="false">
+    <image href="/assets/images/card-acceptance-signage/{{ card }}.svg" width="{{ width }}" height="{{ signageHeight }}" />
+  </svg>
+</div>
+{% endfor %}
