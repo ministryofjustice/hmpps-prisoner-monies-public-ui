@@ -153,6 +153,24 @@ describe('prisonerDetailsPostHandler', () => {
     expect(redirect).not.toHaveBeenCalled()
   })
 
+  it('redisplays the raw submitted prisoner name (untrimmed) when the prisoner cannot be found', async () => {
+    // Matches legacy: Django redisplays raw POST data, not cleaned_data, for an invalid/rejected form.
+    sendMoneyToPrisonerService.getValidPrisoner.mockResolvedValue(undefined as never)
+    const req = { body: { ...validFormBody, prisoner_name: '  John Smith  ' } } as unknown as Request
+    const { res, render } = makeRes()
+    res.locals.t = i18next.getFixedT('en-gb')
+
+    const handler = prisonerDetailsPostHandler(sendMoneyToPrisonerService)
+    await handler(req, res as unknown as Response, next)
+
+    expect(render).toHaveBeenCalledWith(
+      'pages/prisoner-details',
+      expect.objectContaining({
+        formValues: expect.objectContaining({ prisonerName: '  John Smith  ' }),
+      }),
+    )
+  })
+
   describe('prisoner number normalisation', () => {
     it('uppercases a lowercase prisoner number before looking up the prisoner', async () => {
       sendMoneyToPrisonerService.getValidPrisoner.mockResolvedValue({
@@ -189,7 +207,9 @@ describe('prisonerDetailsPostHandler', () => {
       expect(req.session.sendMoney?.prisonerNumber).toBe('A1234BC')
     })
 
-    it('redisplays the uppercased prisoner number when the prisoner cannot be found', async () => {
+    it('redisplays the prisoner number exactly as typed (not uppercased) when the prisoner cannot be found', async () => {
+      // Matches legacy: an invalid/rejected Django form always redisplays the raw
+      // submitted POST data, never the cleaned_data used for the lookup.
       sendMoneyToPrisonerService.getValidPrisoner.mockResolvedValue(undefined as never)
       const req = {
         body: { ...validFormBody, prisoner_number: 'a1234bc' },
@@ -200,10 +220,11 @@ describe('prisonerDetailsPostHandler', () => {
       const handler = prisonerDetailsPostHandler(sendMoneyToPrisonerService)
       await handler(req, res as unknown as Response, next)
 
+      expect(sendMoneyToPrisonerService.getValidPrisoner).toHaveBeenCalledWith('A1234BC', expectedPrisonerDOB)
       expect(render).toHaveBeenCalledWith(
         'pages/prisoner-details',
         expect.objectContaining({
-          formValues: expect.objectContaining({ prisonerNumber: 'A1234BC' }),
+          formValues: expect.objectContaining({ prisonerNumber: 'a1234bc' }),
         }),
       )
     })

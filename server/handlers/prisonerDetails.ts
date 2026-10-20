@@ -14,6 +14,17 @@ function extractPrisonerDetailsFormValues(body: Record<string, string>): Prisone
     prisonerNumber: body.prisoner_number,
   }
 }
+function formatPrisonerDetails(formValues: PrisonerDetailsFormValues) {
+  return {
+    ...formValues,
+    prisonerName: formValues.prisonerName?.trim() as string,
+    prisonerNumber: formValues.prisonerNumber?.trim().toUpperCase() as string,
+  }
+}
+
+function buildPrisonerDob({ prisonerDobDay, prisonerDobMonth, prisonerDobYear }: PrisonerDetailsFormValues): string {
+  return `${prisonerDobDay}-${prisonerDobMonth}-${prisonerDobYear}`
+}
 
 function renderPrisonerDetails(
   res: Parameters<RequestHandler>[1],
@@ -36,30 +47,29 @@ export const prisonerDetailsGetHandler: RequestHandler = (_req, res) => {
 export function prisonerDetailsPostHandler(sendMoneyToPrisonerService: SendMoneyToPrisonerService): RequestHandler {
   return async (req, res) => {
     const formValues = extractPrisonerDetailsFormValues(req.body)
-
-    formValues.prisonerNumber = formValues.prisonerNumber?.trim().toUpperCase() as string
-    formValues.prisonerName = formValues.prisonerName?.trim()
-
-    const validationResult = validatePrisonerDetails(formValues, res.locals.t)
+    const formattedFormValues = formatPrisonerDetails(formValues)
+    const validationResult = validatePrisonerDetails(formattedFormValues, res.locals.t)
 
     if (validationResult.errorList.length > 0) {
       return renderPrisonerDetails(res, formValues, validationResult)
     }
 
-    const prisonerDOB = `${formValues.prisonerDobDay}-${formValues.prisonerDobMonth}-${formValues.prisonerDobYear}`
-    const validPrisoner = await sendMoneyToPrisonerService.getValidPrisoner(formValues.prisonerNumber, prisonerDOB)
+    const { prisonerName, prisonerNumber } = formattedFormValues
+    const prisonerDOB = buildPrisonerDob(formattedFormValues)
+    const validPrisoner = await sendMoneyToPrisonerService.getValidPrisoner(prisonerNumber, prisonerDOB)
 
-    if (validPrisoner) {
-      req.session = req.session ?? {}
-      req.session.sendMoney = {
-        ...req.session.sendMoney,
-        prisonerName: formValues.prisonerName,
-        prisonerDOB,
-        prisonerNumber: formValues.prisonerNumber,
-      }
-      return res.redirect(res.locals.localePath(debitCardPaths.PAYMENT_AMOUNT))
+    if (!validPrisoner) {
+      // renders form values as they were submitted rather than the formatted values
+      return renderPrisonerDetails(res, formValues)
     }
 
-    return renderPrisonerDetails(res, formValues)
+    req.session = req.session ?? {}
+    req.session.sendMoney = {
+      ...req.session.sendMoney,
+      prisonerName,
+      prisonerDOB,
+      prisonerNumber,
+    }
+    return res.redirect(res.locals.localePath(debitCardPaths.PAYMENT_AMOUNT))
   }
 }
