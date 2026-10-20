@@ -152,7 +152,7 @@ describe.each([['en-gb'], ['cy']])('POST /%s/debit-card/details', locale => {
   it('redirects to the amount page when the prisoner details are valid', () => {
     sendMoneyToPrisonerService.getValidPrisoner.mockResolvedValue({
       prisonerNumber: 'A1234BC',
-      prisonerDOB: '1990-2-1',
+      prisonerDOB: '1-2-1990',
     })
 
     return request(app)
