@@ -16,6 +16,7 @@ type PrisonerDetailsMessages = {
   prisonerDobLabel: string
   prisonerNumberLabel: string
   prisonerNumberFormat: string
+  prisonerNameCardNumber: string
   dobDayNumber: string
   dobDayRange: string
   dobMonthNumber: string
@@ -32,6 +33,7 @@ const messages: Record<Locale, PrisonerDetailsMessages> = {
     prisonerDobLabel: 'Prisoner date of birth',
     prisonerNumberLabel: 'Prisoner number',
     prisonerNumberFormat: 'Incorrect prisoner number format',
+    prisonerNameCardNumber: 'Please do not enter your debit card number here',
     dobDayNumber: 'Enter ‘day’ as a number',
     dobDayRange: '‘Day’ should be between 1 and 31',
     dobMonthNumber: 'Enter ‘month’ as a number',
@@ -46,6 +48,7 @@ const messages: Record<Locale, PrisonerDetailsMessages> = {
     prisonerDobLabel: "Dyddiad geni'r carcharor",
     prisonerNumberLabel: 'Rhif y carcharor',
     prisonerNumberFormat: 'Fformat anghywir ar gyfer rhif y carcharor',
+    prisonerNameCardNumber: 'Peidiwch â nodi rhif eich cerdyn debyd yma',
     dobDayNumber: 'Nodwch ‘diwrnod’ fel rhif',
     dobDayRange: 'Dylai ‘Diwrnod’ fod rhwng 1 a 31',
     dobMonthNumber: 'Nodwch ‘mis’ fel rhif',
@@ -91,6 +94,28 @@ describe.each<Locale>(['en-gb', 'cy'])('validatePrisonerDetails (%s)', locale =>
       const result = validatePrisonerDetails({ ...validFormValues, prisonerName: '' })
 
       expect(result.errors.prisonerName).toBe(expected.required)
+    })
+
+    it.each([
+      '1234 5678 9012 3456',
+      '1234567890123456',
+      '1234-5678-9012-3456'.replace(/-/g, ' '),
+      'John 1234 5678 9012 3456 Smith',
+    ])('returns a card number error when the name looks like a debit card number: "%s"', cardLikeName => {
+      const result = validatePrisonerDetails({ ...validFormValues, prisonerName: cardLikeName })
+
+      expect(result.errors.prisonerName).toBe(expected.prisonerNameCardNumber)
+      expect(result.errorList).toContainEqual({
+        label: expected.prisonerNameLabel,
+        href: '#id_prisoner_name',
+        messages: [expected.prisonerNameCardNumber],
+      })
+    })
+
+    it('does not flag an ordinary name containing some digits as a card number', () => {
+      const result = validatePrisonerDetails({ ...validFormValues, prisonerName: 'Flat 12 34 Smith' })
+
+      expect(result.errors.prisonerName).toBeUndefined()
     })
   })
 

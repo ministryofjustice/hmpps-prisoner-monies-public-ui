@@ -27,15 +27,13 @@ export type PrisonerDetailsValidationResult = {
 
 const prisonerNumberRegex = /^[a-zA-Z]\d{4}[a-zA-Z]{2}$/
 
+const cardNumberRegex = /\d{4}\s*\d{4}\s*\d{4}\s*\d{4}/
+
 function isValidDate(day: number, month: number, year: number): boolean {
   const date = new Date(year, month - 1, day)
   return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day
 }
 
-// Mirrors Django's SplitDateField/MultiValueField.clean(): if any part is missing, a single
-// 'required' error is raised immediately. Otherwise, each part (day, month, year) is validated
-// independently and ALL resulting errors are collected (not just the first one found), only
-// falling back to a single 'Enter a valid date' error once every individual part is itself valid.
 function validatePrisonerDob(formValues: PrisonerDetailsFormValues, t: TFunction): string[] {
   if (!formValues.prisonerDobDay || !formValues.prisonerDobMonth || !formValues.prisonerDobYear) {
     return [t('prisonerDetails.errors.required')]
@@ -85,6 +83,8 @@ export function validatePrisonerDetails(
 
   if (!formValues.prisonerName) {
     errors.prisonerName = t('prisonerDetails.errors.required')
+  } else if (cardNumberRegex.test(formValues.prisonerName)) {
+    errors.prisonerName = t('prisonerDetails.errors.prisonerNameCardNumber')
   }
 
   const prisonerDobErrors = validatePrisonerDob(formValues, t)

@@ -76,6 +76,7 @@
     "errors": {
       "required": "Mae’n rhaid llenwi’r maes hwn",
       "prisonerNumberFormat": "Fformat anghywir ar gyfer rhif y carcharor",
+      "prisonerNameCardNumber": "Peidiwch â nodi rhif eich cerdyn debyd yma",
       "dobDayNumber": "Nodwch ‘diwrnod’ fel rhif",
       "dobDayRange": "Dylai ‘Diwrnod’ fod rhwng 1 a 31",
       "dobMonthNumber": "Nodwch ‘mis’ fel rhif",

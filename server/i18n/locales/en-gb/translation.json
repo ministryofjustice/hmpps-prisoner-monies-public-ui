@@ -97,6 +97,7 @@
       "errors": {
         "required": "This field is required",
         "prisonerNumberFormat": "Incorrect prisoner number format",
+        "prisonerNameCardNumber": "Please do not enter your debit card number here",
         "dobDayNumber": "Enter ‘day’ as a number",
         "dobDayRange": "‘Day’ should be between 1 and 31",
         "dobMonthNumber": "Enter ‘month’ as a number",
