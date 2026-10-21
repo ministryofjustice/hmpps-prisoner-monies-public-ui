@@ -26,8 +26,12 @@ function formatPrisonerDetails(formValues: PrisonerDetailsFormValues) {
   }
 }
 
+function padDatePart(value: string | undefined): string {
+  return typeof value === 'string' ? value.padStart(2, '0') : ''
+}
+
 function buildPrisonerDob({ prisonerDobDay, prisonerDobMonth, prisonerDobYear }: PrisonerDetailsFormValues): string {
-  return `${prisonerDobDay}-${prisonerDobMonth}-${prisonerDobYear}`
+  return `${padDatePart(prisonerDobDay)}-${padDatePart(prisonerDobMonth)}-${prisonerDobYear}`
 }
 
 function renderPrisonerDetails(

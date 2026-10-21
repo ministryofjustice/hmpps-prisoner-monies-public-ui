@@ -16,10 +16,18 @@ beforeAll(() => i18nextInitPromise)
 
 const next = jest.fn() as unknown as NextFunction
 
-const validFormBody = {
+type PrisonerDetailsRequestBody = {
+  prisoner_name: string
+  prisoner_dob_0: string
+  prisoner_dob_1: string
+  prisoner_dob_2: string
+  prisoner_number: string
+}
+
+const validFormBody: PrisonerDetailsRequestBody = {
   prisoner_name: 'John Smith',
-  prisoner_dob_0: '1',
-  prisoner_dob_1: '2',
+  prisoner_dob_0: '01',
+  prisoner_dob_1: '02',
   prisoner_dob_2: '1990',
   prisoner_number: 'A1234BC',
 }
@@ -249,6 +257,50 @@ describe('prisonerDetailsPostHandler', () => {
       await handler(req, res as unknown as Response, next)
 
       expect(req.session.sendMoney?.prisonerName).toBe('John Smith')
+    })
+  })
+
+  describe('prisoner date of birth zero-padding', () => {
+    const unpaddedDobFormBody: PrisonerDetailsRequestBody = {
+      prisoner_name: 'Jane Doe',
+      prisoner_dob_0: '1',
+      prisoner_dob_1: '1',
+      prisoner_dob_2: '1999',
+      prisoner_number: 'A9876ZZ',
+    }
+
+    it('zero-pads single-digit day and month before calling isPrisonerKnown', async () => {
+      sendMoneyToPrisonerService.isPrisonerKnown.mockResolvedValue(true)
+      const req = {
+        body: unpaddedDobFormBody,
+      } as unknown as Request
+      const { res } = makeRes()
+      res.locals.t = i18next.getFixedT('en-gb')
+
+      const handler = prisonerDetailsPostHandler(sendMoneyToPrisonerService)
+      await handler(req, res as unknown as Response, next)
+
+      expect(sendMoneyToPrisonerService.isPrisonerKnown).toHaveBeenCalledWith(
+        unpaddedDobFormBody.prisoner_number,
+        '01-01-1999',
+      )
+    })
+
+    it('does not re-pad a day/month that is already two digits', async () => {
+      sendMoneyToPrisonerService.isPrisonerKnown.mockResolvedValue(true)
+      const req = {
+        body: { ...unpaddedDobFormBody, prisoner_dob_0: '21', prisoner_dob_1: '10', prisoner_dob_2: '1980' },
+      } as unknown as Request
+      const { res } = makeRes()
+      res.locals.t = i18next.getFixedT('en-gb')
+
+      const handler = prisonerDetailsPostHandler(sendMoneyToPrisonerService)
+      await handler(req, res as unknown as Response, next)
+
+      expect(sendMoneyToPrisonerService.isPrisonerKnown).toHaveBeenCalledWith(
+        unpaddedDobFormBody.prisoner_number,
+        '21-10-1980',
+      )
     })
   })
 })

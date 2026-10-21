@@ -253,7 +253,7 @@ describe.each([['en-gb'], ['cy']])('POST /%s/debit-card/details', locale => {
       .expect(302)
       .expect('Location', `/${locale}/debit-card/amount`)
       .expect(() => {
-        expect(sendMoneyToPrisonerService.isPrisonerKnown).toHaveBeenCalledWith('A1234BC', '1-2-1990')
+        expect(sendMoneyToPrisonerService.isPrisonerKnown).toHaveBeenCalledWith('A1234BC', '01-02-1990')
       })
   })
 
