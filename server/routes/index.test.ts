@@ -107,15 +107,21 @@ describe.each([
 })
 
 describe.each([
-  ['en-gb', 'Privacy policy'],
-  ['cy', 'Privacy policy'],
-])('GET /%s/privacy', (locale, expectedHeading) => {
+  ['en-gb', 'Privacy policy', 'Types of personal data we process', '/en-gb/cookies'],
+  ['cy', 'Polisi preifatrwydd', 'Pwrpas', '/cy/cookies'],
+])('GET /%s/privacy', (locale, expectedHeading, expectedSection, cookiesHref) => {
   it('should render privacy page', () => {
     return request(app)
       .get(`/${locale}/privacy`)
       .expect('Content-Type', /html/)
       .expect(200)
-      .expect(res => expect(res.text).toContain(expectedHeading))
+      .expect(res => {
+        expect(res.text).toContain(expectedHeading)
+        expect(res.text).toContain(expectedSection)
+        expect(res.text).toContain(`href="${cookiesHref}"`)
+        expect(res.text).toContain('href="mailto:privacy@justice.gov.uk"')
+        expect(res.text).toContain('href="https://www.payments.service.gov.uk/privacy"')
+      })
   })
 })
 
