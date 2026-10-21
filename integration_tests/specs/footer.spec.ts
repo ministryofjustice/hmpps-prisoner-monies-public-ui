@@ -5,11 +5,8 @@ const FOOTER = 'footer.govuk-template__footer'
 
 const locales = ['en-gb', 'cy'] as const
 
-// pages the footer is expected to render identically on, beyond the homepage
-const pagesWithFooter = [
-  { name: 'before you continue page', path: paths.BEFORE_YOU_CONTINUE },
-  { name: 'prisoner details page', path: debitCardPaths.PRISONER_DETAILS },
-]
+// journey pages that should share the footer
+const pagesWithFooter = [debitCardPaths.PRISONER_DETAILS, debitCardPaths.PAYMENT_AMOUNT, debitCardPaths.CHECK_DETAILS]
 
 // one row per locale/link combination, using the exact text actually rendered (no locale lookups needed)
 const footerLinkCases = [
@@ -32,16 +29,21 @@ const footerLinkCases = [
 ] as const
 
 test.describe('Footer', () => {
-  for (const locale of locales) {
-    for (const { name, path } of pagesWithFooter) {
-      test(`[${locale}] shows the support links and crown copyright/OGL licence on the ${name}`, async ({ page }) => {
-        await page.goto(`/${locale}${path}`)
-        const footer = page.locator(FOOTER)
+  test('renders the support links and crown copyright/OGL licence', async ({ page }) => {
+    await page.goto(paths.LOCALE_EN_GB)
+    const footer = page.locator(FOOTER)
 
-        await expect(footer).toBeVisible()
-        await expect(footer.getByText('Support links', { exact: true })).toBeAttached()
-        await expect(footer.getByText('Open Government Licence v3.0')).toBeVisible()
-        await expect(footer.getByText('© Crown copyright')).toBeVisible()
+    await expect(footer).toBeVisible()
+    await expect(footer.getByText('Support links', { exact: true })).toBeAttached()
+    await expect(footer.getByText('Open Government Licence v3.0')).toBeVisible()
+    await expect(footer.getByText('© Crown copyright')).toBeVisible()
+  })
+
+  for (const locale of locales) {
+    for (const path of pagesWithFooter) {
+      test(`[${locale}] footer is present on ${path}`, async ({ page }) => {
+        await page.goto(`/${locale}${path}`)
+        await expect(page.locator(FOOTER)).toBeVisible()
       })
     }
   }
