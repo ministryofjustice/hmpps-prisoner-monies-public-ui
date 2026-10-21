@@ -66,12 +66,12 @@ describe('prisonerDetailsPostHandler', () => {
       'pages/prisoner-details',
       expect.objectContaining({ backLinkHref: PRISONER_DETAILS_BACK_LINK_HREF }),
     )
-    expect(sendMoneyToPrisonerService.isValidPrisoner).not.toHaveBeenCalled()
+    expect(sendMoneyToPrisonerService.isPrisonerKnown).not.toHaveBeenCalled()
     expect(redirect).not.toHaveBeenCalled()
   })
 
   it('redirects to the amount page when the prisoner is valid', async () => {
-    sendMoneyToPrisonerService.isValidPrisoner.mockResolvedValue(true)
+    sendMoneyToPrisonerService.isPrisonerKnown.mockResolvedValue(true)
     const req = { body: validFormBody } as unknown as Request
     const { res, redirect, render } = makeRes()
     res.locals.t = i18next.getFixedT('en-gb')
@@ -79,7 +79,7 @@ describe('prisonerDetailsPostHandler', () => {
     const handler = prisonerDetailsPostHandler(sendMoneyToPrisonerService)
     await handler(req, res as unknown as Response, next)
 
-    expect(sendMoneyToPrisonerService.isValidPrisoner).toHaveBeenCalledWith(
+    expect(sendMoneyToPrisonerService.isPrisonerKnown).toHaveBeenCalledWith(
       validFormBody.prisoner_number,
       expectedPrisonerDOB,
     )
@@ -88,7 +88,7 @@ describe('prisonerDetailsPostHandler', () => {
   })
 
   it('stores the prisoner details in the session when the prisoner is valid', async () => {
-    sendMoneyToPrisonerService.isValidPrisoner.mockResolvedValue(true)
+    sendMoneyToPrisonerService.isPrisonerKnown.mockResolvedValue(true)
     const req = { body: validFormBody, session: {} } as unknown as Request
     const { res } = makeRes()
 
@@ -101,7 +101,7 @@ describe('prisonerDetailsPostHandler', () => {
   })
 
   it('preserves other sendMoney session values already stored (e.g. amount)', async () => {
-    sendMoneyToPrisonerService.isValidPrisoner.mockResolvedValue(true)
+    sendMoneyToPrisonerService.isPrisonerKnown.mockResolvedValue(true)
     const req = {
       body: validFormBody,
       session: { sendMoney: { amount: '10.00' } },
@@ -120,7 +120,7 @@ describe('prisonerDetailsPostHandler', () => {
   })
 
   it('re-renders with no field errors when the prisoner cannot be found', async () => {
-    sendMoneyToPrisonerService.isValidPrisoner.mockResolvedValue(false)
+    sendMoneyToPrisonerService.isPrisonerKnown.mockResolvedValue(false)
     const req = { body: validFormBody } as unknown as Request
     const { res, render, redirect } = makeRes()
     res.locals.t = i18next.getFixedT('en-gb')
@@ -150,7 +150,7 @@ describe('prisonerDetailsPostHandler', () => {
 
   it('redisplays the raw submitted prisoner name (untrimmed) when the prisoner cannot be found', async () => {
     // Matches legacy: Django redisplays raw POST data, not cleaned_data, for an invalid/rejected form.
-    sendMoneyToPrisonerService.isValidPrisoner.mockResolvedValue(false)
+    sendMoneyToPrisonerService.isPrisonerKnown.mockResolvedValue(false)
     const req = { body: { ...validFormBody, prisoner_name: '  John Smith  ' } } as unknown as Request
     const { res, render } = makeRes()
     res.locals.t = i18next.getFixedT('en-gb')
@@ -168,7 +168,7 @@ describe('prisonerDetailsPostHandler', () => {
 
   describe('prisoner number normalisation', () => {
     it('uppercases a lowercase prisoner number before looking up the prisoner', async () => {
-      sendMoneyToPrisonerService.isValidPrisoner.mockResolvedValue(true)
+      sendMoneyToPrisonerService.isPrisonerKnown.mockResolvedValue(true)
       const req = {
         body: { ...validFormBody, prisoner_number: 'a1234bc' },
       } as unknown as Request
@@ -178,11 +178,11 @@ describe('prisonerDetailsPostHandler', () => {
       const handler = prisonerDetailsPostHandler(sendMoneyToPrisonerService)
       await handler(req, res as unknown as Response, next)
 
-      expect(sendMoneyToPrisonerService.isValidPrisoner).toHaveBeenCalledWith('A1234BC', expectedPrisonerDOB)
+      expect(sendMoneyToPrisonerService.isPrisonerKnown).toHaveBeenCalledWith('A1234BC', expectedPrisonerDOB)
     })
 
     it('trims whitespace before storing it in the session', async () => {
-      sendMoneyToPrisonerService.isValidPrisoner.mockResolvedValue(true)
+      sendMoneyToPrisonerService.isPrisonerKnown.mockResolvedValue(true)
       const req = {
         body: { ...validFormBody, prisoner_number: '  a1234Bc  ' },
         session: {},
@@ -199,7 +199,7 @@ describe('prisonerDetailsPostHandler', () => {
     it('redisplays the prisoner number exactly as typed (not uppercased) when the prisoner cannot be found', async () => {
       // Matches legacy: an invalid/rejected Django form always redisplays the raw
       // submitted POST data, never the cleaned_data used for the lookup.
-      sendMoneyToPrisonerService.isValidPrisoner.mockResolvedValue(false)
+      sendMoneyToPrisonerService.isPrisonerKnown.mockResolvedValue(false)
       const req = {
         body: { ...validFormBody, prisoner_number: 'a1234bc' },
       } as unknown as Request
@@ -209,7 +209,7 @@ describe('prisonerDetailsPostHandler', () => {
       const handler = prisonerDetailsPostHandler(sendMoneyToPrisonerService)
       await handler(req, res as unknown as Response, next)
 
-      expect(sendMoneyToPrisonerService.isValidPrisoner).toHaveBeenCalledWith('A1234BC', expectedPrisonerDOB)
+      expect(sendMoneyToPrisonerService.isPrisonerKnown).toHaveBeenCalledWith('A1234BC', expectedPrisonerDOB)
       expect(render).toHaveBeenCalledWith(
         'pages/prisoner-details',
         expect.objectContaining({
@@ -226,7 +226,7 @@ describe('prisonerDetailsPostHandler', () => {
       const handler = prisonerDetailsPostHandler(sendMoneyToPrisonerService)
       await handler(req, res as unknown as Response, next)
 
-      expect(sendMoneyToPrisonerService.isValidPrisoner).not.toHaveBeenCalled()
+      expect(sendMoneyToPrisonerService.isPrisonerKnown).not.toHaveBeenCalled()
       expect(render).toHaveBeenCalledWith(
         'pages/prisoner-details',
         expect.objectContaining({
@@ -238,7 +238,7 @@ describe('prisonerDetailsPostHandler', () => {
 
   describe('prisoner name normalisation', () => {
     it('trims leading and trailing whitespace from the prisoner name before storing it in the session', async () => {
-      sendMoneyToPrisonerService.isValidPrisoner.mockResolvedValue(true)
+      sendMoneyToPrisonerService.isPrisonerKnown.mockResolvedValue(true)
       const req = {
         body: { ...validFormBody, prisoner_name: '  John Smith  ' },
         session: {},

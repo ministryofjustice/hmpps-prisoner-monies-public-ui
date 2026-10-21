@@ -150,7 +150,7 @@ describe.each([['en-gb'], ['cy']])('GET /%s/debit-card/details', locale => {
 
 describe.each([['en-gb'], ['cy']])('POST /%s/debit-card/details', locale => {
   it('redirects to the amount page when the prisoner details are valid', () => {
-    sendMoneyToPrisonerService.isValidPrisoner.mockResolvedValue(true)
+    sendMoneyToPrisonerService.isPrisonerKnown.mockResolvedValue(true)
 
     return request(app)
       .post(`/${locale}/debit-card/details`)
@@ -165,7 +165,7 @@ describe.each([['en-gb'], ['cy']])('POST /%s/debit-card/details', locale => {
       .expect(302)
       .expect('Location', `/${locale}/debit-card/amount`)
       .expect(() => {
-        expect(sendMoneyToPrisonerService.isValidPrisoner).toHaveBeenCalledWith('A1234BC', '1-2-1990')
+        expect(sendMoneyToPrisonerService.isPrisonerKnown).toHaveBeenCalledWith('A1234BC', '1-2-1990')
       })
   })
 
@@ -186,7 +186,7 @@ describe.each([['en-gb'], ['cy']])('POST /%s/debit-card/details', locale => {
   })
 
   it('re-renders with a general (non-field) error and "what to do" guidance when the prisoner cannot be found', () => {
-    sendMoneyToPrisonerService.isValidPrisoner.mockResolvedValue(false)
+    sendMoneyToPrisonerService.isPrisonerKnown.mockResolvedValue(false)
 
     return request(app)
       .post(`/${locale}/debit-card/details`)

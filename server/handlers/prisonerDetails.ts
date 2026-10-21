@@ -60,7 +60,7 @@ export function prisonerDetailsPostHandler(sendMoneyToPrisonerService: SendMoney
 
     const { prisonerName, prisonerNumber } = formattedFormValues
     const prisonerDOB = buildPrisonerDob(formattedFormValues)
-    const validPrisoner = await sendMoneyToPrisonerService.isValidPrisoner(prisonerNumber, prisonerDOB)
+    const validPrisoner = await sendMoneyToPrisonerService.isPrisonerKnown(prisonerNumber, prisonerDOB)
 
     if (!validPrisoner) {
       // renders form values as they were submitted rather than the formatted values
