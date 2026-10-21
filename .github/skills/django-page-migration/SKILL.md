@@ -6,17 +6,34 @@ argument-hint: 'Django view/page to migrate (and target URL path if not obvious)
 
 # Django to Express Page Migration
 
-## Configuration
-These are the defaults for this `prisoner-money` workspace. **Don't assume they apply** — if any of these folders aren't present when the skill is invoked (only one repo is open, paths differ, or this is a different workspace entirely), ask the user to confirm all three before doing anything else (see **Step 0** below).
+## ⚠️ Plan Approval Required — Always, No Exceptions
+This is the most commonly skipped step. It applies on **every** invocation of this skill, regardless of how the request is phrased:
+1. Work out the plan (reading whatever source files you need to), then present it to the user as a **high-level bullet-point list** before changing or creating any file: which files will be added/changed, new routes/handlers/templates, i18n keys needed, the `Page`/audit entries, any backend logic that will be flagged as a stub, and any open questions from **When Unsure, Ask**.
+2. Explicitly ask the user to choose between a sweeping migration (whole page/flow in one go) or small incremental changes (e.g. routing first, then template, then validation).
+3. **Wait for an explicit reply approving the plan** (e.g. "yes", "go ahead", "approved") before calling any file-editing tool. A request that already sounds urgent or says "just do it"/"go ahead and implement" does **not** skip this — restate the plan briefly and get explicit sign-off on it specifically before writing code.
+4. The only exception is if the user already approved an identical plan for this exact page earlier in the same conversation.
 
-- **Legacy Django project** (source): `money-to-prisoners-send-money`
+If you notice you're about to create or edit a file and this hasn't happened yet, stop and go back to step 1.
+
+## Configuration
+Project paths are machine-specific, so they're kept out of this committed file and stored instead in a gitignored local config file:
+
+- **File**: `.github/skills/django-page-migration/local-config.json` (relative to the Express target repo). It's listed in `.gitignore` — it will never be committed, so it's safe to store absolute local paths in it.
+- **Schema**:
+  ```json
+  {
+    "legacyProjectPath": "/absolute/path/to/money-to-prisoners-send-money",
+    "expressProjectPath": "/absolute/path/to/hmpps-prisoner-monies-public-ui",
+    "referenceProjectPath": "/absolute/path/to/a/reference/project, or omit/null if none"
+  }
+  ```
+- `legacyProjectPath`: the Django "send money" app.
   - Views/forms/URLs live under `mtp_send_money/apps/send_money/`, templates under `mtp_send_money/templates/`, translations under `mtp_send_money/translations/<locale>/LC_MESSAGES/django.po`.
-- **Express target project**: `hmpps-prisoner-monies-public-ui`
+- `expressProjectPath`: the Express/Nunjucks target app.
   - Routes/handlers/views/i18n live under `server/`, as detailed in the File Mapping Reference below.
-- **Reference project** (best-practice example for code style and HTML/CSS/SCSS, optional): `~/Documents/Git/probation/hmpps-probation-check-in-ui`
-  - Not everyone has a reference project — ask "do you have a reference project for code/style conventions?" if this one isn't available, and skip the reference-project step below if they say no.
-  - This is a sibling HMPPS Express/Nunjucks GOV.UK service built on the same template (same `assets/scss` and `views` layout), kept here as a reference because it's further along in adopting current conventions than some pages in this repo.
-  - Update this default if the team adopts a different reference project.
+- `referenceProjectPath` (optional): a best-practice example for code style and HTML/CSS/SCSS — not everyone has one. When set, it's expected to be a sibling HMPPS Express/Nunjucks GOV.UK service with the same `assets/scss`/`views` layout, used as a reference because it's further along in adopting current conventions than some pages in this repo.
+
+See **Step 0** below for how this file is read, validated, and (re)populated.
 
 ## When to Use
 - Migrating a page from a legacy Django app to its Express/Nunjucks replacement
@@ -28,12 +45,13 @@ These are the defaults for this `prisoner-money` workspace. **Don't assume they 
 - This applies at every step: folder/project confirmation, template tracing, translations, validation behaviour, planning, and implementation.
 
 ## Before Starting
-0. **Confirm the project folders first.** Check whether the Configuration defaults above exist in the current workspace:
-   - If they do, use them without asking.
-   - If they don't (different workspace, renamed/missing folders, or the skill is being run outside this setup), stop and ask the user for: the legacy Django project folder, the target Express project folder, and (optionally) a reference project for code/HTML/CSS style conventions — don't guess paths or invent a reference project.
+0. **Resolve the project folders first**, in this order:
+   a. Look for `.github/skills/django-page-migration/local-config.json`. If it exists, is valid JSON, and every path it contains (`legacyProjectPath`, `expressProjectPath`, and `referenceProjectPath` if set) still exists on disk, use those paths without asking.
+   b. If the file is **missing, empty, invalid, or any path inside it no longer exists** on disk, treat it as unset — don't silently fall back to guessed defaults. Ask the user for: the legacy Django project folder, the target Express project folder, and (optionally) a reference project for code/HTML/CSS style conventions.
+   c. After the user provides/confirms paths (whether freshly asked or re-confirmed), **write/update `local-config.json`** with them so future invocations don't need to ask again. Mention to the user that this file is gitignored and won't be committed.
 1. Which Django view to migrate — find it in `<legacy project>/mtp_send_money/apps/send_money/{views.py,urls.py,forms.py}` and its template under `templates/send_money/`.
 2. What URL path the new page should live at (e.g. `/debit-card/amount`) and which feature route file it belongs in.
-3. **Propose a plan and wait for approval — do not write any code yet.** Lay out the migration as a high-level bullet-point plan: which files will be added/changed, new routes/handlers/templates, i18n keys needed, the `Page`/audit entries, any backend logic that will be flagged as a stub, and any open questions from **When Unsure, Ask**. Present this so the user can decide whether they want a sweeping migration (whole page/flow in one go) or small incremental changes (e.g. routing first, then template, then validation). Only proceed to the Procedure below once the user explicitly agrees to the plan.
+3. Then follow **⚠️ Plan Approval Required** above before writing any code — it is not optional.
 
 ## File Mapping Reference
 
@@ -76,7 +94,7 @@ Django/Jinja2 templates in the legacy app rarely contain the full picture in one
 - Do this *before* building the Express route/handler/template (feeds into Procedure step 1 below). If a template variable or tag's source can't be found, say so explicitly in your final summary rather than guessing what it renders.
 
 ## Procedure
-(Only begin once the user has approved the plan from **Before Starting** step 3.)
+(Only begin once the user has explicitly approved the plan — see **⚠️ Plan Approval Required** at the top of this document.)
 1. Read the Django view, its form class, and its template in full, reverse-engineering the whole template inheritance/include/tag chain per **Template Tag & Inheritance Tracing** above.
 2. Identify every piece of backend/business logic the view performs (API calls, payment processing, DB/session reads, emails).
 3. Add/extend the route in `server/routes/<feature>.ts`.

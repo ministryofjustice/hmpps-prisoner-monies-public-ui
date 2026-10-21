@@ -64,16 +64,27 @@ test.describe('Send money journey', () => {
     await expect(prisonerDetailsPage.backLink).toBeVisible()
   })
 
-  test('Submitting an empty form shows validation errors for every field', async ({ page }) => {
+  test('Submitting an empty form shows the error summary (with field links) and an inline error message for every field', async ({
+    page,
+  }) => {
     const prisonerDetailsPage = await PrisonerDetailsPage.goTo(page)
 
     await prisonerDetailsPage.submit()
 
-    await expect(page).toHaveURL(new RegExp(`${debitCardPaths.PRISONER_DETAILS}$`))
-    await expect(prisonerDetailsPage.errorSummary).toBeVisible()
-    await expect(prisonerDetailsPage.errorMessageLink('Prisoner name')).toBeVisible()
-    await expect(prisonerDetailsPage.errorMessageLink('Prisoner date of birth')).toBeVisible()
-    await expect(prisonerDetailsPage.errorMessageLink('Prisoner number')).toBeVisible()
+    await test.step('stays on the prisoner details page', async () => {
+      await expect(page).toHaveURL(new RegExp(`${debitCardPaths.PRISONER_DETAILS}$`))
+    })
+
+    await test.step('shows the error summary with a link for every field', async () => {
+      await expect(prisonerDetailsPage.errorSummary).toBeVisible()
+      await expect(prisonerDetailsPage.errorMessageLink('Prisoner name')).toBeVisible()
+      await expect(prisonerDetailsPage.errorMessageLink('Prisoner date of birth')).toBeVisible()
+      await expect(prisonerDetailsPage.errorMessageLink('Prisoner number')).toBeVisible()
+    })
+
+    await test.step('shows an inline error message for every field', async () => {
+      await prisonerDetailsPage.verifyErrorMessagesVisible()
+    })
   })
 
   test('Submitting valid prisoner details moves the user on to the amount page', async ({ page }) => {

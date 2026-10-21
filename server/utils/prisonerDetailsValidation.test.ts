@@ -1,6 +1,63 @@
-import { validatePrisonerDetails, PrisonerDetailsFormValues } from './prisonerDetailsValidation'
+import {
+  validatePrisonerDetails as validatePrisonerDetailsWithT,
+  PrisonerDetailsFormValues,
+} from './prisonerDetailsValidation'
+import i18next, { i18nextInitPromise } from '../i18n/i18n'
 
 const currentYear = new Date().getFullYear()
+
+beforeAll(() => i18nextInitPromise)
+
+type Locale = 'en-gb' | 'cy'
+
+type PrisonerDetailsMessages = {
+  required: string
+  prisonerNameLabel: string
+  prisonerDobLabel: string
+  prisonerNumberLabel: string
+  prisonerNumberFormat: string
+  prisonerNameCardNumber: string
+  dobDayNumber: string
+  dobDayRange: string
+  dobMonthNumber: string
+  dobMonthRange: string
+  dobYearNumber: string
+  dobYearRange: (year: number) => string
+  dobInvalid: string
+}
+
+const messages: Record<Locale, PrisonerDetailsMessages> = {
+  'en-gb': {
+    required: 'This field is required',
+    prisonerNameLabel: 'Prisoner name',
+    prisonerDobLabel: 'Prisoner date of birth',
+    prisonerNumberLabel: 'Prisoner number',
+    prisonerNumberFormat: 'Incorrect prisoner number format',
+    prisonerNameCardNumber: 'Please do not enter your debit card number here',
+    dobDayNumber: 'Enter ‘day’ as a number',
+    dobDayRange: '‘Day’ should be between 1 and 31',
+    dobMonthNumber: 'Enter ‘month’ as a number',
+    dobMonthRange: '‘Month’ should be between 1 and 12',
+    dobYearNumber: 'Enter ‘year’ as a number',
+    dobYearRange: year => `‘Year’ should be between 1900 and ${year}`,
+    dobInvalid: 'Enter a valid date',
+  },
+  cy: {
+    required: 'Mae’n rhaid llenwi’r maes hwn',
+    prisonerNameLabel: "Enw'r carcharor",
+    prisonerDobLabel: "Dyddiad geni'r carcharor",
+    prisonerNumberLabel: 'Rhif y carcharor',
+    prisonerNumberFormat: 'Fformat anghywir ar gyfer rhif y carcharor',
+    prisonerNameCardNumber: 'Peidiwch â nodi rhif eich cerdyn debyd yma',
+    dobDayNumber: 'Nodwch ‘diwrnod’ fel rhif',
+    dobDayRange: 'Dylai ‘Diwrnod’ fod rhwng 1 a 31',
+    dobMonthNumber: 'Nodwch ‘mis’ fel rhif',
+    dobMonthRange: 'Dylai ‘Mis’ fod rhwng 1 a 12',
+    dobYearNumber: 'Nodwch ‘blwyddyn’ fel rhif',
+    dobYearRange: year => `Dylai ‘Blwyddyn’ fod rhwng 1900 a ${year}`,
+    dobInvalid: 'Nodwch ddyddiad dilys',
+  },
+}
 
 const validFormValues: PrisonerDetailsFormValues = {
   prisonerName: 'John Smith',
@@ -10,7 +67,11 @@ const validFormValues: PrisonerDetailsFormValues = {
   prisonerNumber: 'A1234BC',
 }
 
-describe('validatePrisonerDetails', () => {
+describe.each<Locale>(['en-gb', 'cy'])('validatePrisonerDetails (%s)', locale => {
+  const validatePrisonerDetails = (formValues: PrisonerDetailsFormValues) =>
+    validatePrisonerDetailsWithT(formValues, i18next.getFixedT(locale))
+  const expected = messages[locale]
+
   describe('prisoner name', () => {
     it('returns no error when the name is present', () => {
       const result = validatePrisonerDetails(validFormValues)
@@ -21,18 +82,40 @@ describe('validatePrisonerDetails', () => {
     it('returns an error when the name is missing', () => {
       const result = validatePrisonerDetails({ ...validFormValues, prisonerName: undefined })
 
-      expect(result.errors.prisonerName).toBe('This field is required.')
+      expect(result.errors.prisonerName).toBe(expected.required)
       expect(result.errorList).toContainEqual({
-        label: 'Prisoner name',
+        label: expected.prisonerNameLabel,
         href: '#id_prisoner_name',
-        messages: ['This field is required.'],
+        messages: [expected.required],
       })
     })
 
     it('returns an error when the name is an empty string', () => {
       const result = validatePrisonerDetails({ ...validFormValues, prisonerName: '' })
 
-      expect(result.errors.prisonerName).toBe('This field is required.')
+      expect(result.errors.prisonerName).toBe(expected.required)
+    })
+
+    it.each([
+      '1234 5678 9012 3456',
+      '1234567890123456',
+      '1234-5678-9012-3456'.replace(/-/g, ' '),
+      'John 1234 5678 9012 3456 Smith',
+    ])('returns a card number error when the name looks like a debit card number: "%s"', cardLikeName => {
+      const result = validatePrisonerDetails({ ...validFormValues, prisonerName: cardLikeName })
+
+      expect(result.errors.prisonerName).toBe(expected.prisonerNameCardNumber)
+      expect(result.errorList).toContainEqual({
+        label: expected.prisonerNameLabel,
+        href: '#id_prisoner_name',
+        messages: [expected.prisonerNameCardNumber],
+      })
+    })
+
+    it('does not flag an ordinary name containing some digits as a card number', () => {
+      const result = validatePrisonerDetails({ ...validFormValues, prisonerName: 'Flat 12 34 Smith' })
+
+      expect(result.errors.prisonerName).toBeUndefined()
     })
   })
 
@@ -51,24 +134,24 @@ describe('validatePrisonerDetails', () => {
         prisonerDobYear: undefined,
       })
 
-      expect(result.errors.prisonerDob).toEqual(['This field is required.'])
+      expect(result.errors.prisonerDob).toEqual([expected.required])
       expect(result.errorList).toContainEqual({
-        label: 'Prisoner date of birth',
+        label: expected.prisonerDobLabel,
         href: '#id_prisoner_dob_0',
-        messages: ['This field is required.'],
+        messages: [expected.required],
       })
     })
 
     it('returns an error when the year is before 1900', () => {
       const result = validatePrisonerDetails({ ...validFormValues, prisonerDobYear: '1899' })
 
-      expect(result.errors.prisonerDob).toEqual([`‘Year’ should be between 1900 and ${currentYear}`])
+      expect(result.errors.prisonerDob).toEqual([expected.dobYearRange(currentYear)])
     })
 
     it('returns an error when the year is after the current year', () => {
       const result = validatePrisonerDetails({ ...validFormValues, prisonerDobYear: String(currentYear + 1) })
 
-      expect(result.errors.prisonerDob).toEqual([`‘Year’ should be between 1900 and ${currentYear}`])
+      expect(result.errors.prisonerDob).toEqual([expected.dobYearRange(currentYear)])
     })
 
     it('returns an error for a day/month combination that does not exist', () => {
@@ -79,7 +162,7 @@ describe('validatePrisonerDetails', () => {
         prisonerDobYear: '1990',
       })
 
-      expect(result.errors.prisonerDob).toEqual(['Enter a valid date'])
+      expect(result.errors.prisonerDob).toEqual([expected.dobInvalid])
     })
 
     it('returns an error when only some date of birth fields are filled in', () => {
@@ -90,7 +173,7 @@ describe('validatePrisonerDetails', () => {
         prisonerDobYear: undefined,
       })
 
-      expect(result.errors.prisonerDob).toEqual(['This field is required.'])
+      expect(result.errors.prisonerDob).toEqual([expected.required])
     })
 
     it('returns an error when day and month are filled in but year is missing', () => {
@@ -101,37 +184,37 @@ describe('validatePrisonerDetails', () => {
         prisonerDobYear: undefined,
       })
 
-      expect(result.errors.prisonerDob).toEqual(['This field is required.'])
+      expect(result.errors.prisonerDob).toEqual([expected.required])
     })
 
     it('returns an error when the day is not a number', () => {
       const result = validatePrisonerDetails({ ...validFormValues, prisonerDobDay: 'aa' })
 
-      expect(result.errors.prisonerDob).toEqual(['Enter ‘day’ as a number'])
+      expect(result.errors.prisonerDob).toEqual([expected.dobDayNumber])
     })
 
     it('returns an error when the day is out of range', () => {
       const result = validatePrisonerDetails({ ...validFormValues, prisonerDobDay: '32' })
 
-      expect(result.errors.prisonerDob).toEqual(['‘Day’ should be between 1 and 31'])
+      expect(result.errors.prisonerDob).toEqual([expected.dobDayRange])
     })
 
     it('returns an error when the month is not a number', () => {
       const result = validatePrisonerDetails({ ...validFormValues, prisonerDobMonth: 'aa' })
 
-      expect(result.errors.prisonerDob).toEqual(['Enter ‘month’ as a number'])
+      expect(result.errors.prisonerDob).toEqual([expected.dobMonthNumber])
     })
 
     it('returns an error when the month is out of range', () => {
       const result = validatePrisonerDetails({ ...validFormValues, prisonerDobMonth: '13' })
 
-      expect(result.errors.prisonerDob).toEqual(['‘Month’ should be between 1 and 12'])
+      expect(result.errors.prisonerDob).toEqual([expected.dobMonthRange])
     })
 
     it('returns an error when the year is not a number', () => {
       const result = validatePrisonerDetails({ ...validFormValues, prisonerDobYear: 'aa' })
 
-      expect(result.errors.prisonerDob).toEqual(['Enter ‘year’ as a number'])
+      expect(result.errors.prisonerDob).toEqual([expected.dobYearNumber])
     })
 
     it('returns an error for every invalid part when day, month and year are all non-numeric', () => {
@@ -143,9 +226,9 @@ describe('validatePrisonerDetails', () => {
       })
 
       expect(result.errors.prisonerDob).toEqual([
-        'Enter ‘day’ as a number',
-        'Enter ‘month’ as a number',
-        'Enter ‘year’ as a number',
+        expected.dobDayNumber,
+        expected.dobMonthNumber,
+        expected.dobYearNumber,
       ])
     })
 
@@ -158,9 +241,9 @@ describe('validatePrisonerDetails', () => {
       })
 
       expect(result.errors.prisonerDob).toEqual([
-        '‘Day’ should be between 1 and 31',
-        '‘Month’ should be between 1 and 12',
-        `‘Year’ should be between 1900 and ${currentYear}`,
+        expected.dobDayRange,
+        expected.dobMonthRange,
+        expected.dobYearRange(currentYear),
       ])
     })
 
@@ -173,13 +256,9 @@ describe('validatePrisonerDetails', () => {
       })
 
       expect(result.errorList).toContainEqual({
-        label: 'Prisoner date of birth',
+        label: expected.prisonerDobLabel,
         href: '#id_prisoner_dob_0',
-        messages: [
-          '‘Day’ should be between 1 and 31',
-          '‘Month’ should be between 1 and 12',
-          `‘Year’ should be between 1900 and ${currentYear}`,
-        ],
+        messages: [expected.dobDayRange, expected.dobMonthRange, expected.dobYearRange(currentYear)],
       })
     })
   })
@@ -194,11 +273,11 @@ describe('validatePrisonerDetails', () => {
     it('returns an error when the prisoner number is missing', () => {
       const result = validatePrisonerDetails({ ...validFormValues, prisonerNumber: undefined })
 
-      expect(result.errors.prisonerNumber).toBe('This field is required.')
+      expect(result.errors.prisonerNumber).toBe(expected.required)
       expect(result.errorList).toContainEqual({
-        label: 'Prisoner number',
+        label: expected.prisonerNumberLabel,
         href: '#id_prisoner_number',
-        messages: ['This field is required.'],
+        messages: [expected.required],
       })
     })
 
@@ -207,7 +286,7 @@ describe('validatePrisonerDetails', () => {
       invalidNumber => {
         const result = validatePrisonerDetails({ ...validFormValues, prisonerNumber: invalidNumber })
 
-        expect(result.errors.prisonerNumber).toBe('Incorrect prisoner number format')
+        expect(result.errors.prisonerNumber).toBe(expected.prisonerNumberFormat)
       },
     )
   })
@@ -223,13 +302,13 @@ describe('validatePrisonerDetails', () => {
       const result = validatePrisonerDetails({})
 
       expect(result.errorList).toEqual([
-        { label: 'Prisoner name', href: '#id_prisoner_name', messages: ['This field is required.'] },
+        { label: expected.prisonerNameLabel, href: '#id_prisoner_name', messages: [expected.required] },
         {
-          label: 'Prisoner date of birth',
+          label: expected.prisonerDobLabel,
           href: '#id_prisoner_dob_0',
-          messages: ['This field is required.'],
+          messages: [expected.required],
         },
-        { label: 'Prisoner number', href: '#id_prisoner_number', messages: ['This field is required.'] },
+        { label: expected.prisonerNumberLabel, href: '#id_prisoner_number', messages: [expected.required] },
       ])
     })
   })
