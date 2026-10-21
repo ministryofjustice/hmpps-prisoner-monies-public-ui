@@ -95,8 +95,8 @@ Django/Jinja2 templates in the legacy app rarely contain the full picture in one
 
 ## Procedure
 (Only begin once the user has explicitly approved the plan — see **⚠️ Plan Approval Required** at the top of this document.)
-1. Read the Django view, its form class, and its template in full, reverse-engineering the whole template inheritance/include/tag chain per **Template Tag & Inheritance Tracing** above.
-2. Identify every piece of backend/business logic the view performs (API calls, payment processing, DB/session reads, emails).
+1. Read the Django view, its form class, and its template in full, reverse-engineering the whole template inheritance/include/tag chain per **Template Tag & Inheritance Tracing** above. Also find and read its legacy tests — `apps/send_money/tests/test_views.py`, `test_forms.py`, and `test_functional.py` — per **Porting Tests** below; they're the source of truth for behaviours/edge cases to preserve, and should be referenced in the plan from **⚠️ Plan Approval Required**.
+2. Identify every piece of backend/business logic the view performs (API calls, payment processing, DB/session reads, emails) and any access restriction on it (see **Authentication & Permissions**).
 3. Add/extend the route in `server/routes/<feature>.ts`.
 4. Write the handler(s) in `server/handlers/<page>.ts`, following the GET-renders / POST-validates-then-redirects pattern.
 5. Port form validation into `server/utils/<page>Validation.ts`, matching Django's validation rules and error messages as closely as sensible for GOV.UK error summary conventions.
@@ -106,8 +106,41 @@ Django/Jinja2 templates in the legacy app rarely contain the full picture in one
 9. Add a new `Page` entry in `server/constants/pages.ts` and register `auditPageViewRequest({ services, page })` on the GET route so the page view is audited (every migrated page needs this, even if the Django view never recorded one).
 10. If the page submits a meaningful business event (search, completed step, etc.), audit it via `auditService.logAuditEvent(...)` from the POST handler or a dedicated middleware (see `auditSearchRequest.ts`) — not needed for purely internal/validation-only POSTs.
 11. For any backend/business logic identified in step 2, add a stub (see below) rather than implementing it.
-12. Write Jest tests alongside the new files (`<page>.test.ts` for handlers, `<x>Validation.test.ts` for validation, `<x>Service.test.ts` for services), following existing test file conventions in the repo.
-13. Run the target repo's lint and tests to confirm nothing is broken.
+12. Port tests at all three tiers per **Porting Tests** below — Playwright integration coverage is required for every migrated page, regardless of whether a legacy functional test exists.
+13. Run the target repo's lint and tests (Jest *and* Playwright) to confirm nothing is broken.
+
+## Porting Tests
+Django test files can't be "moved" directly (different language/framework), but their **scenarios** should be — use the legacy tests as your checklist of behaviours to cover, not as the only reason to write a test. Every migrated page must end up with both Jest and Playwright coverage proving it renders and works, regardless of whether an equivalent legacy test existed:
+
+| Legacy Django test | Express equivalent | What it covers |
+|---|---|---|
+| `test_forms.py` (form validation cases) | `server/utils/<page>Validation.test.ts` | Pure unit tests of validation logic, no HTTP/Express involved — mirror `prisonerDetailsValidation.test.ts` |
+| `test_views.py` (Django test-client view tests) | `server/handlers/<page>.test.ts` | Unit tests of the handler function with mocked `req`/`res`/services — mirror `handlers/prisonerDetails.test.ts` (uses `testutils/mockResponse`) |
+| `test_views.py` / `test_views_misc.py` (end-to-end-ish Django client assertions) | Additions to `server/routes/index.test.ts` | Supertest requests through the real app/router/templates — asserts on rendered HTML, redirects, and audit calls, like the existing `describe.each` blocks |
+| `test_functional.py` (Selenium browser tests), or nothing if no legacy functional test exists | A Playwright spec under `integration_tests/specs/` | **Mandatory for every migrated page** — see **Playwright Integration Tests** below |
+
+- Where legacy tests cover translated (`cy`) behaviour, keep that coverage in both the Jest and Playwright equivalents, per **Link Text & Translations**.
+- If a legacy unit-level test tier genuinely doesn't apply (e.g. a static page has no form to validate), it's fine to skip that one Express tier, but say so in your summary — the Playwright tier is never skipped.
+
+## Playwright Integration Tests
+Every migrated page needs a Playwright spec under `integration_tests/specs/` proving it renders with its key components visible *and* functional — not just that the route returns 200. Follow the conventions already in this folder (`sendMoney.spec.ts`, `footer.spec.ts`, `health.spec.ts`):
+- **Where the spec lives**: add to the existing spec file for that journey/feature if the page is part of an existing flow (e.g. another debit-card step → `sendMoney.spec.ts`), or create a new `integration_tests/specs/<feature>.spec.ts` for a standalone feature/component (mirroring `footer.spec.ts`). Ask the user if it's not obvious which.
+- **Page objects**: for any page with interactive elements (form fields, buttons, non-trivial links), add a page object in `integration_tests/pages/<page>.ts` extending `BasePage` (`integration_tests/utils/basePage.ts`), mirroring `prisonerDetailsPage.ts` / `beforeYouContinuePage.ts` — expose locators as readonly properties, not raw strings scattered through the spec. Simple cross-cutting checks (like the footer) can query locators directly without a dedicated page object.
+- **What "visible and functional" means, at minimum**:
+  - The page's `<h1>`/primary heading is visible.
+  - Every form field, button, and link present in the Nunjucks template is visible and has the correct accessible name/label.
+  - For form pages: a happy-path test that fills in valid data, submits, and asserts the resulting redirect/page; *and* at least one validation-error test (invalid/missing input) asserting the error summary and field-level errors appear.
+  - For links (including ones in shared partials like the footer/header): clicking navigates to the correct destination page and its heading is visible, per **Link Text & Translations**.
+- **Authentication**: if **Authentication & Permissions** determined the route needs an HMPPS Auth role, the spec must call `login(page, { roles: ['ROLE_X'] })` from `integration_tests/testUtils.ts` before visiting the page, and stub any required mock APIs under `integration_tests/mockApis/` (wiremock-based) — don't assume an unauthenticated `page.goto()` will work.
+- **Locale coverage**: run the spec for every supported locale (`en-gb`, `cy`) the page supports, per the `[locale]`-prefixed test title pattern in `footer.spec.ts`.
+- Lint (`npx eslint`) and typecheck (`npx tsc -p integration_tests --noEmit`) the spec, then actually run it (`npm run int-test`, optionally `-- --grep '<name>'`) before considering the migration done — don't just write it and assume it passes.
+
+## Authentication & Permissions
+Django's auth model (session login, `@login_required`, `permission_required(...)`, `PermissionRequiredMixin`/`UserPassesTestMixin`, group/permission checks) and Express's (JWT bearer tokens with `ROLE_`-prefixed authorities via `authorisationMiddleware`, currently commented out in `app.ts` because every migrated page so far is public) are **not equivalent** — there's no mechanical 1:1 mapping between them.
+- **Check every Django view for an access restriction**, not just the obvious payment/form logic — login/permission decorators or mixins, a custom `user_passes_test`, IP allowlisting, or any other gate on who can reach the page.
+- **Don't silently drop or silently enforce any restriction you find.** A restricted Django view breaks the "fully public" assumption the rest of this skill makes — stop and ask the user which HMPPS Auth role(s), if any, should gate the Express route. Which role applies is a product/security decision, not something to infer from the Django code.
+- If the user confirms a role is needed, wire it up via `authorisationMiddleware(['ROLE_X'])` on that route (uncommenting/enabling it in `app.ts` if this is the first authenticated route), and call this out clearly in both your plan and final summary — it's a notable change to a currently fully-public service.
+- If the Django view has no access restriction (true for every page in `send_money` at the time of writing), do nothing — don't add `authorisationMiddleware` speculatively.
 
 ## Flagging Backend Logic
 When a Django view relies on logic not yet implemented in Express (API calls, GOV.UK Pay/Notify, prisoner balance checks, etc.):
@@ -128,6 +161,9 @@ When a Django view relies on logic not yet implemented in Express (API calls, GO
 - [ ] Link/button text matches the legacy wording verbatim, every anchor's target matches the legacy `href`/`{% url %}` resolution (migrated as-is, not redesigned), and every non-English translation is copied from an existing legacy `.po` file (not invented) — unmatched strings are left in English and flagged
 - [ ] Page view is audited (`Page` enum entry + `auditPageViewRequest` on the GET route)
 - [ ] Meaningful submitted events (if any) are audited via `auditService.logAuditEvent`
+- [ ] Checked the Django view for auth/permission restrictions (**Authentication & Permissions**) — confirmed with the user, not assumed either way
+- [ ] Legacy Django tests were read and used as the source of test scenarios (**Porting Tests**)
+- [ ] Jest unit tests added for handler/validation/service as applicable
+- [ ] A Playwright spec was added/extended under `integration_tests/specs/` covering key components' visibility and functionality, for every supported locale (**Playwright Integration Tests**) — and was actually run, not just written
 - [ ] Backend/API logic is stubbed with a `TODO` comment, not implemented
-- [ ] Tests added/updated for handler, validation, and any new service methods
-- [ ] Lint and tests pass
+- [ ] Lint and tests pass (Jest and Playwright)
