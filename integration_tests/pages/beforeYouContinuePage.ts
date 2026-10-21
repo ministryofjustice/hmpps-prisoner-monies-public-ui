@@ -15,8 +15,8 @@ export default class BeforeYouContinuePage extends BasePage {
 
   private constructor(page: Page) {
     super(page)
-    this.termsLink = page.getByRole('link', { name: 'terms and conditions' })
-    this.privacyLink = page.getByRole('link', { name: 'privacy policy' })
+    this.termsLink = this.mainContent.getByRole('link', { name: 'terms and conditions' })
+    this.privacyLink = this.mainContent.getByRole('link', { name: 'privacy policy' })
     this.backLink = page.getByRole('link', { name: 'Back' })
   }
 

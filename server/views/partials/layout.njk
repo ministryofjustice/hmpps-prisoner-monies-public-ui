@@ -2,6 +2,7 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/footer/macro.njk" import govukFooter %}
 
 {% block head %}
   <link href="{{ '/assets/css/index.css' | assetMap }}" rel="stylesheet"/>
@@ -39,6 +40,22 @@
 {% endblock %}
 
 {% block bodyStart %}
+{% endblock %}
+
+{% block govukFooter %}
+{{ govukFooter({
+  meta: {
+    visuallyHiddenTitle: t("footer.supportLinksHeading"),
+    items: [
+      { href: localePath('/terms'), text: t("footer.terms") },
+      { href: localePath('/privacy'), text: t("footer.privacy") },
+      { href: localePath('/cookies'), text: t("footer.cookies") },
+      { href: localePath('/accessibility'), text: t("footer.accessibility") },
+      { href: localePath('/help'), text: t("footer.help") }
+    ],
+    html: t("footer.builtByHtml")
+  }
+}) }}
 {% endblock %}
 
 {% block bodyEnd %}

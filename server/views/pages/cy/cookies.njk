@@ -1,0 +1,12 @@
+{% extends "../../partials/layout-two-thirds.njk" %}
+
+{% set pageTitle = t("cookies.pageTitle") + " - " + applicationName %}
+{% set mainClasses = "govuk-body" %}
+
+{% block page_content %}
+
+  <h1 class="govuk-heading-xl">{{ t("cookies.pageTitle") }}</h1>
+
+  <p class="govuk-body">{{ t("cookies.message") }}</p>
+
+{% endblock %}
