@@ -33,7 +33,7 @@ export default function routes(services: Services): Router {
     return res.render(`pages/${res.locals.locale}/terms`)
   })
 
-  router.get(paths.PRIVACY, (_req, res, _next) => {
+  router.get(paths.PRIVACY, auditPageViewRequest({ services, page: Page.PRIVACY }), (_req, res, _next) => {
     return res.render(`pages/${res.locals.locale}/privacy`)
   })
 
