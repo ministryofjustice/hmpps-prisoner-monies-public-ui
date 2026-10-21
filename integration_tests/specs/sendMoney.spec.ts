@@ -7,11 +7,11 @@ import CheckDetailsPage from '../pages/checkDetailsPage'
 import { paths, debitCardPaths } from '../../server/constants/paths'
 
 const VALID_PRISONER_DETAILS: PrisonerDetailsFormInput = {
-  prisonerName: 'John Smith',
-  prisonerDobDay: '1',
-  prisonerDobMonth: '2',
-  prisonerDobYear: '1990',
-  prisonerNumber: 'A1234BC',
+  prisonerName: 'bill baxter',
+  prisonerDobDay: '01',
+  prisonerDobMonth: '01',
+  prisonerDobYear: '1999',
+  prisonerNumber: 'A0076EA',
 }
 
 test.describe('Send money journey', () => {
