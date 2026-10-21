@@ -401,7 +401,7 @@ describe('language route test', () => {
     await i18next.loadNamespaces('translation')
     // 'terms.pageTitle' only exists in the en-gb translation, so the cy-fixed
     // translator should fall back to the English value rather than the key itself
-    expect(i18next.getFixedT('cy')('terms.pageTitle')).toBe('Terms and conditions')
+    expect(i18next.getFixedT('cy')('prisonerDetails.whatToDoHeading')).toBe('What to do:')
   })
 
   it('404s for an unsupported language prefix', () => {
