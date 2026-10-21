@@ -315,36 +315,41 @@ describe.each<Locale>(['en-gb', 'cy'])('validatePrisonerDetails (%s)', locale =>
   })
 })
 
-// Mirrors legacy send-money's PrisonerDetailsForm.clean(), which raises a non-field
-// ValidationError (code='not_found') with this message, and the legacy template's
-// "What to do:" guidance shown only for that error code
-// (money-to-prisoners-send-money: forms.py, prisoner-details-error-summary.html).
 describe('prisonerNotFoundResult', () => {
-  const prisonerNotFoundResult = () => prisonerNotFoundResultWithT(i18next.getFixedT('en-gb'))
+  const guidanceMessages = [
+    'Check you’ve entered the details correctly',
+    'Ask the person in prison to check with their wing officer that your details match theirs',
+    'If your details are wrong, use the new details you’ve been given',
+    'If the prison details are wrong, the person in prison needs to submit a general application to the Offender Management Unit querying their details',
+  ]
 
-  it('returns a single general error, not tied to a field', () => {
-    const result = prisonerNotFoundResult()
+  const notFoundMessages: Record<Locale, string> = {
+    'en-gb': 'No prisoner matches the details you’ve supplied',
+    cy: 'Nid oes carcharor sy’n cyfateb i’r manylion a roddwyd gennych',
+  }
 
-    expect(result.errors).toEqual({})
-    expect(result.errorList).toHaveLength(1)
-    expect(result.errorList[0].href).toBeUndefined()
-    expect(result.errorList[0].label).toBeUndefined()
-  })
+  describe.each<Locale>(['en-gb', 'cy'])('in %s', locale => {
+    const prisonerNotFoundResult = () => prisonerNotFoundResultWithT(i18next.getFixedT(locale))
 
-  it('matches the legacy send-money wording', () => {
-    const result = prisonerNotFoundResult()
+    it('returns a single general error, not tied to a field', () => {
+      const result = prisonerNotFoundResult()
 
-    expect(result.errorList[0].messages).toEqual(['No prisoner matches the details you’ve supplied'])
-  })
+      expect(result.errors).toEqual({})
+      expect(result.errorList).toHaveLength(1)
+      expect(result.errorList[0].href).toBeUndefined()
+      expect(result.errorList[0].label).toBeUndefined()
+    })
 
-  it('includes the legacy "what to do" guidance', () => {
-    const result = prisonerNotFoundResult()
+    it('matches the legacy send-money wording, translated for the locale', () => {
+      const result = prisonerNotFoundResult()
 
-    expect(result.errorList[0].guidance).toEqual([
-      'Check you’ve entered the details correctly',
-      'Ask the person in prison to check with their wing officer that your details match theirs',
-      'If your details are wrong, use the new details you’ve been given',
-      'If the prison details are wrong, the person in prison needs to submit a general application to the Offender Management Unit querying their details',
-    ])
+      expect(result.errorList[0].messages).toEqual([notFoundMessages[locale]])
+    })
+
+    it('includes the legacy "what to do" guidance, always in English regardless of locale', () => {
+      const result = prisonerNotFoundResult()
+
+      expect(result.errorList[0].guidance).toEqual(guidanceMessages)
+    })
   })
 })
