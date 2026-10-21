@@ -13,6 +13,9 @@ export const paths = {
   PAYMENT_CHOICE: '/payment-choice',
   TERMS: '/terms',
   PRIVACY: '/privacy',
+  COOKIES: '/cookies',
+  ACCESSIBILITY: '/accessibility',
+  HELP: '/help',
   CONTACT_US: '/contact-us',
 }
 

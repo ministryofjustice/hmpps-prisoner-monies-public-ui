@@ -33,8 +33,20 @@ export default function routes(services: Services): Router {
     return res.render(`pages/${res.locals.locale}/terms`)
   })
 
-  router.get(paths.PRIVACY, (_req, res, _next) => {
+  router.get(paths.PRIVACY, auditPageViewRequest({ services, page: Page.PRIVACY }), (_req, res, _next) => {
     return res.render(`pages/${res.locals.locale}/privacy`)
+  })
+
+  router.get(paths.COOKIES, auditPageViewRequest({ services, page: Page.COOKIES }), (_req, res, _next) => {
+    return res.render(`pages/${res.locals.locale}/cookies`)
+  })
+
+  router.get(paths.ACCESSIBILITY, auditPageViewRequest({ services, page: Page.ACCESSIBILITY }), (_req, res, _next) => {
+    return res.render(`pages/${res.locals.locale}/accessibility`)
+  })
+
+  router.get(paths.HELP, auditPageViewRequest({ services, page: Page.HELP }), (_req, res, _next) => {
+    return res.render(`pages/${res.locals.locale}/help`)
   })
 
   router.get(paths.CONTACT_US, (_req, res, _next) => {

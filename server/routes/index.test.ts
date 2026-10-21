@@ -107,15 +107,21 @@ describe.each([
 })
 
 describe.each([
-  ['en-gb', 'Privacy policy'],
-  ['cy', 'Privacy policy'],
-])('GET /%s/privacy', (locale, expectedHeading) => {
+  ['en-gb', 'Privacy policy', 'Types of personal data we process', '/en-gb/cookies'],
+  ['cy', 'Polisi preifatrwydd', 'Pwrpas', '/cy/cookies'],
+])('GET /%s/privacy', (locale, expectedHeading, expectedSection, cookiesHref) => {
   it('should render privacy page', () => {
     return request(app)
       .get(`/${locale}/privacy`)
       .expect('Content-Type', /html/)
       .expect(200)
-      .expect(res => expect(res.text).toContain(expectedHeading))
+      .expect(res => {
+        expect(res.text).toContain(expectedHeading)
+        expect(res.text).toContain(expectedSection)
+        expect(res.text).toContain(`href="${cookiesHref}"`)
+        expect(res.text).toContain('href="mailto:privacy@justice.gov.uk"')
+        expect(res.text).toContain('href="https://www.payments.service.gov.uk/privacy"')
+      })
   })
 })
 
@@ -129,6 +135,88 @@ describe.each([
       .expect('Content-Type', /html/)
       .expect(200)
       .expect(res => expect(res.text).toContain(expectedHeading))
+  })
+})
+
+describe.each([
+  ['en-gb', 'Cookies'],
+  ['cy', 'Cwcis'],
+])('GET /%s/cookies', (locale, expectedHeading) => {
+  it('renders the cookies placeholder page and audits the page view', () => {
+    return request(app)
+      .get(`/${locale}/cookies`)
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain(expectedHeading)
+        expect(auditService.logPageView).toHaveBeenCalledWith('COOKIES', {
+          correlationId: expect.any(String),
+          who: ANONYMOUS_USER,
+        })
+      })
+  })
+})
+
+describe.each([
+  ['en-gb', 'Accessibility statement'],
+  ['cy', 'Accessibility statement'],
+])('GET /%s/accessibility', (locale, expectedHeading) => {
+  it('renders the accessibility placeholder page and audits the page view', () => {
+    return request(app)
+      .get(`/${locale}/accessibility`)
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain(expectedHeading)
+        expect(auditService.logPageView).toHaveBeenCalledWith('ACCESSIBILITY', {
+          correlationId: expect.any(String),
+          who: ANONYMOUS_USER,
+        })
+      })
+  })
+})
+
+describe.each([
+  ['en-gb', 'Help'],
+  ['cy', 'Cymorth'],
+])('GET /%s/help', (locale, expectedHeading) => {
+  it('renders the help placeholder page and audits the page view', () => {
+    return request(app)
+      .get(`/${locale}/help`)
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain(expectedHeading)
+        expect(auditService.logPageView).toHaveBeenCalledWith('HELP', {
+          correlationId: expect.any(String),
+          who: ANONYMOUS_USER,
+        })
+      })
+  })
+})
+
+describe.each([
+  ['en-gb', '/'],
+  ['en-gb', '/debit-card/details'],
+  ['cy', '/'],
+  ['cy', '/debit-card/details'],
+])('GET /%s%s footer', (locale, path) => {
+  it('links to the terms, privacy, cookies, accessibility and help pages, with the visually hidden heading and crown copyright/OGL licence', () => {
+    return request(app)
+      .get(`/${locale}${path}`)
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain('<h2 class="govuk-visually-hidden">Support links</h2>')
+        expect(res.text).toContain(`href="/${locale}/terms"`)
+        expect(res.text).toContain(`href="/${locale}/privacy"`)
+        expect(res.text).toContain(`href="/${locale}/cookies"`)
+        expect(res.text).toContain(`href="/${locale}/accessibility"`)
+        expect(res.text).toContain(`href="/${locale}/help"`)
+        expect(res.text).toContain('href="https://mojdigital.blog.gov.uk/"')
+        expect(res.text).toContain('Open Government Licence v3.0')
+        expect(res.text).toContain('© Crown copyright')
+      })
   })
 })
 
