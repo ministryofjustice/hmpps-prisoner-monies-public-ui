@@ -104,8 +104,16 @@
         "dobMonthRange": "‘Month’ should be between 1 and 12",
         "dobYearNumber": "Enter ‘year’ as a number",
         "dobYearRange": "‘Year’ should be between 1900 and {{currentYear}}",
-        "dobInvalid": "Enter a valid date"
+        "dobInvalid": "Enter a valid date",
+        "prisonerNotFound": "No prisoner matches the details you’ve supplied"
       },
+      "whatToDoHeading": "What to do:",
+      "prisonerNotFoundGuidance": [
+        "Check you’ve entered the details correctly",
+        "Ask the person in prison to check with their wing officer that your details match theirs",
+        "If your details are wrong, use the new details you’ve been given",
+        "If the prison details are wrong, the person in prison needs to submit a general application to the Offender Management Unit querying their details"
+      ],
       "submit": "Enter amount"
   }
 }

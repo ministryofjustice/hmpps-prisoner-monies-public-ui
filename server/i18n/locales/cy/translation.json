@@ -83,8 +83,16 @@
       "dobMonthRange": "Dylai ‘Mis’ fod rhwng 1 a 12",
       "dobYearNumber": "Nodwch ‘blwyddyn’ fel rhif",
       "dobYearRange": "Dylai ‘Blwyddyn’ fod rhwng 1900 a {{currentYear}}",
-      "dobInvalid": "Nodwch ddyddiad dilys"
+      "dobInvalid": "Nodwch ddyddiad dilys",
+      "prisonerNotFound": "Nid oes carcharor yn cyfateb i’r manylion rydych wedi’u darparu"
     },
+    "whatToDoHeading": "Beth i’w wneud:",
+    "prisonerNotFoundGuidance": [
+      "Gwiriwch eich bod wedi nodi’r manylion yn gywir",
+      "Gofynnwch i’r person yn y carchar wirio gyda’u swyddog wing bod eich manylion yn cyfateb i’w rhai nhw",
+      "Os yw eich manylion yn anghywir, defnyddiwch y manylion newydd rydych wedi’u cael",
+      "Os yw manylion y carchar yn anghywir, mae angen i’r person yn y carchar gyflwyno cais cyffredinol i’r Uned Rheoli Troseddwyr yn holi am eu manylion"
+    ],
     "submit": "Nodwch y swm"
   }
 }
