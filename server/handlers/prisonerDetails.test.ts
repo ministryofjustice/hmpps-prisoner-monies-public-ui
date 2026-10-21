@@ -149,7 +149,6 @@ describe('prisonerDetailsPostHandler', () => {
   })
 
   it('redisplays the raw submitted prisoner name (untrimmed) when the prisoner cannot be found', async () => {
-    // Matches legacy: Django redisplays raw POST data, not cleaned_data, for an invalid/rejected form.
     sendMoneyToPrisonerService.isPrisonerKnown.mockResolvedValue(false)
     const req = { body: { ...validFormBody, prisoner_name: '  John Smith  ' } } as unknown as Request
     const { res, render } = makeRes()
