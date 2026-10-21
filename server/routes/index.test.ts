@@ -1,6 +1,7 @@
 import type { Express } from 'express'
 import { AuditService } from '@ministryofjustice/hmpps-audit-client'
 import request from 'supertest'
+import i18next from 'i18next'
 import { appWithAllRoutes, user } from './testutils/appSetup'
 import ExampleService from '../services/exampleService'
 import ExampleApiClient from '../data/exampleApiClient'
@@ -132,6 +133,8 @@ describe.each([
         expect(res.text).toContain(expectedHeading)
         expect(res.text).toContain(expectedCopy)
         expect(res.text).toContain('card-acceptance-signage/visa.svg')
+        expect(res.text).toContain('card-acceptance-signage/mastercard.svg')
+        expect(res.text).toContain('card-acceptance-signage/maestro.svg')
         expect(res.text).toContain(`href="/${locale}/help/"`)
         expect(auditService.logPageView).toHaveBeenCalledWith(
           Page.TERMS,
@@ -303,6 +306,13 @@ describe('language route test', () => {
         expect(res.text).toContain('<a class="govuk-link" href="/cy/terms">telerau ac amodau</a>')
         expect(res.text).toContain('<a class="govuk-link" href="/cy/privacy">polisi preifatrwydd</a>')
       })
+  })
+
+  it('falls back to the default language when a translation key is missing', async () => {
+    await i18next.loadNamespaces('translation')
+    // a key that only exists in en-gb should fall back to the English value rather than the key itself
+    i18next.addResource('en-gb', 'translation', 'test.englishOnly', 'English only')
+    expect(i18next.getFixedT('cy')('test.englishOnly')).toBe('English only')
   })
 
   it('404s for an unsupported language prefix', () => {
