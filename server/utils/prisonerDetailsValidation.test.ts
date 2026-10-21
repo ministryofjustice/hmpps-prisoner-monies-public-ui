@@ -340,13 +340,13 @@ describe('prisonerNotFoundResult', () => {
       expect(result.errorList[0].label).toBeUndefined()
     })
 
-    it('matches the legacy send-money wording, translated for the locale', () => {
+    it('returns the correct "not found" message translated for the locale', () => {
       const result = prisonerNotFoundResult()
 
       expect(result.errorList[0].messages).toEqual([notFoundMessages[locale]])
     })
 
-    it('includes the legacy "what to do" guidance, always in English regardless of locale', () => {
+    it('includes the "what to do" guidance, always in English regardless of locale', () => {
       const result = prisonerNotFoundResult()
 
       expect(result.errorList[0].guidance).toEqual(guidanceMessages)
