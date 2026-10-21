@@ -200,9 +200,10 @@ describe.each([['en-gb'], ['cy']])('POST /%s/debit-card/details', locale => {
       })
       .expect(200)
       .expect(res => {
-        expect(res.text).toContain('mtp-error-summary__field-error')
         // the "not found" error is a general error, not tied to a field, so it
-        // should not be rendered as a link to a field like the other errors are
+        // should use the non-field-error class (for the bold/red mtp styling)
+        // rather than the field-error class, and should not render as a link
+        expect(res.text).toContain('mtp-error-summary__non-field-error')
         expect(res.text).not.toMatch(/<a href="#id_prisoner_number">/)
 
         const expectedMessage = i18next.getFixedT(locale)('prisonerDetails.errors.prisonerNotFound')

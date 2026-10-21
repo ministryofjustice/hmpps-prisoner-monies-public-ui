@@ -22,7 +22,7 @@
         <div class="govuk-error-summary__body">
           <ul class="govuk-list govuk-error-summary__list">
             {% for fieldError in errorList %}
-            <li class="mtp-error-summary__field-error">
+            <li class="{{ 'mtp-error-summary__field-error' if fieldError.href else 'mtp-error-summary__non-field-error' }}">
               {% if fieldError.href %}
               <a href="{{ fieldError.href }}">{{ fieldError.label }}</a>
               <ul>
@@ -35,7 +35,7 @@
               {{ message }}<span class="govuk-visually-hidden">.</span>
               {% endfor %}
               {% if fieldError.guidance and fieldError.guidance.length %}
-              <p>{{ t("prisonerDetails.whatToDoHeading") }}</p>
+              {{ t("prisonerDetails.whatToDoHeading") }}
               <ul class="govuk-list govuk-list--bullet">
                 {% for guidanceMessage in fieldError.guidance %}
                 <li>{{ guidanceMessage }}</li>
