@@ -66,6 +66,69 @@ describe('GET /payment-choice', () => {
   })
 })
 
+describe.each([
+  [
+    'en-gb',
+    'Pay now by debit card',
+    'Continue',
+    'You can complete your payment here using Mastercard, Visa and Maestro',
+  ],
+  [
+    'cy',
+    'Talu nawr gyda cherdyn debyd',
+    'Parhau',
+    'You can complete your payment here using Mastercard, Visa and Maestro',
+  ],
+])('GET /%s/payment-choice', (locale, heading, continueText, body) => {
+  it('renders the page content in the requested language', () => {
+    sendMoneyToPrisonerService.checkPaymentServiceAvailable.mockResolvedValue({ available: true })
+
+    return request(app)
+      .get(`/${locale}/payment-choice`)
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain(heading)
+        expect(res.text).toContain(continueText)
+        expect(res.text).toContain(body)
+      })
+  })
+
+  it('renders the debit card continue button and audits the page view when the payment service is available', () => {
+    sendMoneyToPrisonerService.checkPaymentServiceAvailable.mockResolvedValue({ available: true })
+
+    return request(app)
+      .get(`/${locale}/payment-choice`)
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain(`href="/${locale}/debit-card/details"`)
+        expect(res.text).not.toContain('service-unavailable-heading')
+        expect(auditService.logPageView).toHaveBeenCalledWith('PAYMENT_CHOICE', {
+          correlationId: expect.any(String),
+          who: ANONYMOUS_USER,
+        })
+      })
+  })
+
+  it('renders the service-unavailable message instead of the continue button when the payment service is down', () => {
+    sendMoneyToPrisonerService.checkPaymentServiceAvailable.mockResolvedValue({
+      available: false,
+      messageToUsers: 'Down for maintenance',
+    })
+
+    return request(app)
+      .get(`/${locale}/payment-choice`)
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain('service-unavailable-heading')
+        expect(res.text).toContain('Down for maintenance')
+        expect(res.text).not.toContain(`href="/${locale}/debit-card/details"`)
+      })
+  })
+})
+
 describe('GET /:lang/terms with an unsupported prefix', () => {
   it('should 404', () => {
     return request(app).get('/fr/terms').expect(404)

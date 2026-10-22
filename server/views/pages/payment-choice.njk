@@ -1,34 +1,50 @@
 {% extends "../partials/layout-two-thirds.njk" %}
 
-{% set pageTitle = "Pay now by debit card - " + applicationName %}
+{% set pageTitle = t("paymentChoice.pageHeading") + " - " + applicationName %}
 {% set mainClasses = "govuk-body" %}
 
 {% block page_content %}
 
     <header>
-      <h1 class="govuk-heading-xl">Pay now by debit card</h1>
+      <h1 class="govuk-heading-xl">{{ t("paymentChoice.pageHeading") }}</h1>
     </header>
 
     <p class="govuk-body-l">
-      Paying by debit card is fast, simple, reliable and free and the best way of sending money to a prisoner.
+      {{ t("paymentChoice.intro") }}
+    </p>
+
+    {% if serviceAvailable %}
+
+    <p class="govuk-body">
+      {{ t("paymentChoice.body1") }}
+      {{ t("paymentChoice.body2") }}
     </p>
 
     <p class="govuk-body">
-      You can complete your payment here using Mastercard, Visa and Maestro debit cards.
-      Money usually takes less than 3 working days to reach a prisoner's account, but may take longer.
+      {{ t("paymentChoice.body3") }}
     </p>
 
     <p class="govuk-body">
-      You'll get email confirmation of payment.
-    </p>
-
-    <p class="govuk-body">
-      You can make an international payment using a debit card.
+      {{ t("paymentChoice.body4") }}
     </p>
 
     <a id="id_debit_card" class="govuk-button" data-module="govuk-button" href="{{continueUrl}}">
-      Continue
+      {{ t("paymentChoice.continue") }}
     </a>
 
+    {% else %}
+
+    <div class="govuk-error-summary" aria-labelledby="service-unavailable-heading" role="alert" data-module="govuk-error-summary">
+      <h2 class="govuk-error-summary__title" id="service-unavailable-heading">
+        {{ serviceUnavailableMessage or t("paymentChoice.serviceUnavailableHeading") }}
+      </h2>
+      <div class="govuk-error-summary__body">
+        <p class="govuk-body">
+          {{ t("paymentChoice.serviceUnavailableBody") }}
+        </p>
+      </div>
+    </div>
+
+    {% endif %}
 
 {% endblock %}
