@@ -140,7 +140,7 @@ describe.each([
       .expect(200)
       .expect(res => {
         expect(res.text).toContain(expectedHeading)
-        expect(res.text).toContain('hmpps-prisoner-monies-public-ui.session')
+        expect(res.text).toContain('smtp.session')
       })
   })
 })
