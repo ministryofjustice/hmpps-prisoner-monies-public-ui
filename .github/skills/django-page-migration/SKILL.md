@@ -6,6 +6,17 @@ argument-hint: 'Django view/page to migrate (and target URL path if not obvious)
 
 # Django to Express Page Migration
 
+## Acceptance Criteria
+These are the completion goals for every migrated page. Include them in the migration plan and report evidence against each in the final summary; writing code or adding tests alone does not satisfy them. Apply any additional ticket-specific AC too. For the Terms and Conditions page, use these same goals with that page as the subject.
+
+- **Legacy content parity**: the page content matches the rendered legacy page in both languages, including any existing mixed English/Welsh content on `/cy`. Preserve that output rather than tidying, rewriting, or translating it as part of migration.
+- **Page-view telemetry**: Azure Application Insights records page views for the migrated page in both locales. Reuse the target application's telemetry setup and verify the page-view recording path with a focused test. Audit logging is a separate requirement, not evidence of Application Insights page-view telemetry; do not claim live Azure ingestion was verified unless it actually was.
+- **Welsh rendering**: the `/cy` page renders the existing legacy translations correctly, retaining legacy English fallbacks where applicable. Do not invent translations to make a partially translated legacy page fully Welsh.
+- **Passing parity tests**: Playwright parity tests in the configured local parity project compare the migrated page against legacy for both language versions and actually pass. Target-app Playwright integration tests are also required; they do not replace parity tests.
+- **Correct links**: all page links, including shared header/footer links, resolve to the intended destinations. Links to pages not yet migrated go to reachable blank/placeholder versions at their intended target routes, not unrelated pages or 404s. Include any placeholder routes in the approved plan.
+
+If an AC cannot be verified (for example, the parity project has not been cloned), report it as blocked/not verified and explain what is missing. Do not mark the migration complete or weaken an assertion to get a pass.
+
 ## ⚠️ Plan Approval Required — Always, No Exceptions
 This is the most commonly skipped step. It applies on **every** invocation of this skill, regardless of how the request is phrased:
 1. Work out the plan (reading whatever source files you need to), then present it to the user as a **high-level bullet-point list** before changing or creating any file: which files will be added/changed, new routes/handlers/templates, i18n keys needed, the `Page`/audit entries, any backend logic that will be flagged as a stub, and any open questions from **When Unsure, Ask**.
@@ -18,13 +29,14 @@ If you notice you're about to create or edit a file and this hasn't happened yet
 ## Configuration
 Project paths are machine-specific, so they're kept out of this committed file and stored instead in a gitignored local config file:
 
-- **File**: `.github/skills/django-page-migration/local-config.json` (relative to the Express target repo). It's listed in `.gitignore` — it will never be committed, so it's safe to store absolute local paths in it.
+- **File**: `.github/skills/django-page-migration/local-config.json` (relative to the Express target repo). Verify it is gitignored before writing machine-specific absolute paths; do not commit it or store secrets in it.
 - **Schema**:
   ```json
   {
     "legacyProjectPath": "/absolute/path/to/money-to-prisoners-send-money",
     "expressProjectPath": "/absolute/path/to/hmpps-prisoner-monies-public-ui",
-    "referenceProjectPath": "/absolute/path/to/a/reference/project, or omit/null if none"
+    "referenceProjectPath": null,
+    "parityProjectPath": null
   }
   ```
 - `legacyProjectPath`: the Django "send money" app.
@@ -32,6 +44,7 @@ Project paths are machine-specific, so they're kept out of this committed file a
 - `expressProjectPath`: the Express/Nunjucks target app.
   - Routes/handlers/views/i18n live under `server/`, as detailed in the File Mapping Reference below.
 - `referenceProjectPath` (optional): a best-practice example for code style and HTML/CSS/SCSS — not everyone has one. When set, it's expected to be a sibling HMPPS Express/Nunjucks GOV.UK service with the same `assets/scss`/`views` layout, used as a reference because it's further along in adopting current conventions than some pages in this repo.
+- `parityProjectPath`: the absolute local path to the separate Playwright legacy-versus-Express parity-test project, not the code-style reference project. Store `null` until it is available. If the user says it is in their workspace, identify the matching workspace folder and confirm it if ambiguous; otherwise ask for its absolute path. Save the confirmed absolute path in this local config so each developer can use their own checkout location. Do not guess a path or clone a project without permission.
 
 See **Step 0** below for how this file is read, validated, and (re)populated.
 
@@ -46,9 +59,9 @@ See **Step 0** below for how this file is read, validated, and (re)populated.
 
 ## Before Starting
 0. **Resolve the project folders first**, in this order:
-   a. Look for `.github/skills/django-page-migration/local-config.json`. If it exists, is valid JSON, and every path it contains (`legacyProjectPath`, `expressProjectPath`, and `referenceProjectPath` if set) still exists on disk, use those paths without asking.
-   b. If the file is **missing, empty, invalid, or any path inside it no longer exists** on disk, treat it as unset — don't silently fall back to guessed defaults. Ask the user for: the legacy Django project folder, the target Express project folder, and (optionally) a reference project for code/HTML/CSS style conventions.
-   c. After the user provides/confirms paths (whether freshly asked or re-confirmed), **write/update `local-config.json`** with them so future invocations don't need to ask again. Mention to the user that this file is gitignored and won't be committed.
+  a. Read `.github/skills/django-page-migration/local-config.json` as JSON. Validate that `legacyProjectPath` and `expressProjectPath` are absolute paths to existing directories, and that `referenceProjectPath` and `parityProjectPath`, when set, are too. Reuse valid entries without asking.
+  b. If the file is **missing, empty, or invalid JSON**, ask for the legacy and target project folders, an optional code-style reference project, and the parity project. For an existing config, ask only for missing/invalid entries; a missing `parityProjectPath` in an older config must trigger parity setup, not silently skip parity tests. Accept `null` for an unavailable parity project, but flag parity verification as blocked in the plan.
+  c. Include any config update in the approval plan. **After explicit approval**, write/update `local-config.json` with the confirmed absolute paths, preserving other valid entries. Verify it is gitignored and explain that these paths stay local. An unavailable parity project does not prevent agreed implementation work, but prevents claiming all AC are met.
 1. Which Django view to migrate — find it in `<legacy project>/mtp_send_money/apps/send_money/{views.py,urls.py,forms.py}` and its template under `templates/send_money/`.
 2. What URL path the new page should live at (e.g. `/debit-card/amount`) and which feature route file it belongs in.
 3. Then follow **⚠️ Plan Approval Required** above before writing any code — it is not optional.
@@ -95,8 +108,8 @@ Django/Jinja2 templates in the legacy app rarely contain the full picture in one
 
 ## Procedure
 (Only begin once the user has explicitly approved the plan — see **⚠️ Plan Approval Required** at the top of this document.)
-1. Read the Django view, its form class, and its template in full, reverse-engineering the whole template inheritance/include/tag chain per **Template Tag & Inheritance Tracing** above.
-2. Identify every piece of backend/business logic the view performs (API calls, payment processing, DB/session reads, emails).
+1. Read the Django view, its form class, and its template in full, reverse-engineering the whole template inheritance/include/tag chain per **Template Tag & Inheritance Tracing** above. Also find and read its legacy tests — `apps/send_money/tests/test_views.py`, `test_forms.py`, and `test_functional.py` — per **Porting Tests** below; they're the source of truth for behaviours/edge cases to preserve, and should be referenced in the plan from **⚠️ Plan Approval Required**.
+2. Identify every piece of backend/business logic the view performs (API calls, payment processing, DB/session reads, emails) and any access restriction on it (see **Authentication & Permissions**).
 3. Add/extend the route in `server/routes/<feature>.ts`.
 4. Write the handler(s) in `server/handlers/<page>.ts`, following the GET-renders / POST-validates-then-redirects pattern.
 5. Port form validation into `server/utils/<page>Validation.ts`, matching Django's validation rules and error messages as closely as sensible for GOV.UK error summary conventions.
@@ -106,8 +119,48 @@ Django/Jinja2 templates in the legacy app rarely contain the full picture in one
 9. Add a new `Page` entry in `server/constants/pages.ts` and register `auditPageViewRequest({ services, page })` on the GET route so the page view is audited (every migrated page needs this, even if the Django view never recorded one).
 10. If the page submits a meaningful business event (search, completed step, etc.), audit it via `auditService.logAuditEvent(...)` from the POST handler or a dedicated middleware (see `auditSearchRequest.ts`) — not needed for purely internal/validation-only POSTs.
 11. For any backend/business logic identified in step 2, add a stub (see below) rather than implementing it.
-12. Write Jest tests alongside the new files (`<page>.test.ts` for handlers, `<x>Validation.test.ts` for validation, `<x>Service.test.ts` for services), following existing test file conventions in the repo.
-13. Run the target repo's lint and tests to confirm nothing is broken.
+12. Port tests at all three tiers per **Porting Tests** below — Playwright integration coverage is required for every migrated page, regardless of whether a legacy functional test exists.
+13. Verify Application Insights page-view telemetry separately from audit logging, following the target application's existing setup. Run the target repo's lint and tests (Jest *and* Playwright), then run the page's bilingual parity checks per **Parity Project Verification**. Report results against every **Acceptance Criteria** item.
+
+## Parity Project Verification
+- Read the configured `parityProjectPath` project's instructions, README, package scripts, and nearest existing parity test before editing or running it. Use its existing test framework, fixtures, URL configuration, and comparison helpers rather than inventing a second parity harness in the target app.
+- Include parity-project test/config changes and the exact focused verification command in the approval plan. Establish how its configured legacy and Express endpoints are run; ask for any missing setup rather than guessing URLs or using a live payment journey.
+- Add/extend the page's parity cases for `en-gb` and `cy`, checking rendered content (including mixed-language legacy output), Welsh rendering, and link destinations. Follow existing normalization for environment-specific origins; do not normalize away meaningful content or destination differences.
+- Run the focused Playwright parity tests for both locales and record the command and result. Keep shared-component checks reusable: verify shared footer content/navigation once per applicable locale, then check its presence on the migrated page instead of duplicating the full footer suite on every page.
+- If the project or required local services are unavailable, report exactly which parity checks remain blocked. Do not substitute target-only rendering tests or claim parity passed without a successful comparison run.
+
+## Porting Tests
+Django test files can't be "moved" directly (different language/framework), but their **scenarios** should be — use the legacy tests as your checklist of behaviours to cover, not as the only reason to write a test. Every migrated page must end up with both Jest and Playwright coverage proving it renders and works, regardless of whether an equivalent legacy test existed:
+
+| Legacy Django test | Express equivalent | What it covers |
+|---|---|---|
+| `test_forms.py` (form validation cases) | `server/utils/<page>Validation.test.ts` | Pure unit tests of validation logic, no HTTP/Express involved — mirror `prisonerDetailsValidation.test.ts` |
+| `test_views.py` (Django test-client view tests) | `server/handlers/<page>.test.ts` | Unit tests of the handler function with mocked `req`/`res`/services — mirror `handlers/prisonerDetails.test.ts` (uses `testutils/mockResponse`) |
+| `test_views.py` / `test_views_misc.py` (end-to-end-ish Django client assertions) | Additions to `server/routes/index.test.ts` | Supertest requests through the real app/router/templates — asserts on rendered HTML, redirects, and audit calls, like the existing `describe.each` blocks |
+| `test_functional.py` (Selenium browser tests), or nothing if no legacy functional test exists | A Playwright spec under `integration_tests/specs/` | **Mandatory for every migrated page** — see **Playwright Integration Tests** below |
+
+- Where legacy tests cover translated (`cy`) behaviour, keep that coverage in both the Jest and Playwright equivalents, per **Link Text & Translations**.
+- If a legacy unit-level test tier genuinely doesn't apply (e.g. a static page has no form to validate), it's fine to skip that one Express tier, but say so in your summary — the Playwright tier is never skipped.
+
+## Playwright Integration Tests
+Every migrated page needs a Playwright spec under `integration_tests/specs/` proving it renders with its key components visible *and* functional — not just that the route returns 200. Follow the conventions already in this folder (`sendMoney.spec.ts`, `footer.spec.ts`, `health.spec.ts`):
+- **Where the spec lives**: add to the existing spec file for that journey/feature if the page is part of an existing flow (e.g. another debit-card step → `sendMoney.spec.ts`), or create a new `integration_tests/specs/<feature>.spec.ts` for a standalone feature/component (mirroring `footer.spec.ts`). Ask the user if it's not obvious which.
+- **Page objects**: for any page with interactive elements (form fields, buttons, non-trivial links), add a page object in `integration_tests/pages/<page>.ts` extending `BasePage` (`integration_tests/utils/basePage.ts`), mirroring `prisonerDetailsPage.ts` / `beforeYouContinuePage.ts` — expose locators as readonly properties, not raw strings scattered through the spec. Simple cross-cutting checks (like the footer) can query locators directly without a dedicated page object.
+- **What "visible and functional" means, at minimum**:
+  - The page's `<h1>`/primary heading is visible.
+  - Every form field, button, and link present in the Nunjucks template is visible and has the correct accessible name/label.
+  - For form pages: a happy-path test that fills in valid data, submits, and asserts the resulting redirect/page; *and* at least one validation-error test (invalid/missing input) asserting the error summary and field-level errors appear.
+  - For links (including ones in shared partials like the footer/header): clicking navigates to the correct destination page and its heading is visible, per **Link Text & Translations**.
+- **Authentication**: if **Authentication & Permissions** determined the route needs an HMPPS Auth role, the spec must call `login(page, { roles: ['ROLE_X'] })` from `integration_tests/testUtils.ts` before visiting the page, and stub any required mock APIs under `integration_tests/mockApis/` (wiremock-based) — don't assume an unauthenticated `page.goto()` will work.
+- **Locale coverage**: run the spec for every supported locale (`en-gb`, `cy`) the page supports, per the `[locale]`-prefixed test title pattern in `footer.spec.ts`.
+- Lint (`npx eslint`) and typecheck (`npx tsc -p integration_tests --noEmit`) the spec, then actually run it (`npm run int-test`, optionally `-- --grep '<name>'`) before considering the migration done — don't just write it and assume it passes.
+
+## Authentication & Permissions
+Django's auth model (session login, `@login_required`, `permission_required(...)`, `PermissionRequiredMixin`/`UserPassesTestMixin`, group/permission checks) and Express's (JWT bearer tokens with `ROLE_`-prefixed authorities via `authorisationMiddleware`, currently commented out in `app.ts` because every migrated page so far is public) are **not equivalent** — there's no mechanical 1:1 mapping between them.
+- **Check every Django view for an access restriction**, not just the obvious payment/form logic — login/permission decorators or mixins, a custom `user_passes_test`, IP allowlisting, or any other gate on who can reach the page.
+- **Don't silently drop or silently enforce any restriction you find.** A restricted Django view breaks the "fully public" assumption the rest of this skill makes — stop and ask the user which HMPPS Auth role(s), if any, should gate the Express route. Which role applies is a product/security decision, not something to infer from the Django code.
+- If the user confirms a role is needed, wire it up via `authorisationMiddleware(['ROLE_X'])` on that route (uncommenting/enabling it in `app.ts` if this is the first authenticated route), and call this out clearly in both your plan and final summary — it's a notable change to a currently fully-public service.
+- If the Django view has no access restriction (true for every page in `send_money` at the time of writing), do nothing — don't add `authorisationMiddleware` speculatively.
 
 ## Flagging Backend Logic
 When a Django view relies on logic not yet implemented in Express (API calls, GOV.UK Pay/Notify, prisoner balance checks, etc.):
@@ -117,6 +170,8 @@ When a Django view relies on logic not yet implemented in Express (API calls, GO
 - Call out every flagged stub in your final summary to the user so it can be tracked.
 
 ## Completion Checklist
+- [ ] Every **Acceptance Criteria** item has verification evidence; unmet or blocked criteria are explicitly reported, not marked complete
+- [ ] Local project paths are validated, including `parityProjectPath`; confirmed updates are saved in the gitignored local config after approval
 - [ ] Plan was presented as bullet points and explicitly approved by the user before any code was written
 - [ ] Full template inheritance/include/tag chain traced per **Template Tag & Inheritance Tracing** (not just the page's own `.html` file)
 - [ ] Route registered and reachable at the correct path
@@ -127,7 +182,12 @@ When a Django view relies on logic not yet implemented in Express (API calls, GO
 - [ ] Page copy follows **Static Pages vs Interactive Journey Pages** (static prose pages get per-locale templates; journey pages use `t("...")` keys added to `en-gb` and `cy` locale files)
 - [ ] Link/button text matches the legacy wording verbatim, every anchor's target matches the legacy `href`/`{% url %}` resolution (migrated as-is, not redesigned), and every non-English translation is copied from an existing legacy `.po` file (not invented) — unmatched strings are left in English and flagged
 - [ ] Page view is audited (`Page` enum entry + `auditPageViewRequest` on the GET route)
+- [ ] Application Insights page-view recording is verified separately from audit logging for both locales; live-ingestion verification is not claimed without evidence
 - [ ] Meaningful submitted events (if any) are audited via `auditService.logAuditEvent`
+- [ ] Checked the Django view for auth/permission restrictions (**Authentication & Permissions**) — confirmed with the user, not assumed either way
+- [ ] Legacy Django tests were read and used as the source of test scenarios (**Porting Tests**)
+- [ ] Jest unit tests added for handler/validation/service as applicable
+- [ ] A Playwright spec was added/extended under `integration_tests/specs/` covering key components' visibility and functionality, for every supported locale (**Playwright Integration Tests**) — and was actually run, not just written
+- [ ] Playwright parity tests in the configured parity project pass for both English and Welsh, preserving legacy mixed-language content and checking intended link destinations/placeholders
 - [ ] Backend/API logic is stubbed with a `TODO` comment, not implemented
-- [ ] Tests added/updated for handler, validation, and any new service methods
-- [ ] Lint and tests pass
+- [ ] Lint and tests pass (Jest and Playwright)
