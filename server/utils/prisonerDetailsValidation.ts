@@ -15,9 +15,10 @@ export type PrisonerDetailsErrors = {
 }
 
 export type PrisonerDetailsErrorListItem = {
-  label: string
-  href: string
+  label?: string
+  href?: string
   messages: string[]
+  guidance?: string[]
 }
 
 export type PrisonerDetailsValidationResult = {
@@ -122,4 +123,16 @@ export function validatePrisonerDetails(
   }
 
   return { errors, errorList }
+}
+
+export function prisonerNotFoundResult(t: TFunction): PrisonerDetailsValidationResult {
+  return {
+    errors: {},
+    errorList: [
+      {
+        messages: [t('prisonerDetails.errors.prisonerNotFound')],
+        guidance: t('prisonerDetails.prisonerNotFoundGuidance', { returnObjects: true }) as string[],
+      },
+    ],
+  }
 }

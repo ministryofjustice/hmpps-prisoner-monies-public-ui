@@ -1,6 +1,10 @@
 import type { RequestHandler } from 'express'
 import SendMoneyToPrisonerService from '../services/sendMoneyToPrisonerService'
-import { validatePrisonerDetails, PrisonerDetailsFormValues } from '../utils/prisonerDetailsValidation'
+import {
+  validatePrisonerDetails,
+  prisonerNotFoundResult,
+  PrisonerDetailsFormValues,
+} from '../utils/prisonerDetailsValidation'
 import { paths, debitCardPaths } from '../constants/paths'
 
 export const PRISONER_DETAILS_BACK_LINK_HREF = paths.PAYMENT_CHOICE
@@ -22,8 +26,12 @@ function formatPrisonerDetails(formValues: PrisonerDetailsFormValues) {
   }
 }
 
+function padDatePart(value: string | undefined): string {
+  return typeof value === 'string' ? value.padStart(2, '0') : ''
+}
+
 function buildPrisonerDob({ prisonerDobDay, prisonerDobMonth, prisonerDobYear }: PrisonerDetailsFormValues): string {
-  return `${prisonerDobDay}-${prisonerDobMonth}-${prisonerDobYear}`
+  return `${padDatePart(prisonerDobDay)}-${padDatePart(prisonerDobMonth)}-${prisonerDobYear}`
 }
 
 function renderPrisonerDetails(
@@ -56,11 +64,11 @@ export function prisonerDetailsPostHandler(sendMoneyToPrisonerService: SendMoney
 
     const { prisonerName, prisonerNumber } = formattedFormValues
     const prisonerDOB = buildPrisonerDob(formattedFormValues)
-    const validPrisoner = await sendMoneyToPrisonerService.getValidPrisoner(prisonerNumber, prisonerDOB)
+    const validPrisoner = await sendMoneyToPrisonerService.isPrisonerKnown(prisonerNumber, prisonerDOB)
 
     if (!validPrisoner) {
       // renders form values as they were submitted rather than the formatted values
-      return renderPrisonerDetails(res, formValues)
+      return renderPrisonerDetails(res, formValues, prisonerNotFoundResult(res.locals.t))
     }
 
     req.session = req.session ?? {}

@@ -22,20 +22,35 @@
         <div class="govuk-error-summary__body">
           <ul class="govuk-list govuk-error-summary__list">
             {% for fieldError in errorList %}
-            <li class="mtp-error-summary__field-error">
+            <li class="{{ 'mtp-error-summary__field-error' if fieldError.href else 'mtp-error-summary__non-field-error' }}">
+              {% if fieldError.href %}
               <a href="{{ fieldError.href }}">{{ fieldError.label }}</a>
               <ul>
                 {% for message in fieldError.messages %}
                 <li>{{ message }}<span class="govuk-visually-hidden">.</span></li>
                 {% endfor %}
               </ul>
+              {% else %}
+              {% for message in fieldError.messages %}
+              {{ message }}<span class="govuk-visually-hidden">.</span>
+              {% endfor %}
+              {% if fieldError.guidance and fieldError.guidance.length %}
+              {{ t("prisonerDetails.whatToDoHeading") }}
+              <ul class="govuk-list govuk-list--bullet">
+                {% for guidanceMessage in fieldError.guidance %}
+                <li>{{ guidanceMessage }}</li>
+                {% endfor %}
+              </ul>
+              {% endif %}
+              {% endif %}
             </li>
             {% endfor %}
           </ul>
         </div>
       </div>
     </div>
-    {% endif %}
+{% endif %}
+
 
     <form method="post" action="{{postDebitCardDetails}}">
       <input type="hidden" name="_csrf" value="{{ csrfToken }}">

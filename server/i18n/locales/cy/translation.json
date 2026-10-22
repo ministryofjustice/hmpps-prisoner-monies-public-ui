@@ -104,7 +104,8 @@
       "dobMonthRange": "Dylai ‘Mis’ fod rhwng 1 a 12",
       "dobYearNumber": "Nodwch ‘blwyddyn’ fel rhif",
       "dobYearRange": "Dylai ‘Blwyddyn’ fod rhwng 1900 a {{currentYear}}",
-      "dobInvalid": "Nodwch ddyddiad dilys"
+      "dobInvalid": "Nodwch ddyddiad dilys",
+      "prisonerNotFound": "Nid oes carcharor sy’n cyfateb i’r manylion a roddwyd gennych"
     },
     "submit": "Nodwch y swm"
   }

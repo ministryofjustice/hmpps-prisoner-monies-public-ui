@@ -1,5 +1,6 @@
 import {
   validatePrisonerDetails as validatePrisonerDetailsWithT,
+  prisonerNotFoundResult as prisonerNotFoundResultWithT,
   PrisonerDetailsFormValues,
 } from './prisonerDetailsValidation'
 import i18next, { i18nextInitPromise } from '../i18n/i18n'
@@ -310,6 +311,45 @@ describe.each<Locale>(['en-gb', 'cy'])('validatePrisonerDetails (%s)', locale =>
         },
         { label: expected.prisonerNumberLabel, href: '#id_prisoner_number', messages: [expected.required] },
       ])
+    })
+  })
+})
+
+describe('prisonerNotFoundResult', () => {
+  const guidanceMessages = [
+    'Check you’ve entered the details correctly',
+    'Ask the person in prison to check with their wing officer that your details match theirs',
+    'If your details are wrong, use the new details you’ve been given',
+    'If the prison details are wrong, the person in prison needs to submit a general application to the Offender Management Unit querying their details',
+  ]
+
+  const notFoundMessages: Record<Locale, string> = {
+    'en-gb': 'No prisoner matches the details you’ve supplied',
+    cy: 'Nid oes carcharor sy’n cyfateb i’r manylion a roddwyd gennych',
+  }
+
+  describe.each<Locale>(['en-gb', 'cy'])('in %s', locale => {
+    const prisonerNotFoundResult = () => prisonerNotFoundResultWithT(i18next.getFixedT(locale))
+
+    it('returns a single general error, not tied to a field', () => {
+      const result = prisonerNotFoundResult()
+
+      expect(result.errors).toEqual({})
+      expect(result.errorList).toHaveLength(1)
+      expect(result.errorList[0].href).toBeUndefined()
+      expect(result.errorList[0].label).toBeUndefined()
+    })
+
+    it('returns the correct "not found" message translated for the locale', () => {
+      const result = prisonerNotFoundResult()
+
+      expect(result.errorList[0].messages).toEqual([notFoundMessages[locale]])
+    })
+
+    it('includes the "what to do" guidance, always in English regardless of locale', () => {
+      const result = prisonerNotFoundResult()
+
+      expect(result.errorList[0].guidance).toEqual(guidanceMessages)
     })
   })
 })

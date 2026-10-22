@@ -238,10 +238,7 @@ describe.each([['en-gb'], ['cy']])('GET /%s/debit-card/details', locale => {
 
 describe.each([['en-gb'], ['cy']])('POST /%s/debit-card/details', locale => {
   it('redirects to the amount page when the prisoner details are valid', () => {
-    sendMoneyToPrisonerService.getValidPrisoner.mockResolvedValue({
-      prisonerNumber: 'A1234BC',
-      prisonerDOB: '1-2-1990',
-    })
+    sendMoneyToPrisonerService.isPrisonerKnown.mockResolvedValue(true)
 
     return request(app)
       .post(`/${locale}/debit-card/details`)
@@ -256,7 +253,7 @@ describe.each([['en-gb'], ['cy']])('POST /%s/debit-card/details', locale => {
       .expect(302)
       .expect('Location', `/${locale}/debit-card/amount`)
       .expect(() => {
-        expect(sendMoneyToPrisonerService.getValidPrisoner).toHaveBeenCalledWith('A1234BC', '1-2-1990')
+        expect(sendMoneyToPrisonerService.isPrisonerKnown).toHaveBeenCalledWith('A1234BC', '01-02-1990')
       })
   })
 
@@ -273,6 +270,41 @@ describe.each([['en-gb'], ['cy']])('POST /%s/debit-card/details', locale => {
         expect(res.text).toContain('id="id_prisoner_dob_0"')
         expect(res.text).toContain('href="#id_prisoner_number"')
         expect(res.text).toContain('id="id_prisoner_number"')
+      })
+  })
+
+  it('re-renders with a general (non-field) error and "what to do" guidance when the prisoner cannot be found', () => {
+    sendMoneyToPrisonerService.isPrisonerKnown.mockResolvedValue(false)
+
+    return request(app)
+      .post(`/${locale}/debit-card/details`)
+      .type('form')
+      .send({
+        prisoner_name: 'John Smith',
+        prisoner_dob_0: '1',
+        prisoner_dob_1: '2',
+        prisoner_dob_2: '1990',
+        prisoner_number: 'A1234BC',
+      })
+      .expect(200)
+      .expect(res => {
+        // a general error, not tied to a field and therefore not linked to any field on the page
+        expect(res.text).toContain('mtp-error-summary__non-field-error')
+        expect(res.text).not.toMatch(/<a href="#id_prisoner_number">/)
+
+        // the main "not found" message is translated for the locale...
+        const expectedMessage = i18next.getFixedT(locale)('prisonerDetails.errors.prisonerNotFound')
+        expect(res.text).toContain(expectedMessage)
+
+        // the "what to do" guidance is in English only
+        expect(res.text).toContain('What to do:')
+
+        const expectedGuidance = i18next.getFixedT('en-gb')('prisonerDetails.prisonerNotFoundGuidance', {
+          returnObjects: true,
+        }) as string[]
+        expectedGuidance.forEach(guidanceMessage => {
+          expect(res.text).toContain(guidanceMessage)
+        })
       })
   })
 })
@@ -369,7 +401,7 @@ describe('language route test', () => {
     await i18next.loadNamespaces('translation')
     // 'terms.pageTitle' only exists in the en-gb translation, so the cy-fixed
     // translator should fall back to the English value rather than the key itself
-    expect(i18next.getFixedT('cy')('terms.pageTitle')).toBe('Terms and conditions')
+    expect(i18next.getFixedT('cy')('prisonerDetails.whatToDoHeading')).toBe('What to do:')
   })
 
   it('404s for an unsupported language prefix', () => {

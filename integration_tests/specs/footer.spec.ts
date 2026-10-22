@@ -13,7 +13,7 @@ const footerLinkCases = [
   { locale: 'en-gb', linkText: 'Terms and conditions', path: paths.TERMS, heading: 'Terms and conditions' },
   { locale: 'cy', linkText: 'Telerau ac amodau', path: paths.TERMS, heading: 'Terms and conditions' },
   { locale: 'en-gb', linkText: 'Privacy policy', path: paths.PRIVACY, heading: 'Privacy policy' },
-  { locale: 'cy', linkText: 'Polisi preifatrwydd', path: paths.PRIVACY, heading: 'Privacy policy' },
+  { locale: 'cy', linkText: 'Polisi preifatrwydd', path: paths.PRIVACY, heading: 'Polisi preifatrwydd' },
   { locale: 'en-gb', linkText: 'Cookies', path: paths.COOKIES, heading: 'Cookies' },
   { locale: 'cy', linkText: 'Cwcis', path: paths.COOKIES, heading: 'Cwcis' },
   // no verified Welsh translation exists for this string yet, so it stays in English for both locales
