@@ -1,7 +1,6 @@
 import type { Request, Response } from 'express'
 import paymentChoiceGetHandler from './paymentChoice'
 import SendMoneyToPrisonerService from '../services/sendMoneyToPrisonerService'
-import PrisonerMoniesApiClient from '../data/prisonerMoniesApiClient'
 import { paths, debitCardPaths } from '../constants/paths'
 import makeRes from '../testutils/mockResponse'
 
@@ -11,9 +10,7 @@ describe('paymentChoiceGetHandler', () => {
   let sendMoneyToPrisonerService: jest.Mocked<SendMoneyToPrisonerService>
 
   beforeEach(() => {
-    sendMoneyToPrisonerService = new SendMoneyToPrisonerService(
-      {} as PrisonerMoniesApiClient,
-    ) as jest.Mocked<SendMoneyToPrisonerService>
+    sendMoneyToPrisonerService = new SendMoneyToPrisonerService() as jest.Mocked<SendMoneyToPrisonerService>
   })
 
   afterEach(() => {

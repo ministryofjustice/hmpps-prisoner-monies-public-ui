@@ -4,7 +4,6 @@ import request from 'supertest'
 import { appWithAllRoutes, user } from './testutils/appSetup'
 import ExampleService from '../services/exampleService'
 import ExampleApiClient from '../data/exampleApiClient'
-import PrisonerMoniesApiClient from '../data/prisonerMoniesApiClient'
 import SendMoneyToPrisonerService from '../services/sendMoneyToPrisonerService'
 import ANONYMOUS_USER from '../constants/audit'
 import AuditEvent from '../constants/events'
@@ -16,9 +15,7 @@ jest.mock('../services/sendMoneyToPrisonerService')
 
 const auditService = new AuditService({} as never) as jest.Mocked<AuditService>
 const exampleService = new ExampleService({} as ExampleApiClient) as jest.Mocked<ExampleService>
-const sendMoneyToPrisonerService = new SendMoneyToPrisonerService(
-  {} as PrisonerMoniesApiClient,
-) as jest.Mocked<SendMoneyToPrisonerService>
+const sendMoneyToPrisonerService = new SendMoneyToPrisonerService() as jest.Mocked<SendMoneyToPrisonerService>
 
 let app: Express
 
@@ -69,7 +66,34 @@ describe('GET /payment-choice', () => {
   })
 })
 
-describe.each([['en-gb'], ['cy']])('GET /%s/payment-choice', locale => {
+describe.each([
+  [
+    'en-gb',
+    'Pay now by debit card',
+    'Continue',
+    'You can complete your payment here using Mastercard, Visa and Maestro',
+  ],
+  [
+    'cy',
+    'Talu nawr gyda cherdyn debyd',
+    'Parhau',
+    'You can complete your payment here using Mastercard, Visa and Maestro',
+  ],
+])('GET /%s/payment-choice', (locale, heading, continueText, body) => {
+  it('renders the page content in the requested language', () => {
+    sendMoneyToPrisonerService.checkPaymentServiceAvailable.mockResolvedValue({ available: true })
+
+    return request(app)
+      .get(`/${locale}/payment-choice`)
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain(heading)
+        expect(res.text).toContain(continueText)
+        expect(res.text).toContain(body)
+      })
+  })
+
   it('renders the debit card continue button and audits the page view when the payment service is available', () => {
     sendMoneyToPrisonerService.checkPaymentServiceAvailable.mockResolvedValue({ available: true })
 
