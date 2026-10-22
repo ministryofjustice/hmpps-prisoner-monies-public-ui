@@ -2,8 +2,9 @@ import { Router } from 'express'
 import { Services } from '../services'
 import debitCardRouter from './debit-card'
 import auditPageViewRequest from '../middleware/auditPageViewRequest'
+import paymentChoiceGetHandler from '../handlers/paymentChoice'
 import Page from '../constants/pages'
-import { paths, debitCardPaths } from '../constants/paths'
+import { paths } from '../constants/paths'
 
 export default function routes(services: Services): Router {
   const router = Router()
@@ -22,12 +23,11 @@ export default function routes(services: Services): Router {
     },
   )
 
-  router.get(paths.PAYMENT_CHOICE, (_req, res, _next) => {
-    return res.render('pages/payment-choice', {
-      backLinkHref: res.locals.localePath(paths.BEFORE_YOU_CONTINUE),
-      continueUrl: res.locals.localePath(debitCardPaths.PRISONER_DETAILS),
-    })
-  })
+  router.get(
+    paths.PAYMENT_CHOICE,
+    auditPageViewRequest({ services, page: Page.PAYMENT_CHOICE }),
+    paymentChoiceGetHandler(services.sendMoneyToPrisonerService),
+  )
 
   router.get(paths.TERMS, (_req, res, _next) => {
     return res.render(`pages/${res.locals.locale}/terms`)

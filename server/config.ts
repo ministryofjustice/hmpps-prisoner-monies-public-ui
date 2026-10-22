@@ -81,6 +81,15 @@ export default {
       },
       agent: new AgentConfig(Number(get('EXAMPLE_API_TIMEOUT_RESPONSE', 5000))),
     },
+    prisonerMoniesApi: {
+      url: get('PRISONER_MONIES_API_URL', 'http://localhost:9091/prisoner-monies-api', requiredInProduction),
+      healthPath: '/health/ping',
+      timeout: {
+        response: Number(get('PRISONER_MONIES_API_TIMEOUT_RESPONSE', 5000)),
+        deadline: Number(get('PRISONER_MONIES_API_TIMEOUT_DEADLINE', 5000)),
+      },
+      agent: new AgentConfig(Number(get('PRISONER_MONIES_API_TIMEOUT_RESPONSE', 5000))),
+    },
   },
   sqs: {
     audit: auditConfig(),

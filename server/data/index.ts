@@ -3,6 +3,7 @@ import { createRedisClient } from './redisClient'
 import config from '../config'
 import logger from '../../logger'
 import ExampleApiClient from './exampleApiClient'
+import PrisonerMoniesApiClient from './prisonerMoniesApiClient'
 import applicationInfoSupplier from '../applicationInfo'
 
 const applicationInfo = applicationInfoSupplier()
@@ -18,9 +19,10 @@ export const dataAccess = () => {
     applicationInfo,
     hmppsAuthClient,
     exampleApiClient: new ExampleApiClient(hmppsAuthClient),
+    prisonerMoniesApiClient: new PrisonerMoniesApiClient(hmppsAuthClient),
   }
 }
 
 export type DataAccess = ReturnType<typeof dataAccess>
 
-export { AuthenticationClient, ExampleApiClient }
+export { AuthenticationClient, ExampleApiClient, PrisonerMoniesApiClient }

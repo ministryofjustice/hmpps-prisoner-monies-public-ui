@@ -2,6 +2,17 @@
   "common": {
     "serviceName": "Send money to someone in prison"
   },
+  "paymentChoice": {
+    "pageHeading": "Pay now by debit card",
+    "intro": "Paying by debit card is fast, simple, reliable and free and the best way of sending money to a prisoner.",
+    "body1": "You can complete your payment here using Mastercard, Visa and Maestro debit cards.",
+    "body2": "Money usually takes less than 3 working days to reach a prisoner’s account, but may take longer.",
+    "body3": "You’ll get email confirmation of payment.",
+    "body4": "You can make an international payment using a debit card.",
+    "continue": "Continue",
+    "serviceUnavailableHeading": "This service is temporarily unavailable",
+    "serviceUnavailableBody": "Please try again later."
+  },
   "footer": {
     "supportLinksHeading": "Support links",
     "terms": "Terms and conditions",

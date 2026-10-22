@@ -4,6 +4,7 @@ import {
   prisonerDetailsPostHandler,
   PRISONER_DETAILS_BACK_LINK_HREF,
 } from './prisonerDetails'
+import PrisonerMoniesApiClient from '../data/prisonerMoniesApiClient'
 import SendMoneyToPrisonerService from '../services/sendMoneyToPrisonerService'
 import { debitCardPaths } from '../constants/paths'
 
@@ -47,7 +48,9 @@ describe('prisonerDetailsPostHandler', () => {
   let sendMoneyToPrisonerService: jest.Mocked<SendMoneyToPrisonerService>
 
   beforeEach(() => {
-    sendMoneyToPrisonerService = new SendMoneyToPrisonerService() as jest.Mocked<SendMoneyToPrisonerService>
+    sendMoneyToPrisonerService = new SendMoneyToPrisonerService(
+      {} as PrisonerMoniesApiClient,
+    ) as jest.Mocked<SendMoneyToPrisonerService>
   })
 
   afterEach(() => {

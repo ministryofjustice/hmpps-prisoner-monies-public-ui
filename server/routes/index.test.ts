@@ -4,6 +4,7 @@ import request from 'supertest'
 import { appWithAllRoutes, user } from './testutils/appSetup'
 import ExampleService from '../services/exampleService'
 import ExampleApiClient from '../data/exampleApiClient'
+import PrisonerMoniesApiClient from '../data/prisonerMoniesApiClient'
 import SendMoneyToPrisonerService from '../services/sendMoneyToPrisonerService'
 import ANONYMOUS_USER from '../constants/audit'
 import AuditEvent from '../constants/events'
@@ -15,7 +16,9 @@ jest.mock('../services/sendMoneyToPrisonerService')
 
 const auditService = new AuditService({} as never) as jest.Mocked<AuditService>
 const exampleService = new ExampleService({} as ExampleApiClient) as jest.Mocked<ExampleService>
-const sendMoneyToPrisonerService = new SendMoneyToPrisonerService() as jest.Mocked<SendMoneyToPrisonerService>
+const sendMoneyToPrisonerService = new SendMoneyToPrisonerService(
+  {} as PrisonerMoniesApiClient,
+) as jest.Mocked<SendMoneyToPrisonerService>
 
 let app: Express
 
@@ -63,6 +66,42 @@ describe('GET /info-page', () => {
 describe('GET /payment-choice', () => {
   it('should render payment choice page', () => {
     return request(app).get('/payment-choice').expect('Content-Type', /html/).expect(404)
+  })
+})
+
+describe.each([['en-gb'], ['cy']])('GET /%s/payment-choice', locale => {
+  it('renders the debit card continue button and audits the page view when the payment service is available', () => {
+    sendMoneyToPrisonerService.checkPaymentServiceAvailable.mockResolvedValue({ available: true })
+
+    return request(app)
+      .get(`/${locale}/payment-choice`)
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain(`href="/${locale}/debit-card/details"`)
+        expect(res.text).not.toContain('service-unavailable-heading')
+        expect(auditService.logPageView).toHaveBeenCalledWith('PAYMENT_CHOICE', {
+          correlationId: expect.any(String),
+          who: ANONYMOUS_USER,
+        })
+      })
+  })
+
+  it('renders the service-unavailable message instead of the continue button when the payment service is down', () => {
+    sendMoneyToPrisonerService.checkPaymentServiceAvailable.mockResolvedValue({
+      available: false,
+      messageToUsers: 'Down for maintenance',
+    })
+
+    return request(app)
+      .get(`/${locale}/payment-choice`)
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain('service-unavailable-heading')
+        expect(res.text).toContain('Down for maintenance')
+        expect(res.text).not.toContain(`href="/${locale}/debit-card/details"`)
+      })
   })
 })
 
