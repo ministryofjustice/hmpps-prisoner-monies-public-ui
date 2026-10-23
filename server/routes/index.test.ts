@@ -220,6 +220,44 @@ describe.each([
 })
 
 describe.each([
+  ['en-gb', 'Accessibility statement'],
+  ['cy', 'Accessibility statement'],
+])('GET /%s/accessibility', (locale, expectedHeading) => {
+  it('renders the accessibility placeholder page and audits the page view', () => {
+    return request(app)
+      .get(`/${locale}/accessibility`)
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain(expectedHeading)
+        expect(auditService.logPageView).toHaveBeenCalledWith('ACCESSIBILITY', {
+          correlationId: expect.any(String),
+          who: ANONYMOUS_USER,
+        })
+      })
+  })
+})
+
+describe.each([
+  ['en-gb', 'Help'],
+  ['cy', 'Cymorth'],
+])('GET /%s/help', (locale, expectedHeading) => {
+  it('renders the help placeholder page and audits the page view', () => {
+    return request(app)
+      .get(`/${locale}/help`)
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain(expectedHeading)
+        expect(auditService.logPageView).toHaveBeenCalledWith('HELP', {
+          correlationId: expect.any(String),
+          who: ANONYMOUS_USER,
+        })
+      })
+  })
+})
+
+describe.each([
   ['en-gb', '/'],
   ['en-gb', '/debit-card/details'],
   ['cy', '/'],
