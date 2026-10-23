@@ -305,7 +305,7 @@ describe.each([
         expect(res.text).toContain(`href="/${locale}/privacy"`)
         expect(res.text).toContain(`href="/${locale}/cookies"`)
         expect(res.text).toContain(`href="/${locale}/accessibility"`)
-        expect(res.text).toContain(`href="/${locale}/help"`)
+        expect(res.text).toContain(`href="/${locale}/help/"`)
         expect(res.text).toContain('href="https://mojdigital.blog.gov.uk/"')
         expect(res.text).toContain('Open Government Licence v3.0')
         expect(res.text).toContain('© Crown copyright')

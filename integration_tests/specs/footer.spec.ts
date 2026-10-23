@@ -11,7 +11,7 @@ const pagesWithFooter = [debitCardPaths.PRISONER_DETAILS, debitCardPaths.PAYMENT
 // one row per locale/link combination, using the exact text actually rendered (no locale lookups needed)
 const footerLinkCases = [
   { locale: 'en-gb', linkText: 'Terms and conditions', path: paths.TERMS, heading: 'Terms and conditions' },
-  { locale: 'cy', linkText: 'Telerau ac amodau', path: paths.TERMS, heading: 'Terms and conditions' },
+  { locale: 'cy', linkText: 'Telerau ac amodau', path: paths.TERMS, heading: 'Telerau ac amodau' },
   { locale: 'en-gb', linkText: 'Privacy policy', path: paths.PRIVACY, heading: 'Privacy policy' },
   { locale: 'cy', linkText: 'Polisi preifatrwydd', path: paths.PRIVACY, heading: 'Polisi preifatrwydd' },
   { locale: 'en-gb', linkText: 'Cookies', path: paths.COOKIES, heading: 'Cookies' },
