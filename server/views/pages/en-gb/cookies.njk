@@ -1,12 +1,38 @@
 {% extends "../../partials/layout-two-thirds.njk" %}
 
-{% set pageTitle = t("cookies.pageTitle") + " - " + applicationName %}
+{% set pageTitle = "Cookies - " + applicationName %}
 {% set mainClasses = "govuk-body" %}
 
 {% block page_content %}
 
-  <h1 class="govuk-heading-xl">{{ t("cookies.pageTitle") }}</h1>
+      <h1 class="govuk-heading-xl">Cookies</h1>
 
-  <p class="govuk-body">{{ t("cookies.message") }}</p>
+      <p class="govuk-body">We put small files (known as ‘cookies’) onto your computer or mobile device when you visit this website.</p>
+      <p class="govuk-body">Cookies are used to remember your progress through this service and keep it secure.</p>
+      <p class="govuk-body">Cookies on ‘Send money to someone in prison’ are not used for advertising, marketing or to identify you personally.</p>
+
+      <h2 class="govuk-heading-l">Essential cookies</h2>
+      <p class="govuk-body">These cookies need to be on to allow you to use this service.</p>
+
+      <p class="govuk-body" id="table-caption-service">
+        When you use the ‘Send money to someone in prison’ service, we set a cookie to remember your progress through this site and keep your forms secure.
+        This cookie doesn’t store your personal data.
+      </p>
+      <table class="govuk-table" aria-describedby="table-caption-service">
+        <thead class="govuk-table__head">
+          <tr class="govuk-table__row">
+            <th class="govuk-table__header" scope="col">Name</th>
+            <th class="govuk-table__header" scope="col">Purpose</th>
+            <th class="govuk-table__header" scope="col">Expires</th>
+          </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell"><code>smtp.session</code></td>
+            <td class="govuk-table__cell">Saves your progress through the service and keeps your forms secure</td>
+            <td class="govuk-table__cell">After 120 minutes of inactivity</td>
+          </tr>
+        </tbody>
+      </table>
 
 {% endblock %}

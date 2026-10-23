@@ -37,7 +37,7 @@ export default function routes(services: Services): Router {
     return res.render(`pages/${res.locals.locale}/privacy`)
   })
 
-  router.get(paths.COOKIES, auditPageViewRequest({ services, page: Page.COOKIES }), (_req, res, _next) => {
+  router.get(paths.COOKIES, auditPageViewRequest({ services, page: Page.COOKIES }), async (_req, res, _next) => {
     return res.render(`pages/${res.locals.locale}/cookies`)
   })
 

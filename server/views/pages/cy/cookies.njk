@@ -1,12 +1,38 @@
 {% extends "../../partials/layout-two-thirds.njk" %}
 
-{% set pageTitle = t("cookies.pageTitle") + " - " + applicationName %}
+{% set pageTitle = "Cwcis - " + applicationName %}
 {% set mainClasses = "govuk-body" %}
 
 {% block page_content %}
 
-  <h1 class="govuk-heading-xl">{{ t("cookies.pageTitle") }}</h1>
+      <h1 class="govuk-heading-xl">Cwcis</h1>
 
-  <p class="govuk-body">{{ t("cookies.message") }}</p>
+      <p class="govuk-body">Rydym yn gosod ffeiliau bach (sy’n cael eu galw’n ‘gwcis’) ar eich cyfrifiadur neu ddyfais symudol pan fyddwch yn ymweld â’r wefan hon.</p>
+      <p class="govuk-body">Defnyddir cwcis i gofio eich cynnydd drwy’r gwasanaeth hwn a’i gadw’n ddiogel.</p>
+      <p class="govuk-body">Nid yw cwcis ar ‘Anfon arian at rywun sydd yn y carchar’ yn cael eu defnyddio ar gyfer hysbysebu, marchnata nac i’ch adnabod yn bersonol.</p>
+
+      <h2 class="govuk-heading-l">Cwcis hanfodol</h2>
+      <p class="govuk-body">Mae angen i’r cwcis hyn fod ymlaen er mwyn i chi allu defnyddio’r gwasanaeth hwn.</p>
+
+      <p class="govuk-body" id="table-caption-service">
+        Pan fyddwch yn defnyddio’r gwasanaeth ‘Anfon arian at rywun sydd yn y carchar’, byddwn yn gosod cwci i gofio eich cynnydd drwy’r wefan hon ac i gadw eich ffurflenni’n ddiogel.
+        Nid yw’r cwci hwn yn storio eich data personol.
+      </p>
+      <table class="govuk-table" aria-describedby="table-caption-service">
+        <thead class="govuk-table__head">
+          <tr class="govuk-table__row">
+            <th class="govuk-table__header" scope="col">Enw</th>
+            <th class="govuk-table__header" scope="col">Pwrpas</th>
+            <th class="govuk-table__header" scope="col">Yn dod i ben</th>
+          </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell"><code>smtp.session</code></td>
+            <td class="govuk-table__cell">Yn cadw eich cynnydd drwy’r gwasanaeth ac yn cadw eich ffurflenni’n ddiogel</td>
+            <td class="govuk-table__cell">Ar ôl 120 munud o anweithgarwch</td>
+          </tr>
+        </tbody>
+      </table>
 
 {% endblock %}

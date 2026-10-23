@@ -205,17 +205,16 @@ describe.each([
   ['en-gb', 'Cookies'],
   ['cy', 'Cwcis'],
 ])('GET /%s/cookies', (locale, expectedHeading) => {
-  it('renders the cookies placeholder page and audits the page view', () => {
+  it('renders the cookies page listing only the session cookie', () => {
     return request(app)
       .get(`/${locale}/cookies`)
       .expect('Content-Type', /html/)
       .expect(200)
       .expect(res => {
         expect(res.text).toContain(expectedHeading)
-        expect(auditService.logPageView).toHaveBeenCalledWith('COOKIES', {
-          correlationId: expect.any(String),
-          who: ANONYMOUS_USER,
-        })
+        expect(res.text).toContain('smtp.session')
+        expect(res.text).not.toContain('Google Analytics')
+        expect(res.text).not.toContain('_ga')
       })
   })
 })
