@@ -15,7 +15,6 @@ export const paths = {
   PRIVACY: '/privacy',
   COOKIES: '/cookies',
   ACCESSIBILITY: '/accessibility',
-  HELP: '/help',
   CONTACT_US: '/contact-us',
   HELP: '/help/',
 }
