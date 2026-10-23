@@ -1,5 +1,6 @@
-import { type Locator, type Page } from '@playwright/test'
+import { type Locator, type Page, expect } from '@playwright/test'
 import BasePage from '../utils/basePage'
+import { debitCardPaths } from '../../server/constants/paths'
 
 export type PrisonerDetailsFormInput = {
   prisonerName?: string
@@ -24,19 +25,29 @@ export default class PrisonerDetailsPage extends BasePage {
 
   readonly prisonerNumberInput: Locator
 
+  readonly prisonerNameErrorMessage: Locator
+
+  readonly prisonerDobErrorMessage: Locator
+
+  readonly prisonerNumberErrorMessage: Locator
+
   h1Title = 'Enter prisoner details'
 
-  protected path = '/debit-card/details'
+  protected path = debitCardPaths.PRISONER_DETAILS
 
   private constructor(page: Page) {
     super(page)
     this.backLink = page.getByRole('link', { name: 'Back' })
-    this.errorSummary = page.locator('.govuk-error-summary')
     this.prisonerNameInput = page.locator('#id_prisoner_name')
     this.prisonerDobDayInput = page.locator('#id_prisoner_dob_0')
     this.prisonerDobMonthInput = page.locator('#id_prisoner_dob_1')
     this.prisonerDobYearInput = page.locator('#id_prisoner_dob_2')
     this.prisonerNumberInput = page.locator('#id_prisoner_number')
+
+    this.errorSummary = page.locator('.govuk-error-summary')
+    this.prisonerNameErrorMessage = page.locator('#id_prisoner_name-wrapper .govuk-error-message')
+    this.prisonerDobErrorMessage = page.locator('#id_prisoner_dob-wrapper .govuk-error-message')
+    this.prisonerNumberErrorMessage = page.locator('#id_prisoner_number-wrapper .govuk-error-message')
   }
 
   static async goTo(page: Page): Promise<PrisonerDetailsPage> {
@@ -72,5 +83,16 @@ export default class PrisonerDetailsPage extends BasePage {
 
   errorMessageLink(label: string): Locator {
     return this.errorSummary.getByRole('link', { name: label })
+  }
+
+  async verifyErrorMessagesVisible(expectedMessage = 'This field is required') {
+    await expect(this.prisonerNameErrorMessage).toBeVisible()
+    await expect(this.prisonerNameErrorMessage).toContainText(expectedMessage)
+
+    await expect(this.prisonerDobErrorMessage).toBeVisible()
+    await expect(this.prisonerDobErrorMessage).toContainText(expectedMessage)
+
+    await expect(this.prisonerNumberErrorMessage).toBeVisible()
+    await expect(this.prisonerNumberErrorMessage).toContainText(expectedMessage)
   }
 }

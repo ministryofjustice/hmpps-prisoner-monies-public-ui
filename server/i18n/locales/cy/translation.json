@@ -2,6 +2,47 @@
   "common": {
     "serviceName": "Anfon arian at rywun sydd yn y carchar"
   },
+  "paymentChoice": {
+    "pageHeading": "Talu nawr gyda cherdyn debyd",
+    "intro": "Paying by debit card is fast, simple, reliable and free and the best way of sending money to a prisoner.",
+    "body1": "You can complete your payment here using Mastercard, Visa and Maestro debit cards.",
+    "body2": "Money usually takes less than 3 working days to reach a prisoner’s account, but may take longer.",
+    "body3": "You’ll get email confirmation of payment.",
+    "body4": "You can make an international payment using a debit card.",
+    "continue": "Parhau",
+    "serviceUnavailableHeading": "This service is temporarily unavailable",
+    "serviceUnavailableBody": "Please try again later."
+  },
+  "footer": {
+    "supportLinksHeading": "Support links",
+    "terms": "Telerau ac amodau",
+    "privacy": "Polisi preifatrwydd",
+    "cookies": "Cwcis",
+    "accessibility": "Accessibility statement",
+    "help": "Cymorth",
+    "builtByHtml": "Cynhyrchwyd gan <a class=\"govuk-footer__link\" href=\"https://mojdigital.blog.gov.uk/\"><abbr title=\"Y Weinyddiaeth Cyfiawnder\">MOJ</abbr> Digital</a>"
+  },
+  "cookies": {
+    "pageTitle": "Cwcis",
+    "message": "This page is a placeholder for the cookies policy."
+  },
+  "accessibility": {
+    "pageTitle": "Accessibility statement",
+    "message": "This page is a placeholder for the accessibility statement."
+  },
+  "help": {
+    "pageTitle": "Cymorth",
+    "message": "This page is a placeholder for help and support content."
+  },
+  "beforeYouContinue": {
+    "pageTitle": "Cyn i chi barhau",
+    "intro1": "Rydym yn cynnal gwiriadau cydymffurfiaeth i atal twyll ac ymddygiad troseddol arall.",
+    "intro2": "Drwy ddefnyddio’r gwasanaeth hwn rydych yn cytuno i’r gwiriadau hyn a’n",
+    "termsLink": "telerau ac amodau",
+    "and": "a’n",
+    "privacyLink": "polisi preifatrwydd",
+    "continue": "Parhau"
+  },
   "terms": {
     "intro2": "Darllenwch nhw'n ofalus.",
     "purpose1": "Mae’r telerau ac amodau hyn yn effeithio ar eich hawliau a’ch rhwymedigaethau dan y gyfraith.",
@@ -25,5 +66,57 @@
     "pageTitle": "Ni ellir dod o hyd i’r dudalen",
     "message": "Os gwnaethoch nodi cyfeiriad gwefan yna gwiriwch ei fod yn gywir.",
     "linkText": "Dychwelyd i'r dudalen gartref"
+  },"paymentAmount": {
+    "pageTitle": "Nodwch y swm yr ydych eisiau anfon",
+    "pageCaption": "Talu nawr gyda cherdyn debyd",
+    "errorSummaryTitle": "Roedd problem",
+    "fields": {
+      "amount": {
+        "label": "Swm"
+      }
+    },
+    "errors": {
+      "required": "Mae’n rhaid llenwi’r maes hwn.",
+      "notANumber": "Nodwch fel rhif",
+      "tooSmall": "Dylai'r swm fod yn 1c neu fwy",
+      "tooManyDecimalPlaces": "Defnyddiwch 2 le degol yn unig",
+      "tooLarge": "Mae'r swm rydych yn ceisio ei anfon yn rhy fawr. Nodwch swm llai"
+    },
+    "submit": "Gwirio'r manylion"
+  },
+  "prisonerDetails": {
+    "pageTitle": "Talu nawr gyda cherdyn debyd",
+    "pageSubTitle": "Nodwch fanylion y carcharor",
+    "errorSummaryTitle": "Roedd problem",
+    "fieldsetLegend": "Manylion y carcharor",
+    "fields": {
+      "prisonerName": {
+        "label": "Enw'r carcharor"
+      },
+      "prisonerDob": {
+        "legend": "Dyddiad geni'r carcharor",
+        "hint": "Er enghraifft, 28 04 1996",
+        "day": "Diwrnod",
+        "month": "Mis",
+        "year": "Blwyddyn"
+      },
+      "prisonerNumber": {
+        "label": "Rhif y carcharor",
+        "hint": "Er enghraifft, A1234BC"
+      }
+    },
+    "errors": {
+      "required": "Mae’n rhaid llenwi’r maes hwn",
+      "prisonerNumberFormat": "Fformat anghywir ar gyfer rhif y carcharor",
+      "prisonerNameCardNumber": "Peidiwch â nodi rhif eich cerdyn debyd yma",
+      "dobDayNumber": "Nodwch ‘diwrnod’ fel rhif",
+      "dobDayRange": "Dylai ‘Diwrnod’ fod rhwng 1 a 31",
+      "dobMonthNumber": "Nodwch ‘mis’ fel rhif",
+      "dobMonthRange": "Dylai ‘Mis’ fod rhwng 1 a 12",
+      "dobYearNumber": "Nodwch ‘blwyddyn’ fel rhif",
+      "dobYearRange": "Dylai ‘Blwyddyn’ fod rhwng 1900 a {{currentYear}}",
+      "dobInvalid": "Nodwch ddyddiad dilys"
+    },
+    "submit": "Nodwch y swm"
   }
 }

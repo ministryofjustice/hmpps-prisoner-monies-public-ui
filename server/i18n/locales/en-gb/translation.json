@@ -2,6 +2,47 @@
   "common": {
     "serviceName": "Send money to someone in prison"
   },
+  "paymentChoice": {
+    "pageHeading": "Pay now by debit card",
+    "intro": "Paying by debit card is fast, simple, reliable and free and the best way of sending money to a prisoner.",
+    "body1": "You can complete your payment here using Mastercard, Visa and Maestro debit cards.",
+    "body2": "Money usually takes less than 3 working days to reach a prisoner’s account, but may take longer.",
+    "body3": "You’ll get email confirmation of payment.",
+    "body4": "You can make an international payment using a debit card.",
+    "continue": "Continue",
+    "serviceUnavailableHeading": "This service is temporarily unavailable",
+    "serviceUnavailableBody": "Please try again later."
+  },
+  "footer": {
+    "supportLinksHeading": "Support links",
+    "terms": "Terms and conditions",
+    "privacy": "Privacy policy",
+    "cookies": "Cookies",
+    "accessibility": "Accessibility statement",
+    "help": "Help",
+    "builtByHtml": "Built by <a class=\"govuk-footer__link\" href=\"https://mojdigital.blog.gov.uk/\"><abbr title=\"Ministry of Justice\">MOJ</abbr> Digital</a>"
+  },
+  "cookies": {
+    "pageTitle": "Cookies",
+    "message": "This page is a placeholder for the cookies policy."
+  },
+  "accessibility": {
+    "pageTitle": "Accessibility statement",
+    "message": "This page is a placeholder for the accessibility statement."
+  },
+  "help": {
+    "pageTitle": "Help",
+    "message": "This page is a placeholder for help and support content."
+  },
+  "beforeYouContinue": {
+    "pageTitle": "Before you continue",
+    "intro1": "We run compliance checks to prevent fraud and other criminal behaviour.",
+    "intro2": "By using this service you're agreeing to these checks and our",
+    "termsLink": "terms and conditions",
+    "and": "and",
+    "privacyLink": "privacy policy",
+    "continue": "Continue"
+  },
   "terms": {
     "pageTitle": "Terms and conditions",
     "intro1": "By using the ‘Send money to someone in prison’ service you agree to our privacy policy and to these terms and conditions.",
@@ -45,5 +86,58 @@
     "pageTitle": "Page not found",
     "message": "If you entered a web address please check it was correct.",
     "linkText": "Return to the home page"
+  },
+  "paymentAmount": {
+    "pageTitle": "Enter amount to send",
+    "pageCaption": "Pay now by debit card",
+    "errorSummaryTitle": "There was a problem",
+    "fields": {
+      "amount": {
+        "label": "Amount"
+      }
+    },
+    "errors": {
+      "required": "This field is required.",
+      "notANumber": "Enter as a number",
+      "tooSmall": "Amount should be 1p or more",
+      "tooManyDecimalPlaces": "Only use 2 decimal places",
+      "tooLarge": "The amount you are trying to send is too large. Please enter a smaller amount"
+    },
+    "submit": "Check details"
+  },
+  "prisonerDetails": {
+      "pageTitle": "Pay now by debit card",
+      "pageSubTitle": "Enter prisoner details",
+      "errorSummaryTitle": "There was a problem",
+      "fieldsetLegend": "Prisoner details",
+      "fields": {
+        "prisonerName": {
+          "label": "Prisoner name"
+        },
+        "prisonerDob": {
+          "legend": "Prisoner date of birth",
+          "hint": "For example, 28 04 1989",
+          "day": "Day",
+          "month": "Month",
+          "year": "Year"
+        },
+        "prisonerNumber": {
+          "label": "Prisoner number",
+          "hint": "For example, A1234BC"
+        }
+      },
+      "errors": {
+        "required": "This field is required",
+        "prisonerNumberFormat": "Incorrect prisoner number format",
+        "prisonerNameCardNumber": "Please do not enter your debit card number here",
+        "dobDayNumber": "Enter ‘day’ as a number",
+        "dobDayRange": "‘Day’ should be between 1 and 31",
+        "dobMonthNumber": "Enter ‘month’ as a number",
+        "dobMonthRange": "‘Month’ should be between 1 and 12",
+        "dobYearNumber": "Enter ‘year’ as a number",
+        "dobYearRange": "‘Year’ should be between 1900 and {{currentYear}}",
+        "dobInvalid": "Enter a valid date"
+      },
+      "submit": "Enter amount"
   }
 }

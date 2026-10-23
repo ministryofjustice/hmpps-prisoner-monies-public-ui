@@ -68,6 +68,9 @@ web_modules/
 # Yarn Integrity file
 .yarn-integrity
 
+# Local, machine-specific project paths confirmed for the django-page-migration skill
+.github/skills/django-page-migration/local-config.json
+
 # dotenv environment variables file
 .env
 .env.test
