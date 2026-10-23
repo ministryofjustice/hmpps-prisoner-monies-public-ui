@@ -1,8 +1,12 @@
 {% extends "../../partials/layout-two-thirds.njk" %}
 
-{% set pageTitle = "Cymorth - " + applicationName %}
+{% set pageTitle = t("help.pageTitle") + " - " + applicationName %}
 {% set mainClasses = "govuk-body" %}
 
 {% block page_content %}
-<h1 class="govuk-heading-xl">Cymorth</h1>
+
+  <h1 class="govuk-heading-xl">{{ t("help.pageTitle") }}</h1>
+
+  <p class="govuk-body">{{ t("help.message") }}</p>
+
 {% endblock %}

@@ -2,6 +2,38 @@
   "common": {
     "serviceName": "Send money to someone in prison"
   },
+  "paymentChoice": {
+    "pageHeading": "Pay now by debit card",
+    "intro": "Paying by debit card is fast, simple, reliable and free and the best way of sending money to a prisoner.",
+    "body1": "You can complete your payment here using Mastercard, Visa and Maestro debit cards.",
+    "body2": "Money usually takes less than 3 working days to reach a prisoner’s account, but may take longer.",
+    "body3": "You’ll get email confirmation of payment.",
+    "body4": "You can make an international payment using a debit card.",
+    "continue": "Continue",
+    "serviceUnavailableHeading": "This service is temporarily unavailable",
+    "serviceUnavailableBody": "Please try again later."
+  },
+  "footer": {
+    "supportLinksHeading": "Support links",
+    "terms": "Terms and conditions",
+    "privacy": "Privacy policy",
+    "cookies": "Cookies",
+    "accessibility": "Accessibility statement",
+    "help": "Help",
+    "builtByHtml": "Built by <a class=\"govuk-footer__link\" href=\"https://mojdigital.blog.gov.uk/\"><abbr title=\"Ministry of Justice\">MOJ</abbr> Digital</a>"
+  },
+  "cookies": {
+    "pageTitle": "Cookies",
+    "message": "This page is a placeholder for the cookies policy."
+  },
+  "accessibility": {
+    "pageTitle": "Accessibility statement",
+    "message": "This page is a placeholder for the accessibility statement."
+  },
+  "help": {
+    "pageTitle": "Help",
+    "message": "This page is a placeholder for help and support content."
+  },
   "beforeYouContinue": {
     "pageTitle": "Before you continue",
     "intro1": "We run compliance checks to prevent fraud and other criminal behaviour.",

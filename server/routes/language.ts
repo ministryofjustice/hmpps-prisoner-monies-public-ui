@@ -2,8 +2,9 @@ import { Router } from 'express'
 import { Services } from '../services'
 import debitCardRouter from './debit-card'
 import auditPageViewRequest from '../middleware/auditPageViewRequest'
+import paymentChoiceGetHandler from '../handlers/paymentChoice'
 import Page from '../constants/pages'
-import { paths, debitCardPaths } from '../constants/paths'
+import { paths } from '../constants/paths'
 
 export default function routes(services: Services): Router {
   const router = Router()
@@ -22,19 +23,30 @@ export default function routes(services: Services): Router {
     },
   )
 
-  router.get(paths.PAYMENT_CHOICE, (_req, res, _next) => {
-    return res.render('pages/payment-choice', {
-      backLinkHref: res.locals.localePath(paths.BEFORE_YOU_CONTINUE),
-      continueUrl: res.locals.localePath(debitCardPaths.PRISONER_DETAILS),
-    })
-  })
+  router.get(
+    paths.PAYMENT_CHOICE,
+    auditPageViewRequest({ services, page: Page.PAYMENT_CHOICE }),
+    paymentChoiceGetHandler(services.sendMoneyToPrisonerService),
+  )
 
   router.get(paths.TERMS, auditPageViewRequest({ services, page: Page.TERMS }), (_req, res, _next) => {
     return res.render(`pages/${res.locals.locale}/terms`)
   })
 
-  router.get(paths.PRIVACY, (_req, res, _next) => {
+  router.get(paths.PRIVACY, auditPageViewRequest({ services, page: Page.PRIVACY }), (_req, res, _next) => {
     return res.render(`pages/${res.locals.locale}/privacy`)
+  })
+
+  router.get(paths.COOKIES, auditPageViewRequest({ services, page: Page.COOKIES }), async (_req, res, _next) => {
+    return res.render(`pages/${res.locals.locale}/cookies`)
+  })
+
+  router.get(paths.ACCESSIBILITY, auditPageViewRequest({ services, page: Page.ACCESSIBILITY }), (_req, res, _next) => {
+    return res.render(`pages/${res.locals.locale}/accessibility`)
+  })
+
+  router.get(paths.HELP, auditPageViewRequest({ services, page: Page.HELP }), (_req, res, _next) => {
+    return res.render(`pages/${res.locals.locale}/help`)
   })
 
   router.get(paths.CONTACT_US, (_req, res, _next) => {
