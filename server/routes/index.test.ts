@@ -213,6 +213,33 @@ describe.each([
       .expect(res => {
         expect(res.text).toContain(expectedHeading)
         expect(res.text).toContain('smtp.session')
+        expect(res.text).not.toContain('Google Analytics')
+        expect(res.text).not.toContain('_ga')
+      })
+  })
+})
+
+describe.each([
+  ['en-gb', '/'],
+  ['en-gb', '/debit-card/details'],
+  ['cy', '/'],
+  ['cy', '/debit-card/details'],
+])('GET /%s%s footer', (locale, path) => {
+  it('links to the terms, privacy, cookies, accessibility and help pages, with the visually hidden heading and crown copyright/OGL licence', () => {
+    return request(app)
+      .get(`/${locale}${path}`)
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain('<h2 class="govuk-visually-hidden">Support links</h2>')
+        expect(res.text).toContain(`href="/${locale}/terms"`)
+        expect(res.text).toContain(`href="/${locale}/privacy"`)
+        expect(res.text).toContain(`href="/${locale}/cookies"`)
+        expect(res.text).toContain(`href="/${locale}/accessibility"`)
+        expect(res.text).toContain(`href="/${locale}/help"`)
+        expect(res.text).toContain('href="https://mojdigital.blog.gov.uk/"')
+        expect(res.text).toContain('Open Government Licence v3.0')
+        expect(res.text).toContain('© Crown copyright')
       })
   })
 })
