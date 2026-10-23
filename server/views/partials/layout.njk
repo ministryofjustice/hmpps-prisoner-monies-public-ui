@@ -30,7 +30,7 @@
         }) }}
       {% endif %}
       <span class="govuk-phase-banner__text">
-        <a class="govuk-link" href="{{localePath('/contact-us')}}">Contact us</a> if you need help or would like to give us some feedback.
+        <a class="govuk-link" href="{{localePath('/help/')}}">Contact us</a> if you need help or would like to give us some feedback.
       </span>
   </p>
 </div>
@@ -51,7 +51,7 @@
       { href: localePath('/privacy'), text: t("footer.privacy") },
       { href: localePath('/cookies'), text: t("footer.cookies") },
       { href: localePath('/accessibility'), text: t("footer.accessibility") },
-      { href: localePath('/help'), text: t("footer.help") }
+      { href: localePath('/help/'), text: t("footer.help") }
     ],
     html: t("footer.builtByHtml")
   }

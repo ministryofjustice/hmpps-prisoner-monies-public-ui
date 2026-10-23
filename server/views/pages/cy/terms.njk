@@ -1,76 +1,82 @@
 {% extends "../../partials/layout-two-thirds.njk" %}
 
+{% set pageTitle = "Telerau ac amodau - " + applicationName %}
+{% set mainClasses = "govuk-body" %}
 
 {% block page_content %}
 
+<h1 class="govuk-heading-xl">Telerau ac amodau</h1>
 
-      <h1 class="govuk-heading-xl">Terms and conditions</h1>
+<p class="govuk-body">By using the ‘Send money to someone in prison’ service you agree to our privacy policy and to these terms and conditions. Darllenwch nhw'n ofalus.</p>
 
-      <p class="govuk-body">By using the ‘Send money to someone in prison’ service you agree to our privacy policy and to these terms and conditions. Darllenwch nhw'n ofalus.</p>
+<h2 class="govuk-heading-s">Purpose of these terms and conditions</h2>
+<p class="govuk-body">
+  Mae’r telerau ac amodau hyn yn effeithio ar eich hawliau a’ch rhwymedigaethau dan y gyfraith.
+  They govern your use of, and relationship with, the ‘Send money to someone in prison’ service.
+  They don’t apply to other services provided by the Ministry of Justice or to any other department or service which is linked to this service.
+</p>
+<p class="govuk-body">
+  Mae'n bosib y byddwn o bryd i'w gilydd yn diweddaru'r telerau ac amodau hyn.
+  Gall hyn ddigwydd os bydd newid yn y gyfraith neu i'r ffordd y mae'r gwasanaeth hwn yn gweithio.
+  Rydym yn argymell eich bod yn gwirio'r dudalen hon yn rheolaidd am unrhyw ddiweddariadau.
+</p>
+<p class="govuk-body">If you don’t agree to the terms and conditions set out in this document, you should not send money to prisoners using this service.</p>
 
-      <h2 class="govuk-heading-s">Purpose of these terms and conditions</h2>
-      <p class="govuk-body">
-        Mae’r telerau ac amodau hyn yn effeithio ar eich hawliau a’ch rhwymedigaethau dan y gyfraith.
-        They govern your use of, and relationship with, the ‘Send money to someone in prison’ service.
-        They don’t apply to other services provided by the Ministry of Justice or to any other department or service which is linked to this service.
-      </p>
-      <p class="govuk-body">
-        Mae'n bosib y byddwn o bryd i'w gilydd yn diweddaru'r telerau ac amodau hyn.
-        Gall hyn ddigwydd os bydd newid yn y gyfraith neu i'r ffordd y mae'r gwasanaeth hwn yn gweithio.
-        Rydym yn argymell eich bod yn gwirio'r dudalen hon yn rheolaidd am unrhyw ddiweddariadau.
-      </p>
-      <p class="govuk-body">If you don’t agree to the terms and conditions set out in this document, you should not send money to prisoners using this service.</p>
+<h2 class="govuk-heading-s">Making payments</h2>
 
-      <h2 class="govuk-heading-s">Making payments</h2>
-      <p class="govuk-body">
-        You can only use debit cards on this service – Visa, Mastercard and Maestro.
-        You cannot use credit cards or prepaid cards.
-      </p>
-      <p class="govuk-body">
-        When using this service your payment will be checked by HM Prison and Probation Service (HMPPS) to ensure that it is from a legitimate source and for a legitimate purpose.
-        If HMPPS believes the money is suspicious, your payment will be rejected, and the money will be returned to your account.
-      </p>
-      <p class="govuk-body">Your payment may take up to 5 days to be processed while the compliance check is carried out.</p>
-      <p class="govuk-body">If your payment is rejected by our compliance check, this may lead to further investigation and possible referral to the police if it is thought that an offence has been committed.</p>
-      <p class="govuk-body">Information recorded on this system may be used in the investigation of money laundering or other offences by HMPPS or its partners.</p>
+<div class="app-card-acceptance-signage govuk-!-display-none-print" aria-hidden="true">
+  <img class="app-card-acceptance-signage__logo" src="/assets/images/card-acceptance-signage/visa.svg" alt="">
+  <img class="app-card-acceptance-signage__logo" src="/assets/images/card-acceptance-signage/mastercard.svg" alt="">
+  <img class="app-card-acceptance-signage__logo" src="/assets/images/card-acceptance-signage/maestro.svg" alt="">
+</div>
 
-      <h2 class="govuk-heading-s">Y gyfraith sy’n berthnasol</h2>
-      <p class="govuk-body">Bydd y defnydd a wnewch o’r gwasanaeth hwn ac unrhyw anghydfod sy’n codi o’i ddefnyddio yn cael ei reoli a’i ddehongli yn unol â chyfreithiau Cymru a Lloegr, yn cynnwys ond ddim yn gyfyngedig i:</p>
-      <ul class="govuk-list govuk-list--bullet">
-        <li>Computer Misuse Act 1990</li>
-        <li>Data Protection Act 2018</li>
-        <li>Mental Capacity Act 2005</li>
-        <li>Proceeds of Crime Act 2002</li>
-        <li>Terrorism Act 2000</li>
-      </ul>
+<p class="govuk-body">
+  You can only use debit cards on this service – Visa, Mastercard and Maestro.
+  You cannot use credit cards or prepaid cards.
+</p>
+<p class="govuk-body">
+  When using this service your payment will be checked by HM Prison and Probation Service (HMPPS) to ensure that it is from a legitimate source and for a legitimate purpose.
+  If HMPPS believes the money is suspicious, your payment will be rejected, and the money will be returned to your account.
+</p>
+<p class="govuk-body">Your payment may take up to 5 days to be processed while the compliance check is carried out.</p>
+<p class="govuk-body">If your payment is rejected by our compliance check, this may lead to further investigation and possible referral to the police if it is thought that an offence has been committed.</p>
+<p class="govuk-body">Information recorded on this system may be used in the investigation of money laundering or other offences by HMPPS or its partners.</p>
 
-      <h2 class="govuk-heading-s">Using this service responsibly</h2>
-      <p class="govuk-body">
-        There are risks in using a shared computer, for example in an internet café, to use this service.
-        Eich cyfrifoldeb chi yw bod yn ymwybodol o’r peryglon hyn ac osgoi defnyddio unrhyw gyfrifiadur lle mae posibilrwydd y gall eraill weld eich gwybodaeth bersonol.
-        Do not leave a public computer unattended and ensure your personal data is wiped from the system when you log out.
-        Chi sy’n gyfrifol os ydych yn dewis gadael cyfrifiadur heb ei ddiogelu tra rydych yn y broses o anfon arian at garcharor.
-      </p>
-      <p class="govuk-body">
-        Byddwn yn gwneud popeth y gallwch i wirio a phrofi’r gwasanaeth hwn pryd bynnag y byddwn yn ei ddiwygio neu ei ddiweddaru.
-        Fodd bynnag, mae’n rhaid i chi gymryd gofal eich hunan i sicrhau nad yw’r ffordd yr ydych yn cael mynediad i'r gwasanaeth hwn yn eich gadael yn agored i’r perygl o feirysau, cod cyfrifiadur maleisus neu ymyrraeth o fath arall a allai achosi difrod i’ch system gyfrifiadurol eich hunan.
-      </p>
-      <p class="govuk-body">
-        Ni ddylech gamddefnyddio ein gwasanaeth drwy gyflwyno’n fwriadol feirysau, ymwelwyr diwahoddiad, mwydod, bomiau rhesymeg neu unrhyw ddeunydd arall maleisus neu niweidiol i dechnoleg.
-        Ni ddylech geisio cael mynediad heb awdurdod i'n gwasanaeth, y system lle caiff ein gwasanaeth ei storio nac unrhyw weinydd, cyfrifiadur neu gronfa ddata sy’n gysylltiedig â’n gwasanaeth. Ni ddylech ymosod ar ein gwefan drwy ymosodiad gwrthod gwasanaeth neu ymosodiad gwrthod gwasanaeth a ddosbarthwyd.
-      </p>
+<h2 class="govuk-heading-s">Y gyfraith sy’n berthnasol</h2>
+<p class="govuk-body">Bydd y defnydd a wnewch o’r gwasanaeth hwn ac unrhyw anghydfod sy’n codi o’i ddefnyddio yn cael ei reoli a’i ddehongli yn unol â chyfreithiau Cymru a Lloegr, yn cynnwys ond ddim yn gyfyngedig i:</p>
+<ul class="govuk-list govuk-list--bullet">
+  <li>Computer Misuse Act 1990</li>
+  <li>Data Protection Act 2018</li>
+  <li>Mental Capacity Act 2005</li>
+  <li>Proceeds of Crime Act 2002</li>
+  <li>Terrorism Act 2000</li>
+</ul>
 
-      <h2 class="govuk-heading-s">Feedback and complaints</h2>
-      <p class="govuk-body">If you wish to give feedback or complain about the service, please <a class="govuk-link" href="/contact-us">contact us</a>.</p>
+<h2 class="govuk-heading-s">Using this service responsibly</h2>
+<p class="govuk-body">
+  There are risks in using a shared computer, for example in an internet café, to use this service.
+  Eich cyfrifoldeb chi yw bod yn ymwybodol o’r peryglon hyn ac osgoi defnyddio unrhyw gyfrifiadur lle mae posibilrwydd y gall eraill weld eich gwybodaeth bersonol.
+  Do not leave a public computer unattended and ensure your personal data is wiped from the system when you log out.
+  Chi sy’n gyfrifol os ydych yn dewis gadael cyfrifiadur heb ei ddiogelu tra rydych yn y broses o anfon arian at garcharor.
+</p>
+<p class="govuk-body">
+  Byddwn yn gwneud popeth y gallwch i wirio a phrofi’r gwasanaeth hwn pryd bynnag y byddwn yn ei ddiwygio neu ei ddiweddaru.
+  Fodd bynnag, mae’n rhaid i chi gymryd gofal eich hunan i sicrhau nad yw’r ffordd yr ydych yn cael mynediad i'r gwasanaeth hwn yn eich gadael yn agored i’r perygl o feirysau, cod cyfrifiadur maleisus neu ymyrraeth o fath arall a allai achosi difrod i’ch system gyfrifiadurol eich hunan.
+</p>
+<p class="govuk-body">
+  Ni ddylech gamddefnyddio ein gwasanaeth drwy gyflwyno’n fwriadol feirysau, ymwelwyr diwahoddiad, mwydod, bomiau rhesymeg neu unrhyw ddeunydd arall maleisus neu niweidiol i dechnoleg.
+  Ni ddylech geisio cael mynediad heb awdurdod i'n gwasanaeth, y system lle caiff ein gwasanaeth ei storio nac unrhyw weinydd, cyfrifiadur neu gronfa ddata sy’n gysylltiedig â’n gwasanaeth. Ni ddylech ymosod ar ein gwefan drwy ymosodiad gwrthod gwasanaeth neu ymosodiad gwrthod gwasanaeth a ddosbarthwyd.
+</p>
 
-      <h2 class="govuk-heading-s">Ymwrthodiad</h2>
-      <p class="govuk-body">
-        Nid ydym yn derbyn cyfrifoldeb am golled neu ddifrod sy’n dod i ran defnyddwyr y gwasanaeth hwn, naill ai’n uniongyrchol, yn anuniongyrchol neu’n ganlyniadol, pa un ai a yw’n cael ei achosi drwy gamwedd, tor-cytundeb neu fel arall.
-        Mae hyn yn cynnwys colli incwm neu refeniw, busnes, elw neu gytundebau, arbedion a ragwelwyd, data, ewyllys da, eiddo diriaethol neu wastraff amser sy’n gysylltiedig â’r gwasanaeth hwn neu unrhyw wefannau sy’n gysylltiedig ag ef ac unrhyw ddeunydd sy’n cael ei bostio arno.
-        Ni fydd yr amod hwn yn atal hawliadau am golled neu ddifrod i’ch eiddo diriaethol nac unrhyw hawliadau eraill am golled ariannol uniongyrchol nad ydynt wedi’i heithrio gan unrhyw rai o’r categorïau uchod.
-      </p>
-      <p class="govuk-body">This does not affect our liability for fraudulent misrepresentation or misrepresentation as to a fundamental matter, nor any other liability which cannot be excluded or limited under applicable law.</p>
+<h2 class="govuk-heading-s">Feedback and complaints</h2>
+<p class="govuk-body">If you wish to give feedback or complain about the service, please <a class="govuk-link" href="{{ localePath('/help/') }}">contact us</a>.</p>
 
-
+<h2 class="govuk-heading-s">Ymwrthodiad</h2>
+<p class="govuk-body">
+  Nid ydym yn derbyn cyfrifoldeb am golled neu ddifrod sy’n dod i ran defnyddwyr y gwasanaeth hwn, naill ai’n uniongyrchol, yn anuniongyrchol neu’n ganlyniadol, pa un ai a yw’n cael ei achosi drwy gamwedd, tor-cytundeb neu fel arall.
+  Mae hyn yn cynnwys colli incwm neu refeniw, busnes, elw neu gytundebau, arbedion a ragwelwyd, data, ewyllys da, eiddo diriaethol neu wastraff amser sy’n gysylltiedig â’r gwasanaeth hwn neu unrhyw wefannau sy’n gysylltiedig ag ef ac unrhyw ddeunydd sy’n cael ei bostio arno.
+  Ni fydd yr amod hwn yn atal hawliadau am golled neu ddifrod i’ch eiddo diriaethol nac unrhyw hawliadau eraill am golled ariannol uniongyrchol nad ydynt wedi’i heithrio gan unrhyw rai o’r categorïau uchod.
+</p>
+<p class="govuk-body">This does not affect our liability for fraudulent misrepresentation or misrepresentation as to a fundamental matter, nor any other liability which cannot be excluded or limited under applicable law.</p>
 
 {% endblock %}

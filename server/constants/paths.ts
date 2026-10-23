@@ -15,8 +15,8 @@ export const paths = {
   PRIVACY: '/privacy',
   COOKIES: '/cookies',
   ACCESSIBILITY: '/accessibility',
-  HELP: '/help',
   CONTACT_US: '/contact-us',
+  HELP: '/help/',
 }
 
 // debit card pages, see server/routes/debit-card.ts

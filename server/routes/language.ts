@@ -29,7 +29,7 @@ export default function routes(services: Services): Router {
     paymentChoiceGetHandler(services.sendMoneyToPrisonerService),
   )
 
-  router.get(paths.TERMS, (_req, res, _next) => {
+  router.get(paths.TERMS, auditPageViewRequest({ services, page: Page.TERMS }), (_req, res, _next) => {
     return res.render(`pages/${res.locals.locale}/terms`)
   })
 
@@ -52,6 +52,11 @@ export default function routes(services: Services): Router {
   router.get(paths.CONTACT_US, (_req, res, _next) => {
     return res.render(`pages/${res.locals.locale}/contact-us`)
   })
+
+  router.get(paths.HELP, auditPageViewRequest({ services, page: Page.HELP }), (_req, res, _next) => {
+    return res.render(`pages/${res.locals.locale}/help`)
+  })
+
   router.use(debitCardRouter(services))
 
   return router
